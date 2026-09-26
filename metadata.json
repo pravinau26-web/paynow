@@ -1,0 +1,6 @@
+{
+  "name": "PayNow - UPI Payment App",
+  "description": "Replica-style modern UPI payment app inspired by super.money, featuring PIN-based login, central QR scan-to-pay, real cashback, and smooth animated payment state transitions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

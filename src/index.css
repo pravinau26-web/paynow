@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+:root {
+  --primary: #5B3DF5;
+  --primary-gradient: linear-gradient(135deg, #6C4CFA 0%, #A16CFF 100%);
+  --success: #1DB954;
+  --danger: #FF4D4F;
+  --bg: #FAFAFC;
+  --surface: #FFFFFF;
+  --text-primary: #14141A;
+  --text-muted: #6B6B76;
+  --border: #EFEFF3;
+}
+
+/* ========================================================================= */
+/* RESPONSIVE ROOT CONTAINER SCALING STRATEGY                                 */
+/* Reduces overall UI scale for desktop & laptop displays so components use  */
+/* relative units (rem) and feel compact, native, and avoid vertical overflow*/
+/* ========================================================================= */
+html {
+  font-size: 15px;
+  height: 100%;
+}
+
+@media (min-width: 640px) {
+  html {
+    font-size: 13.75px;
+  }
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 13.25px;
+  }
+}
+
+@media (min-width: 1280px) {
+  html {
+    font-size: 13px;
+  }
+}
+
+/* Gracefully scale down on compact laptop screens (e.g. 768px height) */
+@media (max-height: 820px) and (min-width: 640px) {
+  html {
+    font-size: 12.5px;
+  }
+}
+
+@media (max-height: 720px) and (min-width: 640px) {
+  html {
+    font-size: 11.75px;
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  height: 100%;
+  background-color: #0a0b0e;
+}
+
+#root {
+  min-height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hide scrollbars for clean mobile UX */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Keyframes */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+.animate-shake {
+  animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes scanLine {
+  0% { transform: translateY(0%); opacity: 0.9; }
+  50% { transform: translateY(220px); opacity: 1; }
+  100% { transform: translateY(0%); opacity: 0.9; }
+}
+
+.animate-scan {
+  animation: scanLine 2.2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.15); opacity: 0.35; }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes drawStroke {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-draw {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: drawStroke 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Number tabular */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
