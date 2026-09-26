@@ -28,11 +28,11 @@ const STORAGE_KEYS = {
 
 // Default User Profile
 const DEFAULT_USER: UserProfile = {
-  name: 'Rahul Sharma',
+  name: 'RAHUL SHARMA',
   phone: '+91 98765 43210',
   email: 'rahul.sharma@example.com',
-  upiId: 'rahul.sharma@paynow',
-  pinHash: '1234', // Default 4-digit PIN for demo testing (or user sets during onboarding)
+  upiId: 'rahul.sharma@superpay',
+  pinHash: '1234', // Constant 4-digit PIN (1234)
   biometricEnabled: true,
   soundEnabled: true,
   hapticsEnabled: true,

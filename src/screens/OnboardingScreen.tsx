@@ -116,7 +116,9 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
 
   const handleBankConfirm = () => {
     sounds.playKeypadClick();
-    setStep('set-pin');
+    setPin('1234');
+    setConfirmPin('1234');
+    setStep('biometric');
   };
 
   const handleFirstPin = (val: string) => {
@@ -495,7 +497,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
               onClick={handleBankConfirm}
               className="w-full py-4 rounded-full bg-gradient-to-r from-[#5B3DF5] via-[#7C3AED] to-[#00F0FF] text-white font-bold text-sm shadow-md shadow-[#5B3DF5]/30 transition-all flex items-center justify-center gap-2 active:scale-98 cursor-pointer mt-4"
             >
-              <span>Link Bank & Set PIN</span>
+              <span>Link Bank Account & Continue</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

@@ -57,18 +57,10 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
   const senderNameCaps = (userName || 'RAHUL SHARMA').toUpperCase();
   const receiverNameCaps = (transaction.title || 'MERCHANT').toUpperCase();
 
-  // Account numbers last 4 digits
+  // Account numbers last 4 digits for debiting account only
   const senderLast4 = bankAccount?.accountNumberMasked
     ? bankAccount.accountNumberMasked.slice(-4)
     : '4829';
-
-  // Generate deterministic random last 4 digits for receiver based on UTR
-  const utrDigits = transaction.upiRefNumber.replace(/\D/g, '') || '905961235805';
-  const receiverLast4 = (
-    (Math.abs(
-      utrDigits.split('').reduce((acc, c) => acc * 31 + c.charCodeAt(0), 7)
-    ) % 9000) + 1000
-  ).toString();
 
   const handleCopyUtr = () => {
     sounds.playKeypadClick();
@@ -78,24 +70,40 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
   };
 
   const getShareReceiptText = () => {
-    return `⚡ SUPER PAY - UPI TRANSACTION RECEIPT
+    if (isDebit) {
+      return `⚡ SUPER PAY - UPI TRANSACTION RECEIPT
 ---------------------------------
 Status: ${transaction.status === 'SUCCESS' ? 'PAID SUCCESSFULLY' : transaction.status}
 Amount: ₹${transaction.amount.toLocaleString('en-IN')}
 Date: ${formattedDate}
 
-SENDER (FROM):
+SENDER (DEBITED FROM):
 Name: ${senderNameCaps}
 Bank: ${bankAccount?.bankName || 'HDFC Bank'}
-A/c No: XX${senderLast4}
+A/c No: •••• •••• ${senderLast4}
 
-BENEFICIARY (TO):
+BENEFICIARY (PAID TO):
 Name: ${receiverNameCaps}
-UPI ID: ${transaction.upiId || 'N/A'}
-A/c No: XX${receiverLast4}
-
-UPI Ref (UTR): ${transaction.upiRefNumber}
+${transaction.upiId ? `UPI ID: ${transaction.upiId}\n` : ''}UPI Ref (UTR): ${transaction.upiRefNumber}
 ${transaction.cashback > 0 ? `Cashback Credited: ₹${transaction.cashback.toFixed(2)}\n` : ''}Payment Mode: UPI Instant Settlement
+---------------------------------
+Super Pay · Safe & Secured by NPCI`;
+    }
+
+    return `⚡ SUPER PAY - UPI TRANSACTION RECEIPT
+---------------------------------
+Status: ${transaction.status === 'SUCCESS' ? 'RECEIVED SUCCESSFULLY' : transaction.status}
+Amount: +₹${transaction.amount.toLocaleString('en-IN')}
+Date: ${formattedDate}
+
+CREDITED TO:
+Name: ${senderNameCaps}
+Bank: ${bankAccount?.bankName || 'HDFC Bank'}
+
+RECEIVED FROM:
+Name: ${receiverNameCaps}
+${transaction.upiId ? `UPI ID: ${transaction.upiId}\n` : ''}UPI Ref (UTR): ${transaction.upiRefNumber}
+Payment Mode: UPI Instant Settlement
 ---------------------------------
 Super Pay · Safe & Secured by NPCI`;
   };
@@ -268,9 +276,11 @@ Super Pay · Safe & Secured by NPCI`;
             </span>
           </div>
 
-          {/* Beneficiary / Paid To */}
+          {/* Beneficiary / Paid To or Sender for Credit */}
           <div className="flex justify-between items-start">
-            <span className="text-xs text-slate-500 font-medium">Paid To (Receiver)</span>
+            <span className="text-xs text-slate-500 font-medium">
+              {isDebit ? 'Paid To (Receiver)' : 'Received From'}
+            </span>
             <div className="text-right">
               {/* Account name in CAPS */}
               <p className="text-sm font-extrabold tracking-wide text-slate-900 dark:text-white">
@@ -281,10 +291,6 @@ Super Pay · Safe & Secured by NPCI`;
                   {transaction.upiId}
                 </p>
               )}
-              {/* Receiver Account Number Last 4 */}
-              <p className="text-[11px] font-mono font-semibold text-slate-400 mt-0.5">
-                Bank A/c: •••• •••• {receiverLast4}
-              </p>
             </div>
           </div>
 
@@ -298,21 +304,25 @@ Super Pay · Safe & Secured by NPCI`;
             </div>
           )}
 
-          {/* Sender / Debited From */}
+          {/* Sender / Debited From or Credited To */}
           <div className="flex justify-between items-start pt-2 border-t border-slate-100 dark:border-slate-800/60">
-            <span className="text-xs text-slate-500 font-medium">Debited From</span>
+            <span className="text-xs text-slate-500 font-medium">
+              {isDebit ? 'Debited From' : 'Credited To'}
+            </span>
             <div className="text-right">
-              {/* Sender Name in CAPS */}
+              {/* Name in CAPS */}
               <p className="text-xs font-extrabold tracking-wide text-slate-900 dark:text-white">
                 {senderNameCaps}
               </p>
               <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 mt-0.5">
                 {bankAccount?.bankName || 'HDFC Bank'}
               </p>
-              {/* Account Number Last 4 digits */}
-              <p className="text-[11px] font-mono font-bold text-slate-500 dark:text-slate-400 mt-0.5">
-                A/c No: •••• •••• {senderLast4}
-              </p>
+              {/* Account Number Last 4 digits only for debit */}
+              {isDebit && (
+                <p className="text-[11px] font-mono font-bold text-slate-500 dark:text-slate-400 mt-0.5">
+                  A/c No: •••• •••• {senderLast4}
+                </p>
+              )}
             </div>
           </div>
         </div>

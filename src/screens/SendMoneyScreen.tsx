@@ -50,7 +50,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedContact, setSelectedContact] = useState<Contact | null>(initialContact || null);
-  const [amount, setAmount] = useState('500');
+  const [amount, setAmount] = useState('0');
   const [note, setNote] = useState('');
   const [selectedBankId, setSelectedBankId] = useState(banks[0]?.id || 'bank-hdfc');
   const [showBankPicker, setShowBankPicker] = useState(false);
@@ -277,7 +277,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
       } else {
         sounds.playErrorSound();
         setPinError(true);
-        setPinErrorMessage('Incorrect UPI PIN! (Default demo PIN is 1234)');
+        setPinErrorMessage('Incorrect UPI PIN! Please try again.');
         setTimeout(() => {
           setPin('');
           setPinError(false);
@@ -528,9 +528,16 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
                 <span>₹</span>
                 <input
                   type="number"
-                  min="1"
+                  min="0"
                   value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val.length > 1 && val.startsWith('0') && !val.startsWith('0.')) {
+                      setAmount(val.replace(/^0+/, ''));
+                    } else {
+                      setAmount(val);
+                    }
+                  }}
                   placeholder="0"
                   className="w-48 text-center bg-transparent border-b-2 border-[#5B3DF5] outline-none tabular-nums"
                   autoFocus

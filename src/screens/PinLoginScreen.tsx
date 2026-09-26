@@ -84,13 +84,9 @@ export const PinLoginScreen: React.FC<PinLoginScreenProps> = ({
           Enter your 4-digit App PIN to unlock
         </p>
 
-        {errorMsg ? (
+        {errorMsg && (
           <p className="text-xs font-semibold text-red-500 mt-2 animate-shake">
             {errorMsg}
-          </p>
-        ) : (
-          <p className="text-[11px] text-slate-400 mt-2 font-mono">
-            Demo PIN is <span className="font-bold text-[#5B3DF5]">1234</span>
           </p>
         )}
       </div>
