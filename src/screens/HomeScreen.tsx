@@ -90,22 +90,33 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-[#FAFAFC] dark:bg-[#0E0E12] text-slate-900 dark:text-white pb-24 overflow-y-auto no-scrollbar">
+    <div className="flex-1 flex flex-col bg-[#FAFAFC] dark:bg-[#0E0E12] text-slate-900 dark:text-white pb-32 sm:pb-36 overflow-y-auto no-scrollbar">
       <StatusBar dark={false} />
 
       {/* Top Bar: Profile avatar + Greeting + Action Icons */}
       <div className="px-5 pt-2 pb-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => onNavigate('profile')}
-            className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#5B3DF5] to-[#8B7CFA] text-white flex items-center justify-center font-bold text-sm shadow-md shadow-[#5B3DF5]/30 hover:scale-105 active:scale-95 transition-transform"
-          >
-            {user.name.trim().split(/\s+/).map((n) => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}
-          </button>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => onNavigate('profile')}
+              className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#5B3DF5] to-[#8B7CFA] text-white flex items-center justify-center font-bold text-sm shadow-md shadow-[#5B3DF5]/30 hover:scale-105 active:scale-95 transition-transform"
+            >
+              {user.name.trim().split(/\s+/).map((n) => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}
+            </button>
+            <img
+              src="./logo.svg"
+              alt="Super Pay"
+              className="absolute -bottom-1 -right-1 w-4.5 h-4.5 rounded-full ring-2 ring-white dark:ring-[#0E0E12] shadow-xs"
+            />
+          </div>
           <div>
-            <p className="text-[11px] text-slate-400 font-medium">Hello there,</p>
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white leading-tight">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#5B3DF5] dark:text-[#8B7CFA] bg-[#5B3DF5]/10 px-1.5 py-0.5 rounded-md">
+                Super Pay
+              </span>
+            </div>
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white leading-tight mt-0.5">
               {user.name} 👋
             </h2>
           </div>

@@ -33,16 +33,20 @@ export const AndroidFrame: React.FC<AndroidFrameProps> = ({
     <div className="min-h-screen w-full bg-[#0a0b0e] flex flex-col items-center justify-center relative overflow-x-hidden selection:bg-[#5B3DF5]/30 selection:text-white">
       {/* Top Device Bar (Floating Developer / Showcase Controls - Desktop only) */}
       <header className="w-full max-w-4xl py-2 px-4 hidden sm:flex items-center justify-between z-40 text-xs text-slate-300">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-[#5B3DF5] to-[#A16CFF] flex items-center justify-center text-white font-bold text-[11px] shadow-sm shadow-[#5B3DF5]/40">
-            P
+        <div className="flex items-center gap-2.5">
+          <img
+            src="./logo.svg"
+            alt="Super Pay Logo"
+            className="w-7 h-7 rounded-lg shadow-md shadow-[#5B3DF5]/40 object-contain ring-1 ring-[#5B3DF5]/50"
+          />
+          <div className="flex items-baseline gap-2">
+            <span className="font-bold tracking-tight text-white text-sm hidden sm:inline">
+              Super Pay
+            </span>
+            <span className="text-[11px] text-slate-400 hidden md:inline">
+              Next-Gen UPI Payments · Super Cashback
+            </span>
           </div>
-          <span className="font-bold tracking-tight text-white hidden sm:inline">
-            PayNow
-          </span>
-          <span className="text-[11px] text-slate-400 hidden md:inline">
-            UPI Payments · super.money replica
-          </span>
         </div>
 
         <div className="flex items-center gap-2">

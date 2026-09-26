@@ -62,7 +62,12 @@ export const PinLoginScreen: React.FC<PinLoginScreenProps> = ({
       <StatusBar dark={false} />
 
       {/* Top Section: Avatar & Greeting */}
-      <div className="flex flex-col items-center mt-8">
+      <div className="flex flex-col items-center mt-4 sm:mt-6">
+        <div className="flex items-center gap-1.5 mb-3 bg-[#5B3DF5]/10 px-3 py-1 rounded-full border border-[#5B3DF5]/20">
+          <img src="./logo.svg" alt="Super Pay" className="w-5 h-5 rounded-md" />
+          <span className="text-xs font-extrabold tracking-wider text-[#5B3DF5]">SUPER PAY</span>
+        </div>
+
         <div className="relative">
           <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#5B3DF5] to-[#A16CFF] text-white flex items-center justify-center text-2xl font-bold shadow-xl shadow-[#5B3DF5]/30">
             {user.name.trim().split(/\s+/).map((n) => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}

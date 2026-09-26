@@ -141,10 +141,10 @@ export const ReceiveQrModal: React.FC<ReceiveQrModalProps> = ({
               className="rounded-lg shadow-xs mx-auto"
               style={{ width: '180px', height: '180px' }}
             />
-            {/* Center UPI logo overlay badge */}
+            {/* Center Super Pay logo overlay badge */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-7 h-7 rounded-full bg-white shadow-md border border-slate-200 flex items-center justify-center text-[#5B3DF5] font-extrabold text-[9px] tracking-tight">
-                UPI
+              <div className="w-8 h-8 rounded-lg bg-white shadow-md border border-slate-200 p-0.5 flex items-center justify-center">
+                <img src="./logo.svg" alt="Super Pay" className="w-full h-full rounded-md object-contain" />
               </div>
             </div>
           </div>
