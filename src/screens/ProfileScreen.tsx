@@ -64,6 +64,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   const [customTones, setCustomTones] = useState<CustomToneMeta>(sounds.getCustomToneMeta());
   const [soundToast, setSoundToast] = useState<string | null>(null);
 
+  // Super Pay Reset Modal State
+  const [showResetConfirmModal, setShowResetConfirmModal] = useState(false);
+
   // Change PIN States
   const [showChangePinModal, setShowChangePinModal] = useState(false);
   const [changePinStep, setChangePinStep] = useState<'old' | 'new' | 'confirm'>('old');
@@ -667,11 +670,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           <button
             type="button"
             onClick={() => {
-              if (confirm('Reset PayNow to fresh onboarding state?')) {
-                onResetApp();
-              }
+              sounds.playKeypadClick();
+              setShowResetConfirmModal(true);
             }}
-            className="w-full py-2.5 px-3 rounded-2xl flex items-center gap-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors text-slate-500 hover:text-red-500"
+            className="w-full py-2.5 px-3 rounded-2xl flex items-center gap-3 text-left hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors text-slate-500 hover:text-red-500 cursor-pointer"
           >
             <RotateCcw className="w-4 h-4" />
             <span className="text-xs font-bold">Reset Demo to First-Time Onboarding</span>
@@ -893,6 +895,59 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Super Pay Reset Demo Confirmation Modal */}
+      {showResetConfirmModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-xs p-4 animate-in fade-in">
+          <div className="w-full max-w-sm bg-white dark:bg-[#1A1A20] rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 text-center animate-in zoom-in-95 duration-200 space-y-4">
+            <div className="relative mx-auto w-16 h-16 flex items-center justify-center">
+              <img
+                src="./logo.svg"
+                alt="Super Pay"
+                className="w-16 h-16 rounded-2xl shadow-xl shadow-[#5B3DF5]/30 object-contain ring-2 ring-[#5B3DF5]/40"
+              />
+            </div>
+
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#5B3DF5]/10 text-[#5B3DF5] dark:text-[#8B7CFA] text-[10px] font-extrabold uppercase tracking-wider mb-1">
+                SUPER PAY RESET
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                Reset to Onboarding?
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                This will clear all new transactions, reset bank balances, and take you through the complete Super Pay onboarding setup with custom name and account numbers.
+              </p>
+            </div>
+
+            <div className="pt-2 space-y-2">
+              <button
+                type="button"
+                onClick={() => {
+                  sounds.playSuccessChime();
+                  setShowResetConfirmModal(false);
+                  onResetApp();
+                }}
+                className="w-full py-3.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shadow-red-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span>Yes, Reset to Super Pay Onboarding</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  sounds.playKeypadClick();
+                  setShowResetConfirmModal(false);
+                }}
+                className="w-full py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}

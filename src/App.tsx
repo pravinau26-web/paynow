@@ -186,8 +186,13 @@ export default function App() {
     setCurrentScreen('onboarding');
   };
 
-  const handleOnboardingComplete = (newUser: UserProfile, selectedBankId: string) => {
-    const updatedBanks = banks.map((b) => ({
+  const handleOnboardingComplete = (
+    newUser: UserProfile,
+    selectedBankId: string,
+    customBanks?: BankAccount[]
+  ) => {
+    const baseBanks = customBanks || banks;
+    const updatedBanks = baseBanks.map((b) => ({
       ...b,
       isPrimary: b.id === selectedBankId,
     }));
@@ -584,10 +589,10 @@ export default function App() {
   const handleResetApp = () => {
     storage.resetAll();
     const freshUser: UserProfile = {
-      name: 'Rahul Sharma',
+      name: 'RAHUL SHARMA',
       phone: '+91 98765 43210',
       email: 'rahul.sharma@example.com',
-      upiId: 'rahul.sharma@paynow',
+      upiId: 'rahul.sharma@superpay',
       pinHash: '1234',
       biometricEnabled: true,
       soundEnabled: true,
@@ -596,6 +601,12 @@ export default function App() {
       locked: true,
     };
     setUser(freshUser);
+    setTransactions(storage.getTransactions());
+    setBanks(storage.getBanks());
+    setNotifications(storage.getNotifications());
+    setContacts(storage.getContacts());
+    setSuperCard(storage.getSuperCard());
+    setSuperFds(storage.getSuperFds());
     storage.saveUserProfile(freshUser);
     setCurrentScreen('onboarding');
   };
@@ -815,11 +826,17 @@ export default function App() {
         />
       )}
 
-      {/* TRANSACTION RECEIPT DETAIL MODAL */}
+      {/* TRANSACTION RECEIPT FULL SCREEN */}
       <TransactionDetailModal
         transaction={selectedTxForDetail}
         onClose={() => setSelectedTxForDetail(null)}
         onRepeatPayment={handleRepeatPayment}
+        userName={user.name}
+        bankAccount={
+          banks.find((b) => b.id === selectedTxForDetail?.bankAccountId) ||
+          banks.find((b) => b.isPrimary) ||
+          banks[0]
+        }
       />
 
       {/* NOTIFICATIONS DRAWER */}
