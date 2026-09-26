@@ -8,6 +8,7 @@ import {
   ChevronDown,
   Flashlight,
   Image as ImageIcon,
+  Pencil,
   QrCode,
   ShieldCheck,
   Sparkles,
@@ -44,6 +45,7 @@ export const ScanPayScreen: React.FC<ScanPayScreenProps> = ({
 }) => {
   const [flashlightOn, setFlashlightOn] = useState(false);
   const [scannedMerchant, setScannedMerchant] = useState<MerchantQr | null>(initialMerchant || null);
+  const [payeeName, setPayeeName] = useState<string>(initialMerchant?.name || '');
   const [amount, setAmount] = useState<string>('0');
   const [note, setNote] = useState<string>(initialMerchant?.note || 'Store scan & pay');
   const [selectedBankId, setSelectedBankId] = useState<string>(banks[0]?.id || 'bank-hdfc');
@@ -281,6 +283,7 @@ export const ScanPayScreen: React.FC<ScanPayScreenProps> = ({
 
       const merchant = parseUpiQrString(codeData);
       setScannedMerchant(merchant);
+      setPayeeName(merchant.name);
       setAmount(merchant.defaultAmount ? merchant.defaultAmount.toString() : '0');
       setNote(merchant.note || 'Scanned via Camera');
     };
@@ -423,6 +426,7 @@ export const ScanPayScreen: React.FC<ScanPayScreenProps> = ({
             sounds.playQrScanBeep();
             const merchant = parseUpiQrString(code.data);
             setScannedMerchant(merchant);
+            setPayeeName(merchant.name);
             setAmount(merchant.defaultAmount ? merchant.defaultAmount.toString() : '0');
             setNote(merchant.note || 'Scanned from camera photo');
             setShowGalleryPicker(false);
@@ -464,6 +468,7 @@ export const ScanPayScreen: React.FC<ScanPayScreenProps> = ({
   const handleSelectPresetQr = (merchant: MerchantQr) => {
     sounds.playKeypadClick();
     setScannedMerchant(merchant);
+    setPayeeName(merchant.name);
     setAmount('0');
     setNote(merchant.note || '');
     setShowGalleryPicker(false);
@@ -493,8 +498,9 @@ export const ScanPayScreen: React.FC<ScanPayScreenProps> = ({
         setShowPinModal(false);
         const parsedAmount = parseFloat(amount);
         if (scannedMerchant) {
+          const finalPayeeName = (payeeName.trim() || scannedMerchant.name).toUpperCase();
           onInitiatePayment({
-            recipientName: scannedMerchant.name,
+            recipientName: finalPayeeName,
             upiId: scannedMerchant.upiId,
             amount: parsedAmount,
             note: note || 'Store scan & pay',
@@ -905,22 +911,29 @@ export const ScanPayScreen: React.FC<ScanPayScreenProps> = ({
             {/* Sheet Handle */}
             <div className="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-4" />
 
-            {/* Merchant Header */}
+            {/* Merchant Header with Editable Payee Name */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-1 min-w-0 mr-2">
                 <div
-                  className={`w-11 h-11 rounded-2xl ${scannedMerchant.avatarBg} text-white font-bold text-sm flex items-center justify-center shadow-xs`}
+                  className={`w-11 h-11 rounded-2xl ${scannedMerchant.avatarBg} text-white font-bold text-sm flex items-center justify-center shadow-xs shrink-0`}
                 >
-                  {scannedMerchant.name.slice(0, 2).toUpperCase()}
+                  {(payeeName || scannedMerchant.name).slice(0, 2).toUpperCase()}
                 </div>
-                <div>
-                  <div className="flex items-center gap-1">
-                    <h3 className="text-sm font-bold">{scannedMerchant.name}</h3>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <input
+                      type="text"
+                      value={payeeName}
+                      onChange={(e) => setPayeeName(e.target.value)}
+                      placeholder="Merchant Name"
+                      className="text-sm font-bold text-slate-900 dark:text-white bg-transparent border-b border-dashed border-slate-300 dark:border-slate-700 hover:border-[#5B3DF5] focus:border-[#5B3DF5] outline-none w-full max-w-[190px] py-0.5 tracking-tight transition-colors"
+                    />
+                    <Pencil className="w-3.5 h-3.5 text-slate-400 shrink-0 cursor-pointer" />
                     {scannedMerchant.verified && (
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                     )}
                   </div>
-                  <p className="text-[11px] font-mono text-slate-400">
+                  <p className="text-[11px] font-mono text-slate-400 truncate">
                     {scannedMerchant.upiId}
                   </p>
                 </div>
@@ -929,7 +942,7 @@ export const ScanPayScreen: React.FC<ScanPayScreenProps> = ({
               <button
                 type="button"
                 onClick={() => setScannedMerchant(null)}
-                className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800"
+                className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -937,9 +950,9 @@ export const ScanPayScreen: React.FC<ScanPayScreenProps> = ({
 
             {/* Super Cashback Preview Chip */}
             <div className="my-3 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-xs flex items-center gap-1.5 border border-emerald-500/20">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-600 fill-current" />
-              <span className="font-semibold">
-                Eligible for 5% Real Instant Cashback to your bank account!
+              <Sparkles className="w-3.5 h-3.5 text-emerald-600 fill-current shrink-0" />
+              <span className="font-semibold text-[11px]">
+                Eligible for real instant cashback (0.30% – 0.40%) to your bank account!
               </span>
             </div>
 

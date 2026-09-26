@@ -232,7 +232,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
               Next-Gen UPI Payments
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 max-w-[270px] leading-relaxed">
-              Scan any QR code. Instant 5% real cashback deposited directly to your bank account on every payment.
+              Scan any QR code. Real instant cashback (0.30% – 0.40%) deposited directly to your bank account on every payment.
             </p>
           </div>
 
@@ -658,7 +658,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
                 <span>Super Cashback Activated</span>
               </div>
               <p className="text-[11px] text-emerald-700 dark:text-emerald-400">
-                Earn flat 5% instant cashback on all merchant QR scans, credited straight to your bank account!
+                Earn real instant cashback (0.30% – 0.40%) on merchant QR scans, credited straight to your bank account!
               </p>
             </div>
           </div>

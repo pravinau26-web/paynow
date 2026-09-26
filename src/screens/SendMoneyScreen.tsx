@@ -5,6 +5,7 @@ import {
   CheckCircle2,
   ChevronDown,
   Contact2,
+  Pencil,
   Phone,
   Plus,
   RefreshCw,
@@ -50,6 +51,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedContact, setSelectedContact] = useState<Contact | null>(initialContact || null);
+  const [editablePayeeName, setEditablePayeeName] = useState(initialContact?.name || '');
   const [amount, setAmount] = useState('0');
   const [note, setNote] = useState('');
   const [selectedBankId, setSelectedBankId] = useState(banks[0]?.id || 'bank-hdfc');
@@ -87,6 +89,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
   const handleSelectContact = (c: Contact) => {
     sounds.playKeypadClick();
     setSelectedContact(c);
+    setEditablePayeeName(c.name);
     setCustomUpiMode(false);
   };
 
@@ -96,6 +99,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
     sounds.playKeypadClick();
     const upiFormat = trimmed.includes('@') ? trimmed : `${trimmed.toLowerCase()}@paynow`;
     setCustomUpiId(upiFormat);
+    setEditablePayeeName(trimmed.split('@')[0]);
     setCustomUpiMode(true);
     setSelectedContact(null);
   };
@@ -178,6 +182,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
       onAddContact(newContact);
     }
     setSelectedContact(newContact);
+    setEditablePayeeName(lookupResult.name);
     setCustomUpiMode(false);
     setShowLookupModal(false);
     setLookupState('idle');
@@ -189,6 +194,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
     if (!lookupResult) return;
     sounds.playKeypadClick();
     setCustomUpiId(lookupResult.upiId);
+    setEditablePayeeName(lookupResult.name);
     setCustomUpiMode(true);
     setSelectedContact(null);
     setShowLookupModal(false);
@@ -261,9 +267,10 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
         sounds.playPaymentInitiate();
         setShowPinModal(false);
         const parsedAmount = parseFloat(amount);
-        const recipientTitle = selectedContact
+        const fallbackName = selectedContact
           ? selectedContact.name
-          : (customUpiId.split('@')[0] || searchQuery || 'PR26').toUpperCase();
+          : (customUpiId.split('@')[0] || searchQuery || 'PR26');
+        const recipientTitle = (editablePayeeName.trim() || fallbackName).toUpperCase();
         const recipientUpi = selectedContact ? selectedContact.upiId : (customUpiId || `${(searchQuery || 'pr26').toLowerCase()}@paynow`);
 
         onInitiatePayment({
@@ -286,13 +293,13 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
     }
   };
 
-  const recipientDisplayName = selectedContact
+  const recipientDisplayName = editablePayeeName || (selectedContact
     ? selectedContact.name
     : customUpiId
     ? customUpiId.split('@')[0].toUpperCase()
     : searchQuery
     ? searchQuery.toUpperCase()
-    : 'Payee';
+    : 'Payee');
 
   const recipientDisplayUpi = selectedContact
     ? selectedContact.upiId
@@ -462,25 +469,32 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
         /* STEP 2: Amount Entry & Note */
         <div className="p-5 flex-1 flex flex-col justify-between pb-8">
           <div className="space-y-4">
-            {/* Recipient Card */}
+            {/* Recipient Card with Editable Payee Name */}
             <div className="p-4 rounded-3xl bg-white dark:bg-[#1A1A20] border border-slate-200 dark:border-slate-800 shadow-xs flex items-center justify-between">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-1 min-w-0 mr-2">
                 <div
                   className={`w-11 h-11 rounded-2xl ${
                     selectedContact?.avatarBg || 'bg-[#5B3DF5]'
-                  } text-white font-bold text-sm flex items-center justify-center shadow-sm`}
+                  } text-white font-bold text-sm flex items-center justify-center shadow-sm shrink-0`}
                 >
-                  {selectedContact ? selectedContact.initials : recipientDisplayName.slice(0, 2)}
+                  {(editablePayeeName || recipientDisplayName).slice(0, 2).toUpperCase()}
                 </div>
-                <div>
+                <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
                     <p className="text-xs text-slate-400 font-medium">Transferring to</p>
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                   </div>
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                    {recipientDisplayName}
-                  </h3>
-                  <p className="text-[11px] font-mono text-slate-400">
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <input
+                      type="text"
+                      value={editablePayeeName || recipientDisplayName}
+                      onChange={(e) => setEditablePayeeName(e.target.value)}
+                      placeholder="Recipient Name"
+                      className="text-sm font-bold text-slate-900 dark:text-white bg-transparent border-b border-dashed border-slate-300 dark:border-slate-700 hover:border-[#5B3DF5] focus:border-[#5B3DF5] outline-none w-full max-w-[190px] py-0.5 tracking-tight transition-colors"
+                    />
+                    <Pencil className="w-3.5 h-3.5 text-slate-400 shrink-0 cursor-pointer" />
+                  </div>
+                  <p className="text-[11px] font-mono text-slate-400 truncate">
                     {recipientDisplayUpi}
                   </p>
                 </div>
@@ -492,9 +506,10 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
                 onClick={() => {
                   sounds.playKeypadClick();
                   setSelectedContact(null);
+                  setEditablePayeeName('');
                   setCustomUpiMode(false);
                 }}
-                className="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-bold text-[#5B3DF5] hover:bg-[#5B3DF5]/10 transition-colors"
+                className="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-bold text-[#5B3DF5] hover:bg-[#5B3DF5]/10 transition-colors shrink-0"
               >
                 Change
               </button>

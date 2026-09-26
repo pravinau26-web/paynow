@@ -222,7 +222,7 @@ export default function App() {
 
     activePayloadRef.current = payload;
 
-    // Super.money rule: 5% cashback on merchant QR & recharges, 2% on bills, 0% on P2P
+    // Minute cashback rule: 0.30% to 0.40% (0.0030 to 0.0040) on merchant QR & recharges, 0.20% on bills, 0% on P2P
     let cashbackPct = 0;
     if (
       payload.category === 'shopping' ||
@@ -230,9 +230,12 @@ export default function App() {
       payload.category === 'travel' ||
       payload.category === 'recharge'
     ) {
-      cashbackPct = 0.05;
+      // Minute cashback between 0.30% and 0.40%
+      const minPct = 0.0030;
+      const maxPct = 0.0040;
+      cashbackPct = minPct + Math.random() * (maxPct - minPct);
     } else if (payload.category === 'bills') {
-      cashbackPct = 0.02;
+      cashbackPct = 0.0020; // 0.20%
     }
     const cashbackAmount = Math.round(payload.amount * cashbackPct * 100) / 100;
 
