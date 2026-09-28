@@ -18,7 +18,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   };
 
   return (
-    <div className="fixed sm:absolute bottom-0 left-0 right-0 z-30 pointer-events-none flex justify-center pb-2.5 sm:pb-3 px-2 sm:px-3">
+    <div className="fixed bottom-0 left-0 right-0 z-30 pointer-events-none flex justify-center pb-3 px-3">
       {/* Spacious, ergonomic bottom navigation bar */}
       <nav
         aria-label="App Navigation"
