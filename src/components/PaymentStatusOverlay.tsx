@@ -157,16 +157,21 @@ export const PaymentStatusOverlay: React.FC<PaymentStatusOverlayProps> = ({
             </div>
 
             {/* Context dimmed */}
-            <div className="mt-5 pt-3.5 border-t border-slate-100 dark:border-slate-800/80 w-full opacity-80">
-              <p className="text-2xl font-bold font-mono tabular-nums text-slate-800 dark:text-slate-200">
+            <div className="mt-5 pt-3.5 border-t border-slate-100 dark:border-slate-800/80 w-full flex flex-col items-center">
+              <p className="text-3xl font-black font-mono tabular-nums text-slate-800 dark:text-slate-200">
                 ₹{amount.toLocaleString('en-IN')}
               </p>
-              <p className="text-xs text-slate-500 mt-0.5 truncate">
-                Paying to <span className="font-semibold">{recipientName}</span>
-              </p>
-              {upiId && (
-                <p className="text-[11px] font-mono text-slate-400 mt-0.5">{upiId}</p>
-              )}
+              <div className="mt-2 w-full px-3 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 flex flex-col items-center">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  Paying To
+                </span>
+                <p className="text-base font-black text-slate-900 dark:text-white truncate max-w-full text-center mt-0.5">
+                  {recipientName.toUpperCase()}
+                </p>
+                {upiId && (
+                  <p className="text-[11px] font-mono text-slate-400 mt-0.5">{upiId}</p>
+                )}
+              </div>
             </div>
 
             <p className="text-[11px] text-amber-500 dark:text-amber-400 font-medium mt-3">
@@ -201,21 +206,29 @@ export const PaymentStatusOverlay: React.FC<PaymentStatusOverlayProps> = ({
               </div>
             </div>
 
-            <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">
+            <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1">
               Payment Successful!
             </h3>
 
             {/* Settle amount with counter */}
-            <div className="mt-2 text-3xl font-extrabold font-mono tabular-nums text-slate-900 dark:text-white">
+            <div className="mt-2 text-4xl sm:text-5xl font-black font-mono tabular-nums text-slate-900 dark:text-white">
               ₹{displayAmount.toLocaleString('en-IN')}
             </div>
 
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Paid to <span className="font-semibold text-slate-800 dark:text-slate-200">{recipientName}</span>
-            </p>
-            {upiId && (
-              <p className="text-[11px] font-mono text-slate-400">{upiId}</p>
-            )}
+            {/* Prominent Paid To Receiver Card */}
+            <div className="mt-3.5 w-full max-w-sm px-4 py-2.5 rounded-2xl bg-slate-100/90 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-xs flex flex-col items-center">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Paid To (Receiver)
+              </span>
+              <p className="text-lg sm:text-xl font-black tracking-wide text-slate-900 dark:text-white text-center break-words mt-0.5">
+                {recipientName.toUpperCase()}
+              </p>
+              {upiId && (
+                <p className="text-xs font-mono font-medium text-[#5B3DF5] dark:text-[#8B7CFA] mt-0.5">
+                  {upiId}
+                </p>
+              )}
+            </div>
 
             {/* Real Cashback Badge (super.money style) */}
             {cashbackEarned > 0 && (

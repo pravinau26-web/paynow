@@ -926,14 +926,14 @@ export const ScanPayScreen: React.FC<ScanPayScreenProps> = ({
                       value={payeeName}
                       onChange={(e) => setPayeeName(e.target.value)}
                       placeholder="Merchant Name"
-                      className="text-sm font-bold text-slate-900 dark:text-white bg-transparent border-b border-dashed border-slate-300 dark:border-slate-700 hover:border-[#5B3DF5] focus:border-[#5B3DF5] outline-none w-full max-w-[190px] py-0.5 tracking-tight transition-colors"
+                      className="text-base sm:text-lg font-black text-slate-900 dark:text-white bg-transparent border-b border-dashed border-slate-300 dark:border-slate-700 hover:border-[#5B3DF5] focus:border-[#5B3DF5] outline-none w-full max-w-[210px] py-0.5 tracking-tight transition-colors"
                     />
-                    <Pencil className="w-3.5 h-3.5 text-slate-400 shrink-0 cursor-pointer" />
+                    <Pencil className="w-4 h-4 text-slate-400 shrink-0 cursor-pointer" />
                     {scannedMerchant.verified && (
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
                     )}
                   </div>
-                  <p className="text-[11px] font-mono text-slate-400 truncate">
+                  <p className="text-xs font-mono text-slate-400 truncate mt-0.5">
                     {scannedMerchant.upiId}
                   </p>
                 </div>
@@ -958,9 +958,9 @@ export const ScanPayScreen: React.FC<ScanPayScreenProps> = ({
 
             {/* Amount Entry Field */}
             <div className="my-2">
-              <span className="text-xs font-semibold text-slate-400">Enter Amount</span>
-              <div className="flex items-center justify-center gap-1 text-3xl font-extrabold font-mono py-2">
-                <span>₹</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Enter Amount</span>
+              <div className="flex items-center justify-center gap-1.5 text-4xl sm:text-5xl font-black font-mono py-2">
+                <span className="text-slate-400">₹</span>
                 <input
                   type="number"
                   min="0"
@@ -974,7 +974,7 @@ export const ScanPayScreen: React.FC<ScanPayScreenProps> = ({
                     }
                   }}
                   placeholder="0"
-                  className="w-40 text-center bg-transparent border-b-2 border-[#5B3DF5] outline-none tabular-nums"
+                  className="w-48 text-center bg-transparent border-b-2 border-[#5B3DF5] outline-none tabular-nums"
                   autoFocus
                 />
               </div>

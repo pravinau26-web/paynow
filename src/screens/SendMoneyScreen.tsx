@@ -490,11 +490,11 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
                       value={editablePayeeName || recipientDisplayName}
                       onChange={(e) => setEditablePayeeName(e.target.value)}
                       placeholder="Recipient Name"
-                      className="text-sm font-bold text-slate-900 dark:text-white bg-transparent border-b border-dashed border-slate-300 dark:border-slate-700 hover:border-[#5B3DF5] focus:border-[#5B3DF5] outline-none w-full max-w-[190px] py-0.5 tracking-tight transition-colors"
+                      className="text-base sm:text-lg font-black text-slate-900 dark:text-white bg-transparent border-b border-dashed border-slate-300 dark:border-slate-700 hover:border-[#5B3DF5] focus:border-[#5B3DF5] outline-none w-full max-w-[210px] py-0.5 tracking-tight transition-colors"
                     />
-                    <Pencil className="w-3.5 h-3.5 text-slate-400 shrink-0 cursor-pointer" />
+                    <Pencil className="w-4 h-4 text-slate-400 shrink-0 cursor-pointer" />
                   </div>
-                  <p className="text-[11px] font-mono text-slate-400 truncate">
+                  <p className="text-xs font-mono text-slate-400 truncate mt-0.5">
                     {recipientDisplayUpi}
                   </p>
                 </div>
@@ -509,7 +509,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
                   setEditablePayeeName('');
                   setCustomUpiMode(false);
                 }}
-                className="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-bold text-[#5B3DF5] hover:bg-[#5B3DF5]/10 transition-colors shrink-0"
+                className="px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-bold text-[#5B3DF5] hover:bg-[#5B3DF5]/10 transition-colors shrink-0"
               >
                 Change
               </button>
@@ -538,9 +538,9 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
 
             {/* Amount Entry */}
             <div className="text-center py-2">
-              <span className="text-xs font-semibold text-slate-400">Enter Amount</span>
-              <div className="flex items-center justify-center gap-1 text-4xl font-extrabold font-mono py-2">
-                <span>₹</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Enter Amount</span>
+              <div className="flex items-center justify-center gap-1.5 text-4xl sm:text-5xl font-black font-mono py-2">
+                <span className="text-slate-400">₹</span>
                 <input
                   type="number"
                   min="0"

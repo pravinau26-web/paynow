@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
-import { Smartphone, Monitor, Volume2, VolumeX, Lock, ZoomIn, ZoomOut } from 'lucide-react';
+import { Smartphone, Monitor, Volume2, VolumeX, Lock, ZoomIn, ZoomOut, Sun, Moon } from 'lucide-react';
 import { sounds } from '../services/audio';
+import { ThemeMode } from '../services/theme';
 
 interface AndroidFrameProps {
   children: React.ReactNode;
   onLockApp?: () => void;
   isLocked?: boolean;
+  themeMode?: ThemeMode;
+  onToggleThemeMode?: () => void;
 }
 
 export const AndroidFrame: React.FC<AndroidFrameProps> = ({
   children,
   onLockApp,
   isLocked = false,
+  themeMode = 'system',
+  onToggleThemeMode,
 }) => {
   const [deviceFrameMode, setDeviceFrameMode] = useState<boolean>(true);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
@@ -84,6 +89,27 @@ export const AndroidFrame: React.FC<AndroidFrameProps> = ({
             >
               <Lock className="w-3.5 h-3.5 text-amber-400" />
               <span className="text-[11px] hidden sm:inline">Lock Screen</span>
+            </button>
+          )}
+
+          {/* Theme Mode Quick Switch */}
+          {onToggleThemeMode && (
+            <button
+              type="button"
+              onClick={onToggleThemeMode}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 transition-colors"
+              title={`Current theme: ${themeMode}. Click to toggle.`}
+            >
+              {themeMode === 'dark' ? (
+                <Moon className="w-3.5 h-3.5 text-[#A16CFF]" />
+              ) : themeMode === 'light' ? (
+                <Sun className="w-3.5 h-3.5 text-amber-400" />
+              ) : (
+                <Smartphone className="w-3.5 h-3.5 text-emerald-400" />
+              )}
+              <span className="text-[11px] capitalize hidden sm:inline">
+                {themeMode === 'system' ? 'Auto Theme' : `${themeMode} Theme`}
+              </span>
             </button>
           )}
 

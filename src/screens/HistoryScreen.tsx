@@ -218,10 +218,10 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
                           </div>
 
                           <div className="min-w-0 flex-1">
-                            <p className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">
+                            <p className="font-black text-sm sm:text-base text-slate-900 dark:text-white truncate">
                               {tx.title}
                             </p>
-                            <p className="text-[11px] text-slate-400 truncate mt-0.5">
+                            <p className="text-xs text-slate-400 truncate mt-0.5">
                               {tx.note || tx.subtitle}
                             </p>
                           </div>
@@ -230,7 +230,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
                         {/* Amount & Status Badge */}
                         <div className="text-right shrink-0">
                           <p
-                            className={`font-mono font-bold text-xs sm:text-sm tabular-nums ${
+                            className={`font-mono font-black text-sm sm:text-base tabular-nums ${
                               isFailed
                                 ? 'text-red-500 line-through'
                                 : isDebit

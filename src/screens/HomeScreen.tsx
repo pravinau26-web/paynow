@@ -482,11 +482,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       )}
                     </div>
 
-                    <div className="text-xs min-w-0 flex-1">
-                      <p className="font-bold text-slate-900 dark:text-white truncate">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-black text-sm text-slate-900 dark:text-white truncate">
                         {tx.title}
                       </p>
-                      <div className="flex items-center gap-1.5 text-[11px] text-slate-400 truncate">
+                      <div className="flex items-center gap-1.5 text-xs text-slate-400 truncate">
                         <span className="truncate">{tx.note || tx.subtitle}</span>
                       </div>
                     </div>
@@ -494,7 +494,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
                   <div className="text-right shrink-0">
                     <p
-                      className={`font-mono font-bold text-xs tabular-nums ${
+                      className={`font-mono font-black text-sm tabular-nums ${
                         isFailed
                           ? 'text-red-500 line-through'
                           : isDebit

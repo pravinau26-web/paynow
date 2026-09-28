@@ -27,6 +27,7 @@ import { SuperFdScreen } from './screens/SuperFdScreen';
 import { sounds } from './services/audio';
 import { INITIAL_CONTACTS } from './services/mockData';
 import { storage } from './services/storage';
+import { ThemeMode, getThemeMode, setThemeMode, applyTheme } from './services/theme';
 import {
   AppScreen,
   BankAccount,
@@ -52,6 +53,7 @@ export default function App() {
   const [contacts, setContacts] = useState<Contact[]>(() => storage.getContacts());
   const [superCard, setSuperCard] = useState<SuperCardInfo>(() => storage.getSuperCard());
   const [superFds, setSuperFds] = useState<FixedDepositItem[]>(() => storage.getSuperFds());
+  const [themeMode, setThemeModeState] = useState<ThemeMode>(() => getThemeMode());
 
   // App navigation state
   const [currentScreen, setCurrentScreen] = useState<AppScreen>(() => {
@@ -94,6 +96,35 @@ export default function App() {
   useEffect(() => {
     sounds.enabled = user.soundEnabled;
   }, [user.soundEnabled]);
+
+  // Apply theme mode and listen to system preference changes when in 'system' mode
+  useEffect(() => {
+    applyTheme(themeMode);
+
+    if (themeMode === 'system' && window.matchMedia) {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleSystemThemeChange = () => {
+        applyTheme('system');
+      };
+
+      mediaQuery.addEventListener('change', handleSystemThemeChange);
+      return () => {
+        mediaQuery.removeEventListener('change', handleSystemThemeChange);
+      };
+    }
+  }, [themeMode]);
+
+  const handleSetThemeMode = (mode: ThemeMode) => {
+    setThemeModeState(mode);
+    setThemeMode(mode);
+  };
+
+  const handleCycleThemeMode = () => {
+    sounds.playKeypadClick();
+    const nextMode: ThemeMode =
+      themeMode === 'system' ? 'dark' : themeMode === 'dark' ? 'light' : 'system';
+    handleSetThemeMode(nextMode);
+  };
 
   // Persist state updates
   useEffect(() => {
@@ -632,6 +663,8 @@ export default function App() {
     <AndroidFrame
       isLocked={currentScreen === 'pin-login'}
       onLockApp={currentScreen !== 'onboarding' && currentScreen !== 'pin-login' ? handleLockApp : undefined}
+      themeMode={themeMode}
+      onToggleThemeMode={handleCycleThemeMode}
     >
       {/* SCREEN 1: ONBOARDING */}
       {currentScreen === 'onboarding' && (
@@ -762,6 +795,8 @@ export default function App() {
         <ProfileScreen
           user={user}
           banks={banks}
+          themeMode={themeMode}
+          onSetThemeMode={handleSetThemeMode}
           onUpdateUser={(updated) => {
             const next = { ...user, ...updated };
             setUser(next);

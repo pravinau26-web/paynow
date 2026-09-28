@@ -28,15 +28,21 @@ import {
   Music,
   FileAudio,
   X,
+  Sun,
+  Moon,
+  Palette,
 } from 'lucide-react';
 import { PinPad } from '../components/PinPad';
 import { StatusBar } from '../components/StatusBar';
 import { sounds, CustomToneMeta } from '../services/audio';
+import { ThemeMode } from '../services/theme';
 import { BankAccount, UserProfile } from '../types';
 
 interface ProfileScreenProps {
   user: UserProfile;
   banks: BankAccount[];
+  themeMode: ThemeMode;
+  onSetThemeMode: (mode: ThemeMode) => void;
   onUpdateUser: (updated: Partial<UserProfile>) => void;
   onSetPrimaryBank: (bankId: string) => void;
   onOpenMyQr: () => void;
@@ -47,6 +53,8 @@ interface ProfileScreenProps {
 export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   user,
   banks,
+  themeMode,
+  onSetThemeMode,
   onUpdateUser,
   onSetPrimaryBank,
   onOpenMyQr,
@@ -335,8 +343,87 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         {/* Security & Preferences */}
         <div className="bg-white dark:bg-[#1A1A20] rounded-3xl p-4 border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-1 divide-y divide-slate-100 dark:divide-slate-800/80">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2 px-1">
-            Security & Controls
+            Display & Appearance
           </span>
+
+          {/* Theme Mode Selector (Dark, Light, Auto) */}
+          <div className="py-3 px-1 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <Palette className="w-5 h-5 text-[#5B3DF5]" />
+                <div>
+                  <p className="text-xs font-bold text-slate-900 dark:text-white">App Theme (தீம் மோட்)</p>
+                  <p className="text-[11px] text-slate-400">
+                    {themeMode === 'system'
+                      ? 'Auto (Phone settings / போன் செட்டிங்ஸ்)'
+                      : themeMode === 'dark'
+                      ? 'Black Theme (இருண்ட பிளாக் தீம்)'
+                      : 'White Theme (வெளிச்ச ஒயிட் தீம்)'}
+                  </p>
+                </div>
+              </div>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#5B3DF5]/10 text-[#5B3DF5] uppercase">
+                {themeMode}
+              </span>
+            </div>
+
+            {/* 3-Way Segmented Control */}
+            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60">
+              <button
+                type="button"
+                onClick={() => {
+                  sounds.playKeypadClick();
+                  onSetThemeMode('light');
+                }}
+                className={`py-2 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                  themeMode === 'light'
+                    ? 'bg-white text-slate-900 shadow-sm ring-1 ring-slate-200'
+                    : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                }`}
+              >
+                <Sun className="w-3.5 h-3.5 text-amber-500" />
+                <span>Light</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  sounds.playKeypadClick();
+                  onSetThemeMode('dark');
+                }}
+                className={`py-2 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                  themeMode === 'dark'
+                    ? 'bg-[#121217] text-white shadow-sm ring-1 ring-[#5B3DF5]/40'
+                    : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                }`}
+              >
+                <Moon className="w-3.5 h-3.5 text-[#A16CFF]" />
+                <span>Dark</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  sounds.playKeypadClick();
+                  onSetThemeMode('system');
+                }}
+                className={`py-2 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                  themeMode === 'system'
+                    ? 'bg-gradient-to-r from-[#5B3DF5] to-[#7C3AED] text-white shadow-sm'
+                    : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                }`}
+              >
+                <Smartphone className="w-3.5 h-3.5" />
+                <span>Auto</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="pt-2">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2 px-1">
+              Security & Controls
+            </span>
+          </div>
 
           {/* Change PIN */}
           <button
