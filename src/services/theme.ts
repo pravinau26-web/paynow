@@ -1,52 +1,28 @@
-export type ThemeMode = 'system' | 'dark' | 'light';
+export type ThemeMode = 'light';
 
-const THEME_STORAGE_KEY = 'superpay_theme_mode_v1';
+export const getThemeMode = (): ThemeMode => 'light';
 
-export const getThemeMode = (): ThemeMode => {
+/**
+ * Enforces pure light/white theme across the entire application.
+ * Removes any 'dark' class from html document element and clears dark mode cache,
+ * ensuring the app always appears in pristine light theme even if the user's phone
+ * has Dark Mode enabled in system settings.
+ */
+export const applyTheme = (): boolean => {
   try {
-    const saved = localStorage.getItem(THEME_STORAGE_KEY);
-    if (saved === 'dark' || saved === 'light' || saved === 'system') {
-      return saved;
+    const root = document.documentElement;
+    root.classList.remove('dark');
+    localStorage.removeItem('superpay_theme_mode_v1');
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', '#5B3DF5');
     }
   } catch {
-    // fallback
+    // ignore
   }
-  return 'system';
+  return false;
 };
 
-export const applyTheme = (mode: ThemeMode): boolean => {
-  const root = document.documentElement;
-  let isDark = false;
-
-  if (mode === 'dark') {
-    isDark = true;
-  } else if (mode === 'light') {
-    isDark = false;
-  } else {
-    // System auto preference
-    isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  }
-
-  if (isDark) {
-    root.classList.add('dark');
-  } else {
-    root.classList.remove('dark');
-  }
-
-  // Update mobile status bar theme-color meta
-  const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-  if (metaThemeColor) {
-    metaThemeColor.setAttribute('content', isDark ? '#0E0E12' : '#5B3DF5');
-  }
-
-  return isDark;
-};
-
-export const setThemeMode = (mode: ThemeMode): void => {
-  try {
-    localStorage.setItem(THEME_STORAGE_KEY, mode);
-  } catch {
-    // fallback
-  }
-  applyTheme(mode);
+export const setThemeMode = (): void => {
+  applyTheme();
 };

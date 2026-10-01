@@ -31,18 +31,13 @@
     <script>
       (function() {
         try {
-          var mode = localStorage.getItem('superpay_theme_mode_v1') || 'system';
-          var isDark = mode === 'dark' || (mode === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-          if (isDark) {
-            document.documentElement.classList.add('dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-          }
+          localStorage.removeItem('superpay_theme_mode_v1');
+          document.documentElement.classList.remove('dark');
         } catch (e) {}
       })();
     </script>
   </head>
-  <body class="bg-[#FAFAFC] dark:bg-[#0E0E12] text-slate-900 dark:text-white antialiased select-none overflow-x-hidden min-h-screen w-full">
+  <body class="bg-[#FAFAFC] text-slate-900 antialiased select-none overflow-x-hidden min-h-screen w-full">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -570,12 +570,13 @@ export default function App() {
     }
   };
 
-  const handleRepeatPayment = (tx: Transaction) => {
+  const handleRepeatPayment = (tx: Transaction, customAmount?: number, customNote?: string) => {
+    const finalAmount = customAmount !== undefined && customAmount > 0 ? customAmount : tx.amount;
     handleInitiatePayment({
       recipientName: tx.title,
       upiId: tx.upiId || 'payee@paynow',
-      amount: tx.amount,
-      note: tx.note || 'Repeat payment',
+      amount: finalAmount,
+      note: customNote || tx.note || 'Repeat payment',
       bankAccountId: tx.bankAccountId || banks[0]?.id || 'bank-hdfc',
       category: tx.category === 'cashback' ? 'transfer' : tx.category,
     });

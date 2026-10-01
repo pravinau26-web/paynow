@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ArrowDownLeft,
   ArrowLeft,
@@ -9,7 +9,9 @@ import {
   ExternalLink,
   HelpCircle,
   MessageCircle,
+  Pencil,
   Repeat,
+  RotateCcw,
   Share2,
   ShieldCheck,
   Sparkles,
@@ -22,7 +24,7 @@ import { shareGeneral, shareToWhatsApp } from '../services/share';
 interface TransactionDetailModalProps {
   transaction: Transaction | null;
   onClose: () => void;
-  onRepeatPayment?: (tx: Transaction) => void;
+  onRepeatPayment?: (tx: Transaction, customAmount?: number, customNote?: string) => void;
   userName?: string;
   bankAccount?: BankAccount;
 }
@@ -37,6 +39,17 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
   const [copied, setCopied] = useState(false);
   const [sharedToast, setSharedToast] = useState<string | null>(null);
   const [ticketRaised, setTicketRaised] = useState<string | null>(null);
+  const [repeatAmount, setRepeatAmount] = useState<string>('');
+  const [isEditingAmount, setIsEditingAmount] = useState<boolean>(false);
+  const [repeatNote, setRepeatNote] = useState<string>('');
+
+  useEffect(() => {
+    if (transaction) {
+      setRepeatAmount(transaction.amount.toString());
+      setRepeatNote(transaction.note || 'Repeat payment');
+      setIsEditingAmount(false);
+    }
+  }, [transaction]);
 
   if (!transaction) return null;
 
@@ -409,20 +422,168 @@ Super Pay · Safe & Secured by NPCI`;
             <span>Share Receipt via WhatsApp</span>
           </button>
 
-          {/* Repeat Payment if Debit */}
+          {/* Repeat Payment if Debit with editable amount */}
           {isDebit && onRepeatPayment && (
-            <button
-              type="button"
-              onClick={() => {
-                sounds.playKeypadClick();
-                onClose();
-                onRepeatPayment(transaction);
-              }}
-              className="w-full py-3.5 rounded-2xl text-sm font-bold text-white bg-gradient-to-r from-[#5B3DF5] via-[#7C3AED] to-[#00F0FF] hover:opacity-95 shadow-md shadow-[#5B3DF5]/25 flex items-center justify-center gap-2 transition-transform active:scale-98 cursor-pointer"
-            >
-              <Repeat className="w-4 h-4" />
-              <span>Repeat This Payment</span>
-            </button>
+            <div className="rounded-3xl p-4 bg-gradient-to-b from-[#5B3DF5]/10 via-[#5B3DF5]/5 to-transparent dark:from-[#5B3DF5]/20 dark:via-[#5B3DF5]/10 border border-[#5B3DF5]/30 space-y-3 shadow-xs">
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-xl bg-[#5B3DF5] text-white flex items-center justify-center shadow-xs">
+                    <Repeat className="w-3.5 h-3.5" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider block">
+                      Repeat This Payment
+                    </span>
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400">
+                      Paid to {receiverNameCaps}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Edit Amount Toggle button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    sounds.playKeypadClick();
+                    setIsEditingAmount(!isEditingAmount);
+                  }}
+                  className={`px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                    isEditingAmount
+                      ? 'bg-[#5B3DF5] text-white shadow-xs'
+                      : 'bg-[#5B3DF5]/15 text-[#5B3DF5] dark:text-[#A16CFF] hover:bg-[#5B3DF5]/25'
+                  }`}
+                  title="Edit amount to pay"
+                >
+                  <Pencil className="w-3 h-3" />
+                  <span>{isEditingAmount ? 'Done Editing' : 'Edit Amount'}</span>
+                </button>
+              </div>
+
+              {/* Amount Box */}
+              <div className="p-3.5 rounded-2xl bg-white dark:bg-[#1A1A22] border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                    Amount to Pay
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    {isEditingAmount ? (
+                      <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <Check className="w-3 h-3" />
+                        Editable
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          sounds.playKeypadClick();
+                          setIsEditingAmount(true);
+                        }}
+                        className="text-[10px] font-bold text-[#5B3DF5] dark:text-[#A16CFF] hover:underline flex items-center gap-1"
+                      >
+                        <Pencil className="w-2.5 h-2.5" />
+                        Tap to change
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Amount Entry & Currency Symbol */}
+                <div className="flex items-center justify-center gap-1.5">
+                  <span className="text-2xl sm:text-3xl font-black text-[#5B3DF5]">₹</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max="500000"
+                    value={repeatAmount}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '' || Number(val) >= 0) {
+                        setRepeatAmount(val);
+                      }
+                    }}
+                    onFocus={() => setIsEditingAmount(true)}
+                    placeholder="0"
+                    className="w-full text-center text-3xl sm:text-4xl font-black font-mono tracking-tight bg-transparent text-slate-900 dark:text-white border-b-2 border-[#5B3DF5] focus:outline-none py-1 tabular-nums selection:bg-[#5B3DF5]/30"
+                  />
+                </div>
+
+                {/* Quick Amount Suggestion Chips */}
+                <div className="flex items-center justify-center gap-1.5 flex-wrap pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      sounds.playKeypadClick();
+                      setRepeatAmount(transaction.amount.toString());
+                    }}
+                    className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-colors cursor-pointer ${
+                      Number(repeatAmount) === transaction.amount
+                        ? 'bg-[#5B3DF5] text-white shadow-xs'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                    }`}
+                  >
+                    Original (₹{transaction.amount.toLocaleString('en-IN')})
+                  </button>
+
+                  {[100, 500, 1000, 2000].map((quickAdd) => (
+                    <button
+                      key={quickAdd}
+                      type="button"
+                      onClick={() => {
+                        sounds.playKeypadClick();
+                        const curr = parseFloat(repeatAmount) || 0;
+                        setRepeatAmount((curr + quickAdd).toString());
+                      }}
+                      className="px-2 py-1 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                    >
+                      +₹{quickAdd}
+                    </button>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      sounds.playKeypadClick();
+                      setRepeatAmount('');
+                    }}
+                    className="px-2 py-1 rounded-full text-[11px] font-bold bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors cursor-pointer"
+                  >
+                    Clear
+                  </button>
+                </div>
+
+                {/* Note line */}
+                <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center gap-2">
+                  <span className="text-[11px] font-semibold text-slate-400 shrink-0">Note:</span>
+                  <input
+                    type="text"
+                    value={repeatNote}
+                    onChange={(e) => setRepeatNote(e.target.value)}
+                    placeholder="Payment note (optional)"
+                    className="flex-1 text-xs bg-slate-50 dark:bg-slate-800/60 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:border-[#5B3DF5]"
+                  />
+                </div>
+              </div>
+
+              {/* Action Button with Dynamic Amount */}
+              <button
+                type="button"
+                disabled={!repeatAmount || parseFloat(repeatAmount) <= 0}
+                onClick={() => {
+                  const num = parseFloat(repeatAmount);
+                  const finalAmt = !isNaN(num) && num > 0 ? num : transaction.amount;
+                  sounds.playKeypadClick();
+                  onClose();
+                  onRepeatPayment(transaction, finalAmt, repeatNote);
+                }}
+                className="w-full py-3.5 rounded-2xl text-sm font-black text-white bg-gradient-to-r from-[#5B3DF5] via-[#7C3AED] to-[#00F0FF] hover:opacity-95 shadow-md shadow-[#5B3DF5]/25 flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Repeat className="w-4 h-4" />
+                <span>
+                  Repeat & Pay ₹{parseFloat(repeatAmount) > 0 ? parseFloat(repeatAmount).toLocaleString('en-IN') : '0'}
+                </span>
+              </button>
+            </div>
           )}
 
           {/* Share Link & Download Buttons */}
