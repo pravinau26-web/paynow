@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Bell,
   Check,
@@ -33,6 +33,7 @@ import { PinPad } from '../components/PinPad';
 import { StatusBar } from '../components/StatusBar';
 import { sounds, CustomToneMeta } from '../services/audio';
 import { BankAccount, UserProfile } from '../types';
+import { ThemeMode } from '../services/theme';
 
 interface ProfileScreenProps {
   user: UserProfile;
@@ -42,6 +43,8 @@ interface ProfileScreenProps {
   onOpenMyQr: () => void;
   onLockApp: () => void;
   onResetApp: () => void;
+  themeMode?: ThemeMode;
+  onSetThemeMode?: (mode: ThemeMode) => void;
 }
 
 export const ProfileScreen: React.FC<ProfileScreenProps> = ({
@@ -52,7 +55,14 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onOpenMyQr,
   onLockApp,
   onResetApp,
+  themeMode,
+  onSetThemeMode,
 }) => {
+  // Audio upload refs for reliable mobile touch/click triggering
+  const successFileInputRef = useRef<HTMLInputElement>(null);
+  const failureFileInputRef = useRef<HTMLInputElement>(null);
+  const initiateFileInputRef = useRef<HTMLInputElement>(null);
+
   // Edit Profile States
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
   const [editName, setEditName] = useState(user.name);
@@ -104,25 +114,48 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   // Custom Audio File Upload Handler
   const handleAudioUpload = (type: 'success' | 'failure' | 'initiate', file: File | null) => {
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const dataUri = e.target?.result as string;
-      if (dataUri) {
-        await sounds.setCustomSound(type, dataUri, file.name);
-        setCustomTones(sounds.getCustomToneMeta());
-        const label =
-          type === 'success'
-            ? 'Payment Success'
-            : type === 'failure'
-            ? 'Payment Failure'
-            : 'Transaction Initiate';
-        setSoundToast(`Custom ${label} tone loaded: "${file.name}"`);
-        setTimeout(() => setSoundToast(null), 3500);
 
-        // Immediate audio preview so user can verify
-        if (type === 'success') sounds.playPaymentSuccess();
-        else if (type === 'failure') sounds.playPaymentFailure();
-        else sounds.playPaymentInitiate();
+    // Guard against huge audio files that cause mobile browser memory/storage issues
+    const maxSizeBytes = 6 * 1024 * 1024;
+    if (file.size > maxSizeBytes) {
+      setSoundToast(`⚠️ "${file.name}" is too large (${(file.size / (1024 * 1024)).toFixed(1)}MB). Please choose an audio file under 6MB.`);
+      setTimeout(() => setSoundToast(null), 4500);
+      return;
+    }
+
+    setSoundToast(`Loading "${file.name}"...`);
+
+    const reader = new FileReader();
+    reader.onerror = () => {
+      setSoundToast('⚠️ Could not read audio file. Please try another file.');
+      setTimeout(() => setSoundToast(null), 3500);
+    };
+
+    reader.onload = async (e) => {
+      try {
+        const dataUri = e.target?.result as string;
+        if (dataUri) {
+          await sounds.setCustomSound(type, dataUri, file.name);
+          setCustomTones(sounds.getCustomToneMeta());
+          const label =
+            type === 'success'
+              ? 'Payment Success'
+              : type === 'failure'
+              ? 'Payment Failure'
+              : 'Transaction Initiate';
+          setSoundToast(`✓ Custom ${label} tone loaded: "${file.name}"`);
+          setTimeout(() => setSoundToast(null), 3500);
+
+          // Immediate audio preview so user can verify on their phone
+          sounds.enabled = true;
+          if (type === 'success') sounds.playPaymentSuccess();
+          else if (type === 'failure') sounds.playPaymentFailure();
+          else sounds.playPaymentInitiate();
+        }
+      } catch (err) {
+        console.error('Error saving custom audio tone:', err);
+        setSoundToast('⚠️ Could not save custom audio tone.');
+        setTimeout(() => setSoundToast(null), 3500);
       }
     };
     reader.readAsDataURL(file);
@@ -464,21 +497,30 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                     <span>Test Play</span>
                   </button>
 
-                  {/* Upload Custom Audio Button */}
-                  <label className="flex-1 py-1.5 px-3 rounded-xl bg-white dark:bg-[#1A1A20] border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs hover:bg-emerald-50 dark:hover:bg-slate-800 active:scale-95 transition-all cursor-pointer">
+                  {/* Upload Custom Audio Button (Reliable mobile touch trigger) */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      sounds.playKeypadClick();
+                      successFileInputRef.current?.click();
+                    }}
+                    className="flex-1 py-1.5 px-3 rounded-xl bg-white dark:bg-[#1A1A20] border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs hover:bg-emerald-50 dark:hover:bg-slate-800 active:scale-95 transition-all cursor-pointer"
+                  >
                     <Upload className="w-3 h-3" />
                     <span>{customTones.isCustomSuccess ? 'Change Audio' : 'Upload File'}</span>
-                    <input
-                      type="file"
-                      accept="audio/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) handleAudioUpload('success', file);
-                        e.target.value = '';
-                      }}
-                    />
-                  </label>
+                  </button>
+                  <input
+                    ref={successFileInputRef}
+                    type="file"
+                    accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.webm,.weba,audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/ogg,audio/aac,audio/m4a,audio/x-m4a,audio/mp4"
+                    style={{ display: 'none' }}
+                    className="sr-only"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleAudioUpload('success', file);
+                      e.target.value = '';
+                    }}
+                  />
 
                   {/* Reset to Default */}
                   {customTones.isCustomSuccess && (
@@ -541,21 +583,30 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                     <span>Test Play</span>
                   </button>
 
-                  {/* Upload Custom Audio Button */}
-                  <label className="flex-1 py-1.5 px-3 rounded-xl bg-white dark:bg-[#1A1A20] border border-rose-500/40 text-rose-600 dark:text-rose-400 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs hover:bg-rose-50 dark:hover:bg-slate-800 active:scale-95 transition-all cursor-pointer">
+                  {/* Upload Custom Audio Button (Reliable mobile touch trigger) */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      sounds.playKeypadClick();
+                      failureFileInputRef.current?.click();
+                    }}
+                    className="flex-1 py-1.5 px-3 rounded-xl bg-white dark:bg-[#1A1A20] border border-rose-500/40 text-rose-600 dark:text-rose-400 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs hover:bg-rose-50 dark:hover:bg-slate-800 active:scale-95 transition-all cursor-pointer"
+                  >
                     <Upload className="w-3 h-3" />
                     <span>{customTones.isCustomFailure ? 'Change Audio' : 'Upload File'}</span>
-                    <input
-                      type="file"
-                      accept="audio/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) handleAudioUpload('failure', file);
-                        e.target.value = '';
-                      }}
-                    />
-                  </label>
+                  </button>
+                  <input
+                    ref={failureFileInputRef}
+                    type="file"
+                    accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.webm,.weba,audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/ogg,audio/aac,audio/m4a,audio/x-m4a,audio/mp4"
+                    style={{ display: 'none' }}
+                    className="sr-only"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleAudioUpload('failure', file);
+                      e.target.value = '';
+                    }}
+                  />
 
                   {/* Reset to Default */}
                   {customTones.isCustomFailure && (
@@ -618,21 +669,30 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                     <span>Test Play</span>
                   </button>
 
-                  {/* Upload Custom Audio Button */}
-                  <label className="flex-1 py-1.5 px-3 rounded-xl bg-white dark:bg-[#1A1A20] border border-[#5B3DF5]/40 text-[#5B3DF5] dark:text-[#A16CFF] text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-95 transition-all cursor-pointer">
+                  {/* Upload Custom Audio Button (Reliable mobile touch trigger) */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      sounds.playKeypadClick();
+                      initiateFileInputRef.current?.click();
+                    }}
+                    className="flex-1 py-1.5 px-3 rounded-xl bg-white dark:bg-[#1A1A20] border border-[#5B3DF5]/40 text-[#5B3DF5] dark:text-[#A16CFF] text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-95 transition-all cursor-pointer"
+                  >
                     <Upload className="w-3 h-3" />
                     <span>{customTones.isCustomInitiate ? 'Change Audio' : 'Upload File'}</span>
-                    <input
-                      type="file"
-                      accept="audio/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) handleAudioUpload('initiate', file);
-                        e.target.value = '';
-                      }}
-                    />
-                  </label>
+                  </button>
+                  <input
+                    ref={initiateFileInputRef}
+                    type="file"
+                    accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.webm,.weba,audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/ogg,audio/aac,audio/m4a,audio/x-m4a,audio/mp4"
+                    style={{ display: 'none' }}
+                    className="sr-only"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleAudioUpload('initiate', file);
+                      e.target.value = '';
+                    }}
+                  />
 
                   {/* Reset to Default */}
                   {customTones.isCustomInitiate && (
