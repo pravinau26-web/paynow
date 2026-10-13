@@ -49,6 +49,7 @@ export interface Contact {
   avatarBg: string;
   initials: string;
   isRecent?: boolean;
+  pastStatus?: string;
 }
 
 export interface MerchantQr {

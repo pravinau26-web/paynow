@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import {
   ArrowLeft,
+  ArrowUpRight,
+  AtSign,
+  Building2,
+  Calculator,
   Check,
-  CheckCircle2,
   ChevronDown,
-  Contact2,
-  Pencil,
+  MessageSquare,
   Phone,
   Plus,
-  RefreshCw,
+  QrCode,
   Search,
-  Send,
-  ShieldCheck,
   Smartphone,
   Sparkles,
   User,
-  UserCheck,
+  Users,
   X,
 } from 'lucide-react';
 import { PinPad } from '../components/PinPad';
@@ -51,31 +51,15 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedContact, setSelectedContact] = useState<Contact | null>(initialContact || null);
-  const [editablePayeeName, setEditablePayeeName] = useState(initialContact?.name || '');
   const [amount, setAmount] = useState('0');
   const [note, setNote] = useState('');
-  const [selectedBankId, setSelectedBankId] = useState(banks[0]?.id || 'bank-hdfc');
+  const [showNoteInput, setShowNoteInput] = useState(false);
+  const [selectedBankId, setSelectedBankId] = useState(banks[0]?.id || 'bank-canara');
   const [showBankPicker, setShowBankPicker] = useState(false);
   const [showPinModal, setShowPinModal] = useState(false);
   const [pin, setPin] = useState('');
   const [pinError, setPinError] = useState(false);
   const [pinErrorMessage, setPinErrorMessage] = useState('');
-  const [customUpiMode, setCustomUpiMode] = useState(false);
-  const [customUpiId, setCustomUpiId] = useState('');
-
-  // Contact & Mobile UPI Lookup states
-  const [showLookupModal, setShowLookupModal] = useState(false);
-  const [lookupName, setLookupName] = useState('');
-  const [lookupMobile, setLookupMobile] = useState('');
-  const [lookupState, setLookupState] = useState<'idle' | 'checking' | 'found' | 'error'>('idle');
-  const [lookupResult, setLookupResult] = useState<{
-    name: string;
-    phone: string;
-    upiId: string;
-    bankName: string;
-    verified: boolean;
-  } | null>(null);
-  const [lookupErrorMessage, setLookupErrorMessage] = useState('');
 
   const selectedBank = banks.find((b) => b.id === selectedBankId) || banks[0];
 
@@ -86,174 +70,45 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
       c.upiId.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const recentContacts = contacts.filter((c) => c.isRecent);
+
   const handleSelectContact = (c: Contact) => {
     sounds.playKeypadClick();
     setSelectedContact(c);
-    setEditablePayeeName(c.name);
-    setCustomUpiMode(false);
+    setAmount('0');
   };
 
-  const handleProceedWithSearchQuery = (query: string) => {
-    const trimmed = query.trim();
-    if (!trimmed) return;
+  const handleKeypadPress = (val: string) => {
     sounds.playKeypadClick();
-    const upiFormat = trimmed.includes('@') ? trimmed : `${trimmed.toLowerCase()}@paynow`;
-    setCustomUpiId(upiFormat);
-    setEditablePayeeName(trimmed.split('@')[0]);
-    setCustomUpiMode(true);
-    setSelectedContact(null);
-  };
-
-  // Perform UPI verification for a mobile number & contact name
-  const handleCheckUpi = (nameVal: string, mobileVal: string) => {
-    const rawDigits = mobileVal.replace(/[^0-9]/g, '');
-    if (rawDigits.length < 10) {
-      setLookupState('error');
-      setLookupErrorMessage('Please enter a valid 10-digit mobile number');
-      sounds.playErrorSound();
+    if (val === 'backspace') {
+      if (amount.length <= 1 || amount === '0') {
+        setAmount('0');
+      } else {
+        setAmount(amount.slice(0, -1));
+      }
       return;
     }
-    const cleanMobile = rawDigits.slice(-10);
-    const cleanName = nameVal.trim() || 'UPI Contact';
 
-    sounds.playKeypadClick();
-    setLookupState('checking');
-    setLookupErrorMessage('');
-
-    setTimeout(() => {
-      // Check if this phone number already matches a known contact
-      const matched = contacts.find((c) =>
-        c.phone.replace(/[^0-9]/g, '').includes(cleanMobile)
-      );
-
-      const handleSuffixes = ['@paynow', '@okaxis', '@okhdfcbank', '@oksbi'];
-      const suffix = handleSuffixes[parseInt(cleanMobile.slice(-1), 10) % handleSuffixes.length];
-      const sanitizedNameSlug = cleanName.toLowerCase().replace(/[^a-z0-9]/g, '');
-      const determinedUpiId = matched
-        ? matched.upiId
-        : `${sanitizedNameSlug || 'user'}.${cleanMobile.slice(-4)}${suffix}`;
-
-      const determinedName = matched ? matched.name : cleanName;
-      const formattedPhone = `+91 ${cleanMobile.slice(0, 5)} ${cleanMobile.slice(5)}`;
-
-      setLookupResult({
-        name: determinedName,
-        phone: formattedPhone,
-        upiId: determinedUpiId,
-        bankName: matched ? 'NPCI Registered Bank' : 'NPCI UPI Directory Verified (BHIM)',
-        verified: true,
-      });
-      setLookupState('found');
-      sounds.playSuccessChime();
-    }, 650);
-  };
-
-  // Save new contact from lookup and proceed to pay
-  const handleSaveContactAndPay = () => {
-    if (!lookupResult) return;
-    sounds.playKeypadClick();
-
-    const initials =
-      lookupResult.name
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .slice(0, 2)
-        .toUpperCase() || 'U';
-
-    const bgGradients = [
-      'bg-gradient-to-tr from-purple-500 to-indigo-600',
-      'bg-gradient-to-tr from-blue-500 to-cyan-500',
-      'bg-gradient-to-tr from-emerald-500 to-teal-600',
-      'bg-gradient-to-tr from-rose-500 to-pink-600',
-    ];
-    const avatarBg = bgGradients[Math.floor(Math.random() * bgGradients.length)];
-
-    const newContact: Contact = {
-      id: `c-custom-${Date.now()}`,
-      name: lookupResult.name,
-      phone: lookupResult.phone,
-      upiId: lookupResult.upiId,
-      avatarBg,
-      initials,
-    };
-
-    if (onAddContact) {
-      onAddContact(newContact);
-    }
-    setSelectedContact(newContact);
-    setEditablePayeeName(lookupResult.name);
-    setCustomUpiMode(false);
-    setShowLookupModal(false);
-    setLookupState('idle');
-    setLookupResult(null);
-  };
-
-  // Directly transfer to looked-up UPI ID without saving
-  const handlePayDirectFromLookup = () => {
-    if (!lookupResult) return;
-    sounds.playKeypadClick();
-    setCustomUpiId(lookupResult.upiId);
-    setEditablePayeeName(lookupResult.name);
-    setCustomUpiMode(true);
-    setSelectedContact(null);
-    setShowLookupModal(false);
-    setLookupState('idle');
-    setLookupResult(null);
-  };
-
-  // Device contact picker integration (Mobile browsers supporting Contact Picker API)
-  const handlePickFromDeviceContacts = async () => {
-    sounds.playKeypadClick();
-    try {
-      if ('contacts' in navigator && 'ContactsManager' in window) {
-        const props = ['name', 'tel'];
-        type ContactRecord = { name?: string[]; tel?: string[] };
-        const selected = await (navigator as unknown as {
-          contacts: { select: (p: string[], opts: { multiple: boolean }) => Promise<ContactRecord[]> };
-        }).contacts.select(props, { multiple: false });
-
-        if (selected && selected.length > 0) {
-          const picked = selected[0];
-          const name = (picked.name && picked.name[0]) || 'Mobile Contact';
-          const tel = (picked.tel && picked.tel[0]) || '';
-          setLookupName(name);
-          setLookupMobile(tel);
-          setShowLookupModal(true);
-          if (tel.replace(/[^0-9]/g, '').length >= 10) {
-            handleCheckUpi(name, tel);
-          }
-          return;
-        }
+    if (val === '.') {
+      if (!amount.includes('.')) {
+        setAmount(amount + '.');
       }
-    } catch {
-      // Fallback
+      return;
     }
 
-    // Fallback: open modal with search query pre-filled
-    const digits = searchQuery.replace(/[^0-9]/g, '');
-    const textOnly = searchQuery.replace(/[0-9+]/g, '').trim();
-    setLookupName(textOnly || '');
-    setLookupMobile(digits || '');
-    setShowLookupModal(true);
-    if (digits.length >= 10) {
-      handleCheckUpi(textOnly || 'Contact', digits);
+    if (amount === '0') {
+      setAmount(val);
+    } else {
+      if (amount.length < 7) {
+        setAmount(amount + val);
+      }
     }
   };
 
-  const handleAddQuickAmount = (val: number) => {
-    sounds.playKeypadClick();
-    const current = parseFloat(amount) || 0;
-    setAmount((current + val).toString());
-  };
-
-  const handleOpenPin = () => {
+  const handleProceedToPin = () => {
     const num = parseFloat(amount);
     if (isNaN(num) || num <= 0) return;
     sounds.playKeypadClick();
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
     setPin('');
     setPinError(false);
     setPinErrorMessage('');
@@ -267,18 +122,21 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
         sounds.playPaymentInitiate();
         setShowPinModal(false);
         const parsedAmount = parseFloat(amount);
-        const fallbackName = selectedContact
+        const recipientTitle = selectedContact
           ? selectedContact.name
-          : (customUpiId.split('@')[0] || searchQuery || 'PR26');
-        const recipientTitle = (editablePayeeName.trim() || fallbackName).toUpperCase();
-        const recipientUpi = selectedContact ? selectedContact.upiId : (customUpiId || `${(searchQuery || 'pr26').toLowerCase()}@paynow`);
+          : searchQuery.trim().toUpperCase() || 'RECEIVER';
+        const recipientUpi = selectedContact
+          ? selectedContact.upiId
+          : searchQuery.includes('@')
+          ? searchQuery
+          : `${searchQuery.toLowerCase()}@paynow`;
 
         onInitiatePayment({
           recipientName: recipientTitle,
           upiId: recipientUpi,
           amount: parsedAmount,
           note: note || 'Money transfer via PayNow',
-          bankAccountId: selectedBankId,
+          bankAccountId: selectedBank.id,
           category: 'transfer',
         });
       } else {
@@ -293,442 +151,412 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
     }
   };
 
-  const recipientDisplayName = editablePayeeName || (selectedContact
-    ? selectedContact.name
-    : customUpiId
-    ? customUpiId.split('@')[0].toUpperCase()
-    : searchQuery
-    ? searchQuery.toUpperCase()
-    : 'Payee');
-
-  const recipientDisplayUpi = selectedContact
-    ? selectedContact.upiId
-    : customUpiId || `${(searchQuery || 'pr26').toLowerCase()}@paynow`;
+  // Pastel Avatar colors helper matching super.money
+  const getAvatarColor = (name: string) => {
+    const char = (name.trim()[0] || 'M').toUpperCase();
+    if (char === 'V') return 'bg-[#E8F8EE] text-[#00875A]';
+    if (char === 'M') return 'bg-[#FFF0B3] text-[#974F00]';
+    if (char === 'K') return 'bg-[#EAE6FF] text-[#5B3DF5]';
+    if (char === 'A') return 'bg-[#FFEBE5] text-[#DE350B]';
+    return 'bg-[#EAE6FF] text-[#5B3DF5]';
+  };
 
   return (
-    <div className="flex-1 flex flex-col bg-[#FAFAFC] dark:bg-[#0E0E12] text-slate-900 dark:text-white relative select-none overflow-hidden">
+    <div className="flex-1 min-h-0 flex flex-col bg-[#F7F8FA] dark:bg-[#0E0E12] text-slate-900 dark:text-white overflow-hidden select-none">
       <StatusBar dark={false} />
 
-      {/* Top Header */}
-      <div className="px-5 py-3 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 shrink-0">
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label="Back"
-          className="w-10 h-10 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <span className="text-sm font-bold">Send Money</span>
-        <div className="w-10" />
-      </div>
-
-      <div className="flex-1 overflow-y-auto no-scrollbar flex flex-col">
-        {!selectedContact && !customUpiMode ? (
-        /* STEP 1: Search & Contact List */
-        <div className="p-5 space-y-4">
-          {/* Search Box */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (searchQuery.trim()) {
-                handleProceedWithSearchQuery(searchQuery);
-              }
-            }}
-            className="flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-white dark:bg-[#1A1A20] border border-slate-200 dark:border-slate-800 shadow-xs focus-within:ring-2 focus-within:ring-[#5B3DF5]"
-          >
-            <Search className="w-4 h-4 text-slate-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search name, PR26, PW26, phone, or UPI ID"
-              className="flex-1 bg-transparent text-xs font-medium outline-none"
-              autoFocus
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery('')}
-                className="text-slate-400 hover:text-slate-600"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </form>
-
-          {/* Quick Match / Pay Directly to typed input */}
-          {searchQuery.trim().length > 0 && (
+      {/* ========================================================================= */}
+      {/* SCREEN A: CONTACT SELECTION / SEARCH SCREEN (Frame 00:00 - 00:08)          */}
+      {/* ========================================================================= */}
+      {!selectedContact ? (
+        <div className="flex-1 flex flex-col overflow-y-auto no-scrollbar">
+          {/* Header */}
+          <div className="px-5 pt-3 pb-2 flex items-center justify-between">
             <button
               type="button"
-              onClick={() => handleProceedWithSearchQuery(searchQuery)}
-              className="w-full p-3.5 rounded-2xl bg-[#5B3DF5] text-white flex items-center justify-between shadow-md shadow-[#5B3DF5]/30 hover:bg-[#4E32E5] transition-all animate-in fade-in"
+              onClick={onBack}
+              className="w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 flex items-center justify-center text-slate-800 dark:text-slate-200 cursor-pointer"
             >
-              <div className="flex items-center gap-3 text-left">
-                <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-bold text-xs">
-                  {searchQuery.trim().slice(0, 2).toUpperCase()}
-                </div>
-                <div>
-                  <p className="text-xs font-bold">Transfer to &quot;{searchQuery.trim()}&quot;</p>
-                  <p className="text-[11px] text-white/80 font-mono">
-                    {searchQuery.includes('@') ? searchQuery.trim() : `${searchQuery.trim().toLowerCase()}@paynow`}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-1 text-xs font-bold">
-                <span>Proceed</span>
-                <Send className="w-3.5 h-3.5" />
-              </div>
+              <ArrowLeft className="w-5 h-5 stroke-[2.2]" />
             </button>
-          )}
-
-          {/* Pay to any custom UPI ID button */}
-          <button
-            type="button"
-            onClick={() => {
-              sounds.playKeypadClick();
-              setCustomUpiMode(true);
-              setCustomUpiId(searchQuery.trim() || 'PW26@paynow');
-            }}
-            className="w-full p-3.5 rounded-2xl bg-[#5B3DF5]/5 dark:bg-[#5B3DF5]/10 border border-[#5B3DF5]/20 flex items-center justify-between text-left hover:bg-[#5B3DF5]/10 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[#5B3DF5] text-white flex items-center justify-center">
-                <Plus className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-xs font-bold text-[#5B3DF5]">Pay to any UPI ID / Number</p>
-                <p className="text-[11px] text-slate-400">e.g. PR26, PW26, friend@oksbi</p>
-              </div>
-            </div>
-            <span className="text-xs font-bold text-[#5B3DF5]">Enter ID &rarr;</span>
-          </button>
-
-          {/* Frequent Payees Horizontal */}
-          <div>
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">
-              Frequent Contacts
-            </span>
-            <div className="flex items-center gap-3 mt-2 overflow-x-auto no-scrollbar pb-1">
-              {contacts.slice(0, 4).map((c) => (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => handleSelectContact(c)}
-                  className="flex flex-col items-center gap-1 shrink-0 p-1 group"
-                >
-                  <div
-                    className={`w-12 h-12 rounded-full ${c.avatarBg} text-white font-bold text-xs flex items-center justify-center shadow-xs group-hover:scale-105 active:scale-95 transition-transform`}
-                  >
-                    {c.initials}
-                  </div>
-                  <span className="text-[11px] font-medium text-slate-700 dark:text-slate-300 w-16 truncate text-center">
-                    {c.name.split(' ')[0]}
-                  </span>
-                </button>
-              ))}
-            </div>
+            <button
+              type="button"
+              className="p-2 text-slate-700 dark:text-slate-300 hover:text-[#5B3DF5]"
+              title="Help"
+            >
+              <MessageSquare className="w-5 h-5" />
+            </button>
           </div>
 
-          {/* Contacts List */}
-          <div className="space-y-2 pt-2">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">
-              All Contacts
-            </span>
-            <div className="bg-white dark:bg-[#1A1A20] rounded-3xl divide-y divide-slate-100 dark:divide-slate-800/80 border border-slate-200/80 dark:border-slate-800/80 overflow-hidden shadow-xs">
-              {filteredContacts.map((contact) => (
-                <button
-                  key={contact.id}
-                  type="button"
-                  onClick={() => handleSelectContact(contact)}
-                  className="w-full p-3.5 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-10 h-10 rounded-full ${contact.avatarBg} text-white font-bold text-xs flex items-center justify-center shadow-xs`}
-                    >
-                      {contact.initials}
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-slate-900 dark:text-white">
-                        {contact.name}
-                      </p>
-                      <p className="text-[11px] text-slate-400 font-mono">
-                        {contact.phone} · {contact.upiId}
-                      </p>
-                    </div>
-                  </div>
-
-                  <Send className="w-4 h-4 text-slate-400" />
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : (
-        /* STEP 2: Amount Entry & Note */
-        <div className="p-5 flex-1 flex flex-col justify-between pb-8">
-          <div className="space-y-4">
-            {/* Recipient Card with Editable Payee Name */}
-            <div className="p-4 rounded-3xl bg-white dark:bg-[#1A1A20] border border-slate-200 dark:border-slate-800 shadow-xs flex items-center justify-between">
-              <div className="flex items-center gap-3 flex-1 min-w-0 mr-2">
-                <div
-                  className={`w-11 h-11 rounded-2xl ${
-                    selectedContact?.avatarBg || 'bg-[#5B3DF5]'
-                  } text-white font-bold text-sm flex items-center justify-center shadow-sm shrink-0`}
-                >
-                  {(editablePayeeName || recipientDisplayName).slice(0, 2).toUpperCase()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <p className="text-xs text-slate-400 font-medium">Transferring to</p>
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                  </div>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <input
-                      type="text"
-                      value={editablePayeeName || recipientDisplayName}
-                      onChange={(e) => setEditablePayeeName(e.target.value)}
-                      placeholder="Recipient Name"
-                      className="text-base sm:text-lg font-black text-slate-900 dark:text-white bg-transparent border-b border-dashed border-slate-300 dark:border-slate-700 hover:border-[#5B3DF5] focus:border-[#5B3DF5] outline-none w-full max-w-[210px] py-0.5 tracking-tight transition-colors"
-                    />
-                    <Pencil className="w-4 h-4 text-slate-400 shrink-0 cursor-pointer" />
-                  </div>
-                  <p className="text-xs font-mono text-slate-400 truncate mt-0.5">
-                    {recipientDisplayUpi}
-                  </p>
-                </div>
+          <div className="px-5 space-y-4 pb-28">
+            {/* Title & UPI apps subtitle */}
+            <div>
+              <h1 className="text-2xl font-black text-[#5B3DF5] tracking-tight">
+                Send money to
+              </h1>
+              <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                <span>any UPI app</span>
+                <span className="font-bold text-slate-800 dark:text-slate-200">•</span>
+                <span className="font-bold text-[#4285F4]">GPay</span>
+                <span className="font-bold text-[#5F259F]">PhonePe</span>
+                <span className="font-bold text-[#00BAF2]">Paytm</span>
               </div>
+            </div>
 
-              {/* Change Recipient Button */}
+            {/* Blue Reward Banner from video: "Pay any 10 friends & get ₹10" */}
+            <div className="p-3.5 rounded-2xl bg-gradient-to-r from-[#4A32E5] to-[#5B3DF5] text-white flex items-center justify-between shadow-md shadow-[#5B3DF5]/20">
+              <div className="flex items-center gap-2.5">
+                <div className="px-2 py-1 rounded-lg bg-emerald-500 text-slate-900 font-black text-xs">
+                  ₹10
+                </div>
+                <p className="text-xs sm:text-sm font-bold">
+                  Pay any 10 friends & get ₹10
+                </p>
+              </div>
+              <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
+            </div>
+
+            {/* Search Input Bar */}
+            <div className="flex items-center gap-2.5 px-3.5 py-3 rounded-2xl bg-white dark:bg-[#1A1A22] border border-slate-200/90 dark:border-slate-800 shadow-xs">
+              <Search className="w-4 h-4 text-slate-400 shrink-0" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search number or name or UPI ID"
+                className="flex-1 bg-transparent text-sm font-medium text-slate-900 dark:text-white placeholder:text-slate-400 outline-none"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="p-1 text-slate-400 hover:text-slate-600"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
+            {/* If user types custom UPI query, show 1-click Pay option */}
+            {searchQuery.trim().length > 0 && (
               <button
                 type="button"
                 onClick={() => {
-                  sounds.playKeypadClick();
-                  setSelectedContact(null);
-                  setEditablePayeeName('');
-                  setCustomUpiMode(false);
+                  const name = searchQuery.trim();
+                  const upi = name.includes('@') ? name : `${name.toLowerCase()}@paynow`;
+                  setSelectedContact({
+                    id: `c-manual-${Date.now()}`,
+                    name,
+                    phone: '',
+                    upiId: upi,
+                    avatarBg: 'bg-[#E8F8EE] text-[#00875A]',
+                    initials: name.slice(0, 2).toUpperCase(),
+                  });
+                  setAmount('0');
                 }}
-                className="px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-bold text-[#5B3DF5] hover:bg-[#5B3DF5]/10 transition-colors shrink-0"
+                className="w-full p-3.5 rounded-2xl bg-[#5B3DF5] text-white flex items-center justify-between shadow-md shadow-[#5B3DF5]/30 cursor-pointer animate-in fade-in"
               >
-                Change
-              </button>
-            </div>
-
-            {/* Custom UPI ID editor if in mode */}
-            {customUpiMode && !selectedContact && (
-              <div className="p-3.5 rounded-2xl bg-white dark:bg-[#1A1A20] border border-slate-200 dark:border-slate-800">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    Recipient UPI ID / Handle
-                  </span>
-                  <span className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
-                    <Check className="w-3 h-3" /> Verified
-                  </span>
+                <div className="text-left">
+                  <p className="text-xs font-bold">Transfer to &quot;{searchQuery}&quot;</p>
+                  <p className="text-[11px] text-white/80 font-mono">
+                    {searchQuery.includes('@') ? searchQuery : `${searchQuery.toLowerCase()}@paynow`}
+                  </p>
                 </div>
-                <input
-                  type="text"
-                  value={customUpiId}
-                  onChange={(e) => setCustomUpiId(e.target.value)}
-                  placeholder="e.g. PR26@paynow or friend@oksbi"
-                  className="w-full bg-transparent text-sm font-mono font-bold outline-none text-[#5B3DF5]"
-                />
-              </div>
+                <ArrowUpRight className="w-4 h-4" />
+              </button>
             )}
 
-            {/* Amount Entry */}
-            <div className="text-center py-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Enter Amount</span>
-              <div className="flex items-center justify-center gap-1.5 text-4xl sm:text-5xl font-black font-mono py-2">
-                <span className="text-slate-400">₹</span>
-                <input
-                  type="number"
-                  min="0"
-                  value={amount}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    if (val.length > 1 && val.startsWith('0') && !val.startsWith('0.')) {
-                      setAmount(val.replace(/^0+/, ''));
-                    } else {
-                      setAmount(val);
-                    }
-                  }}
-                  placeholder="0"
-                  className="w-48 text-center bg-transparent border-b-2 border-[#5B3DF5] outline-none tabular-nums"
-                  autoFocus
-                />
-              </div>
-
-              {/* Quick Add Pills */}
-              <div className="flex justify-center gap-2 mt-2">
-                {[100, 200, 500, 1000].map((quick) => (
+            {/* Quick Links (4 icons from video) */}
+            <div>
+              <h2 className="text-xs font-black text-slate-900 dark:text-white tracking-wider mb-2">
+                Quick links
+              </h2>
+              <div className="grid grid-cols-4 gap-2">
+                {[
+                  { label: 'Self pay', icon: <Smartphone className="w-5 h-5 text-slate-700 dark:text-slate-200" /> },
+                  { label: 'Mobile', icon: <Phone className="w-5 h-5 text-slate-700 dark:text-slate-200" /> },
+                  { label: 'UPI ID/no.', icon: <AtSign className="w-5 h-5 text-slate-700 dark:text-slate-200" /> },
+                  { label: 'Bank A/c', icon: <Building2 className="w-5 h-5 text-slate-700 dark:text-slate-200" /> },
+                ].map((item) => (
                   <button
-                    key={quick}
+                    key={item.label}
                     type="button"
-                    onClick={() => handleAddQuickAmount(quick)}
-                    className="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition-colors"
+                    onClick={() => sounds.playKeypadClick()}
+                    className="flex flex-col items-center gap-1.5 p-2 rounded-2xl bg-white dark:bg-[#1A1A22] border border-slate-150 dark:border-slate-800 shadow-xs hover:border-[#5B3DF5]/40 transition-all cursor-pointer"
                   >
-                    +₹{quick}
+                    <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                      {item.icon}
+                    </div>
+                    <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                      {item.label}
+                    </span>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Note input */}
-            <div className="p-3 rounded-2xl bg-white dark:bg-[#1A1A20] border border-slate-200 dark:border-slate-800">
-              <input
-                type="text"
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder="What's this for? (e.g. Rent, dinner split, PR26 work)"
-                className="w-full bg-transparent text-xs outline-none"
-              />
+            {/* Suggested Horizontal Row */}
+            <div>
+              <h2 className="text-xs font-black text-slate-900 dark:text-white tracking-wider mb-2">
+                Suggested
+              </h2>
+              <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1">
+                {contacts.slice(0, 5).map((c) => {
+                  const initial = (c.name.trim()[0] || 'V').toUpperCase();
+                  const color = getAvatarColor(c.name);
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => handleSelectContact(c)}
+                      className="flex flex-col items-center gap-1.5 shrink-0 group cursor-pointer"
+                    >
+                      <div
+                        className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-sm shadow-xs ${color}`}
+                      >
+                        {initial}
+                      </div>
+                      <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 w-16 truncate text-center">
+                        {c.name.split(' ')[0]}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Bank account selector dropdown */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between px-1">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                  Debiting Account
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    sounds.playKeypadClick();
-                    setShowBankPicker(true);
-                  }}
-                  className="text-[11px] font-bold text-[#5B3DF5] hover:underline"
-                >
-                  Change Account
-                </button>
+            {/* Recent Section matching video Frame 00:05 */}
+            <div className="space-y-2">
+              <h2 className="text-xs font-black text-slate-900 dark:text-white tracking-wider">
+                Recent
+              </h2>
+              <div className="bg-white dark:bg-[#1A1A22] rounded-3xl divide-y divide-slate-100 dark:divide-slate-800/80 border border-slate-150 dark:border-slate-800 overflow-hidden shadow-xs">
+                {recentContacts.map((contact) => (
+                  <button
+                    key={contact.id}
+                    type="button"
+                    onClick={() => handleSelectContact(contact)}
+                    className="w-full p-3.5 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div
+                        className={`w-11 h-11 rounded-2xl flex items-center justify-center font-black text-sm shrink-0 shadow-xs ${getAvatarColor(
+                          contact.name
+                        )}`}
+                      >
+                        {(contact.name.trim()[0] || 'M').toUpperCase()}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-bold text-sm text-slate-900 dark:text-white truncate">
+                          {contact.name}
+                        </p>
+                        <p className="text-xs text-slate-400 font-mono truncate">
+                          {contact.phone || contact.upiId}
+                        </p>
+                        {contact.pastStatus && (
+                          <p className="text-[11px] font-bold text-red-500 mt-0.5 truncate">
+                            {contact.pastStatus}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                ))}
               </div>
+            </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  sounds.playKeypadClick();
-                  setShowBankPicker(true);
-                }}
-                className="w-full p-3.5 rounded-2xl bg-white dark:bg-[#1A1A20] border border-slate-200 dark:border-slate-800 flex items-center justify-between text-left hover:border-[#5B3DF5] transition-colors shadow-xs"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-xs text-[#5B3DF5]">
-                    {selectedBank.bankName.slice(0, 2).toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                      {selectedBank.bankName} · {selectedBank.accountNumberMasked}
-                    </p>
-                    <p className="text-[11px] text-slate-400 font-mono">
-                      Available Balance: ₹{selectedBank.balance.toLocaleString('en-IN')}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1.5 text-[#5B3DF5] font-semibold text-xs">
-                  <span>Switch</span>
-                  <ChevronDown className="w-4 h-4" />
-                </div>
-              </button>
+            {/* All Contacts */}
+            <div className="space-y-2">
+              <h2 className="text-xs font-black text-slate-900 dark:text-white tracking-wider">
+                All
+              </h2>
+              <div className="bg-white dark:bg-[#1A1A22] rounded-3xl divide-y divide-slate-100 dark:divide-slate-800/80 border border-slate-150 dark:border-slate-800 overflow-hidden shadow-xs">
+                {filteredContacts.map((contact) => (
+                  <button
+                    key={contact.id}
+                    type="button"
+                    onClick={() => handleSelectContact(contact)}
+                    className="w-full p-3.5 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div
+                        className={`w-11 h-11 rounded-2xl flex items-center justify-center font-black text-sm shrink-0 shadow-xs ${getAvatarColor(
+                          contact.name
+                        )}`}
+                      >
+                        {(contact.name.trim()[0] || 'M').toUpperCase()}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-bold text-sm text-slate-900 dark:text-white truncate">
+                          {contact.name}
+                        </p>
+                        <p className="text-xs text-slate-400 font-mono truncate">
+                          {contact.phone || contact.upiId}
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        /* ========================================================================= */
+        /* SCREEN B: AMOUNT ENTRY & PAYMENT SHEET (Exact matching Frame 00:09 - 00:11)*/
+        /* ========================================================================= */
+        <div className="flex-1 flex flex-col justify-between overflow-hidden">
+          {/* Top Header */}
+          <div className="p-4 flex items-start gap-3 border-b border-slate-100 dark:border-slate-800/60 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                sounds.playKeypadClick();
+                setSelectedContact(null);
+              }}
+              className="w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 flex items-center justify-center text-slate-800 dark:text-slate-200 cursor-pointer shrink-0 mt-0.5"
+            >
+              <ArrowLeft className="w-5 h-5 stroke-[2.2]" />
+            </button>
+
+            <div className="min-w-0 flex-1">
+              {/* Receiver Name */}
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight truncate">
+                {selectedContact.name}
+              </h1>
+
+              {/* UPI ID */}
+              <p className="text-xs font-mono text-slate-400 truncate mt-0.5">
+                UPI ID: {selectedContact.upiId}
+              </p>
+
+              {/* Status pill & See history link (Frame 00:09) */}
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-[11px] font-bold text-red-500 bg-red-500/10 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                  <span>↗</span>
+                  <span>{selectedContact.pastStatus || "Failed ₹1 | 13 October '26"}</span>
+                </span>
+                <span className="text-[11px] font-bold text-[#5B3DF5] dark:text-[#8B7CFA] hover:underline cursor-pointer">
+                  See history
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Pay Button */}
-          <button
-            type="button"
-            onClick={handleOpenPin}
-            disabled={!amount || parseFloat(amount) <= 0 || (customUpiMode && !customUpiId)}
-            className="w-full py-4 rounded-full bg-gradient-to-r from-[#6C4CFA] to-[#A16CFF] text-white font-bold text-sm shadow-xl shadow-[#5B3DF5]/30 hover:opacity-95 disabled:opacity-50 transition-all active:scale-98 flex items-center justify-center gap-2 mt-6 cursor-pointer"
-          >
-            Pay ₹{parseFloat(amount || '0').toLocaleString('en-IN')}
-          </button>
-        </div>
-      )}
-      </div>
+          {/* Amount Display & Quick Add Note */}
+          <div className="flex-1 flex flex-col items-center justify-center px-6 py-4">
+            {/* Currency Symbol and Typed Digits */}
+            <div className="flex items-baseline justify-center gap-1 font-sans">
+              <span className="text-4xl sm:text-5xl font-black text-slate-400">
+                ₹
+              </span>
+              <span className="text-6xl sm:text-7xl font-black text-slate-900 dark:text-white tracking-tight tabular-nums">
+                {amount}
+              </span>
+            </div>
 
-      {/* Debiting Bank Picker Modal */}
-      {showBankPicker && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in">
-          <div className="w-full max-w-xs bg-white dark:bg-[#1A1A20] rounded-3xl p-5 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-              <div>
-                <h3 className="text-sm font-bold">Select Debiting Bank</h3>
-                <p className="text-[11px] text-slate-400">Choose bank account for transfer</p>
-              </div>
+            {/* Buttons Row below amount: "Add a note" + Calculator button */}
+            <div className="flex items-center gap-2.5 mt-5">
               <button
                 type="button"
-                onClick={() => setShowBankPicker(false)}
-                className="text-slate-400 hover:text-slate-600 cursor-pointer"
+                onClick={() => setShowNoteInput(!showNoteInput)}
+                className="px-4 py-2 rounded-2xl bg-white dark:bg-[#1A1A22] border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5 shadow-xs hover:bg-slate-50 cursor-pointer"
               >
-                <X className="w-4 h-4" />
+                <MessageSquare className="w-3.5 h-3.5 text-slate-400" />
+                <span>{note ? note : 'Add a note'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => sounds.playKeypadClick()}
+                className="w-9 h-9 rounded-2xl bg-white dark:bg-[#1A1A22] border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center font-bold text-xs shadow-xs hover:bg-slate-50 cursor-pointer"
+                title="Calculator"
+              >
+                <span>+-×÷</span>
               </button>
             </div>
 
-            <div className="space-y-2 mt-3 max-h-64 overflow-y-auto no-scrollbar">
-              {banks.map((b, idx) => (
+            {/* Note input if open */}
+            {showNoteInput && (
+              <div className="w-full max-w-xs mt-3 animate-in fade-in">
+                <input
+                  type="text"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder="What is this for? (e.g. Dinner, Fuel)"
+                  className="w-full px-3.5 py-2 rounded-xl bg-white dark:bg-[#1A1A22] border border-slate-200 dark:border-slate-700 text-xs font-medium outline-none text-slate-900 dark:text-white"
+                  autoFocus
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Bottom Card: Bank Selector + Bright Green "Pay ₹{amount}" Button + Built-in Keypad */}
+          <div className="px-5 pb-5 space-y-3 shrink-0">
+            {/* Bank Selector Card (Frame 00:10) */}
+            <div className="w-full p-3.5 rounded-2xl bg-white dark:bg-[#1A1A22] border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
+              <div className="flex items-center gap-2.5">
+                <span className="w-6 h-6 rounded-lg bg-blue-500/20 text-blue-600 inline-flex items-center justify-center text-xs font-bold">
+                  🏦
+                </span>
+                <span className="font-bold text-sm text-slate-900 dark:text-white">
+                  {selectedBank.bankName.split(' ')[0]} {selectedBank.accountNumberMasked.slice(-4)}
+                </span>
+              </div>
+              <ChevronDown className="w-4 h-4 text-slate-400" />
+            </div>
+
+            {/* Primary Pay Button: When amount is 0 -> disabled gray. When > 0 -> Bright Lime Green! */}
+            <button
+              type="button"
+              disabled={parseFloat(amount) <= 0}
+              onClick={handleProceedToPin}
+              className={`w-full py-4 rounded-full text-base font-black transition-all flex items-center justify-center shadow-md cursor-pointer ${
+                parseFloat(amount) > 0
+                  ? 'bg-[#B4F726] text-slate-900 shadow-[#B4F726]/30 hover:bg-[#a5ec14] active:scale-98'
+                  : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed shadow-none'
+              }`}
+            >
+              Pay ₹{parseFloat(amount) > 0 ? parseFloat(amount).toLocaleString('en-IN') : '0'}
+            </button>
+
+            {/* Built-in Keypad matching mobile keyboard in video */}
+            <div className="grid grid-cols-3 gap-1.5 pt-1">
+              {['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', 'backspace'].map((key) => (
                 <button
-                  key={b.id}
+                  key={key}
                   type="button"
-                  onClick={() => {
-                    sounds.playKeypadClick();
-                    setSelectedBankId(b.id);
-                    setShowBankPicker(false);
-                  }}
-                  className={`w-full p-3 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer ${
-                    selectedBankId === b.id
-                      ? 'border-[#5B3DF5] bg-[#5B3DF5]/10 font-bold'
-                      : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40'
-                  }`}
+                  onClick={() => handleKeypadPress(key)}
+                  className="py-3.5 rounded-2xl bg-white dark:bg-[#1A1A22] text-slate-900 dark:text-white font-bold text-lg hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-xs"
                 >
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-[10px] font-bold">
-                      {idx + 1}
-                    </span>
-                    <div>
-                      <p className="text-xs font-bold">{b.bankName}</p>
-                      <p className="text-[10px] text-slate-400 font-mono">
-                        {b.accountNumberMasked} · Bal: ₹{b.balance.toLocaleString('en-IN')}
-                      </p>
-                    </div>
-                  </div>
-                  {selectedBankId === b.id && <Check className="w-4 h-4 text-[#5B3DF5]" />}
+                  {key === 'backspace' ? '⌫' : key}
                 </button>
               ))}
             </div>
-
-            <button
-              type="button"
-              onClick={() => setShowBankPicker(false)}
-              className="mt-4 w-full py-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 cursor-pointer hover:bg-slate-200"
-            >
-              Done
-            </button>
           </div>
         </div>
       )}
 
-      {/* PIN Confirmation Sheet */}
+      {/* UPI PIN Modal */}
       {showPinModal && (
-        <div className="absolute inset-0 z-50 flex items-end justify-center bg-black/75 backdrop-blur-xs animate-in fade-in">
-          <div className="w-full max-w-[24rem] bg-white dark:bg-[#1A1A20] rounded-t-3xl p-4 sm:p-5 shadow-2xl border-t border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white flex flex-col items-center">
-            <div className="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mb-3" />
-
-            <div className="flex justify-between items-center w-full pb-2">
-              <div className="text-left">
-                <p className="text-xs text-slate-400">Transferring to</p>
-                <p className="text-sm font-bold text-slate-900 dark:text-white">
-                  {recipientDisplayName}
-                </p>
-                <p className="text-[10px] text-slate-400 font-mono">
-                  via {selectedBank.bankName} ({selectedBank.accountNumberMasked})
-                </p>
-              </div>
-              <p className="text-xl font-bold font-mono tabular-nums text-[#5B3DF5]">
-                ₹{parseFloat(amount || '0').toLocaleString('en-IN')}
-              </p>
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col justify-end sm:justify-center items-center p-0 sm:p-4 animate-in fade-in">
+          <div className="w-full max-w-sm bg-white dark:bg-[#1A1A22] rounded-t-3xl sm:rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-2xl text-center space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                ENTER 4-DIGIT UPI PIN
+              </span>
+              <button
+                type="button"
+                onClick={() => setShowPinModal(false)}
+                className="p-1 text-slate-400 hover:text-slate-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 mb-1">
-              Enter 4-digit UPI PIN to confirm transfer
+            <p className="text-xs text-slate-500">
+              Paying <span className="font-bold text-slate-900 dark:text-white">₹{amount}</span> to{' '}
+              <span className="font-bold text-slate-900 dark:text-white">{selectedContact?.name}</span>
             </p>
 
             {pinErrorMessage ? (
@@ -742,6 +570,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
             )}
 
             <PinPad
+              pinLength={4}
               value={pin}
               onChange={(newPin) => {
                 setPin(newPin);
@@ -754,32 +583,9 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
               isError={pinError}
               showBiometric={false}
             />
-
-            <button
-              type="button"
-              onClick={() => handlePinSubmit(pin)}
-              disabled={pin.length !== 4}
-              className="mt-3 w-full max-w-[280px] py-3 rounded-2xl bg-gradient-to-r from-[#6C4CFA] to-[#A16CFF] text-white font-bold text-xs shadow-md shadow-[#5B3DF5]/30 hover:opacity-95 disabled:opacity-40 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              <span>Confirm & Transfer ₹{parseFloat(amount || '0').toLocaleString('en-IN')}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setShowPinModal(false);
-                setPin('');
-                setPinError(false);
-                setPinErrorMessage('');
-              }}
-              className="mt-2 text-xs font-semibold text-slate-400 hover:text-slate-600 cursor-pointer"
-            >
-              Cancel Transfer
-            </button>
           </div>
         </div>
       )}
     </div>
   );
 };
-
