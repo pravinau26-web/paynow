@@ -780,6 +780,8 @@ export default function App() {
         <HistoryScreen
           transactions={transactions}
           onSelectTransaction={(tx) => setSelectedTxForDetail(tx)}
+          onRepeatPayment={handleRepeatPayment}
+          bankAccount={banks.find((b) => b.isPrimary) || banks[0]}
         />
       )}
 

@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import {
-  ArrowDownLeft,
   ArrowLeft,
   ArrowUpRight,
   Check,
   Copy,
-  Download,
-  ExternalLink,
+  FileText,
   HelpCircle,
-  MessageCircle,
+  MessageSquare,
   Pencil,
   Repeat,
   RotateCcw,
   Share2,
-  ShieldCheck,
   Sparkles,
   X,
 } from 'lucide-react';
@@ -33,47 +30,56 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
   transaction,
   onClose,
   onRepeatPayment,
-  userName = 'RAHUL SHARMA',
+  userName = 'PRAVIN',
   bankAccount,
 }) => {
   const [copied, setCopied] = useState(false);
   const [sharedToast, setSharedToast] = useState<string | null>(null);
+  const [showHelpModal, setShowHelpModal] = useState(false);
   const [ticketRaised, setTicketRaised] = useState<string | null>(null);
-  const [repeatAmount, setRepeatAmount] = useState<string>('');
+  const [showBalance, setShowBalance] = useState(false);
   const [isEditingAmount, setIsEditingAmount] = useState<boolean>(false);
+  const [repeatAmount, setRepeatAmount] = useState<string>('');
   const [repeatNote, setRepeatNote] = useState<string>('');
+  const [showFullViewMore, setShowFullViewMore] = useState(false);
 
   useEffect(() => {
     if (transaction) {
       setRepeatAmount(transaction.amount.toString());
       setRepeatNote(transaction.note || 'Repeat payment');
       setIsEditingAmount(false);
+      setShowBalance(false);
     }
   }, [transaction]);
 
   if (!transaction) return null;
 
   const isDebit = transaction.type === 'debit';
+  const isFailed = transaction.status === 'FAILED';
 
-  // Format date and time
+  // Format date matching super.money video: "October 12 at 10:51 PM"
   const txDate = new Date(transaction.timestamp);
-  const formattedDate = txDate.toLocaleString('en-IN', {
+  const formattedFullDate = txDate.toLocaleString('en-IN', {
+    month: 'long',
     day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
+  }) + ' at ' + txDate.toLocaleString('en-IN', {
+    hour: 'numeric',
     minute: '2-digit',
     hour12: true,
   });
 
-  // Account name in CAPS as requested
-  const senderNameCaps = (userName || 'RAHUL SHARMA').toUpperCase();
-  const receiverNameCaps = (transaction.title || 'MERCHANT').toUpperCase();
+  // Short month label for Past Transactions
+  const monthYearLabel = txDate.toLocaleString('en-IN', { month: 'long' }) + " '" + txDate.getFullYear().toString().slice(-2);
+  const dayOrdinal = txDate.getDate() + (
+    txDate.getDate() === 1 || txDate.getDate() === 21 || txDate.getDate() === 31 ? 'st' :
+    txDate.getDate() === 2 || txDate.getDate() === 22 ? 'nd' :
+    txDate.getDate() === 3 || txDate.getDate() === 23 ? 'rd' : 'th'
+  );
+  const formattedShortDate = `${dayOrdinal} ${txDate.toLocaleString('en-IN', { month: 'short' })} • ${txDate.toLocaleString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true })}`;
 
-  // Account numbers last 4 digits for debiting account only
-  const senderLast4 = bankAccount?.accountNumberMasked
-    ? bankAccount.accountNumberMasked.slice(-4)
-    : '4829';
+  const bankName = bankAccount?.bankName || 'Canara Bank';
+  const bankLast4 = bankAccount?.accountNumberMasked ? bankAccount.accountNumberMasked.slice(-4) : '9461';
+  const availableBalance = bankAccount?.balance ?? 24850.50;
 
   const handleCopyUtr = () => {
     sounds.playKeypadClick();
@@ -83,541 +89,476 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
   };
 
   const getShareReceiptText = () => {
-    if (isDebit) {
-      return `⚡ SUPER PAY - UPI TRANSACTION RECEIPT
+    return `⚡ SUPER PAY - PAYMENT RECEIPT
 ---------------------------------
-Status: ${transaction.status === 'SUCCESS' ? 'PAID SUCCESSFULLY' : transaction.status}
+Status: ${isFailed ? 'FAILED' : 'SUCCESSFUL'}
+Paid to: ${transaction.title}
+UPI ID: ${transaction.upiId || 'paytm.s16g8iz@pty'}
 Amount: ₹${transaction.amount.toLocaleString('en-IN')}
-Date: ${formattedDate}
-
-SENDER (DEBITED FROM):
-Name: ${senderNameCaps}
-Bank: ${bankAccount?.bankName || 'HDFC Bank'}
-A/c No: •••• •••• ${senderLast4}
-
-BENEFICIARY (PAID TO):
-Name: ${receiverNameCaps}
-${transaction.upiId ? `UPI ID: ${transaction.upiId}\n` : ''}UPI Ref (UTR): ${transaction.upiRefNumber}
-${transaction.cashback > 0 ? `Cashback Credited: ₹${transaction.cashback.toFixed(2)}\n` : ''}Payment Mode: UPI Instant Settlement
----------------------------------
-Super Pay · Safe & Secured by NPCI`;
-    }
-
-    return `⚡ SUPER PAY - UPI TRANSACTION RECEIPT
----------------------------------
-Status: ${transaction.status === 'SUCCESS' ? 'RECEIVED SUCCESSFULLY' : transaction.status}
-Amount: +₹${transaction.amount.toLocaleString('en-IN')}
-Date: ${formattedDate}
-
-CREDITED TO:
-Name: ${senderNameCaps}
-Bank: ${bankAccount?.bankName || 'HDFC Bank'}
-
-RECEIVED FROM:
-Name: ${receiverNameCaps}
-${transaction.upiId ? `UPI ID: ${transaction.upiId}\n` : ''}UPI Ref (UTR): ${transaction.upiRefNumber}
-Payment Mode: UPI Instant Settlement
----------------------------------
-Super Pay · Safe & Secured by NPCI`;
+Date: ${formattedFullDate}
+UPI Ref: ${transaction.upiRefNumber}
+Debited from: ${bankName} (A/c **${bankLast4})
+${transaction.cashback > 0 ? `Cashback Earned: ₹${transaction.cashback}\n` : ''}---------------------------------
+Verified by NPCI UPI Rails`;
   };
 
-  const handleShareWhatsApp = () => {
-    sounds.playKeypadClick();
-    shareToWhatsApp(getShareReceiptText());
-  };
-
-  const handleShareGeneral = async () => {
+  const handleShare = async () => {
     sounds.playKeypadClick();
     const res = await shareGeneral({
       title: `Super Pay Receipt - ${transaction.title}`,
       text: getShareReceiptText(),
     });
-
     if (res === 'copied') {
-      setSharedToast('Receipt details copied to clipboard!');
+      setSharedToast('Receipt copied to clipboard!');
       setTimeout(() => setSharedToast(null), 2500);
     }
   };
 
-  const handleDownload = () => {
+  const handleHelp = () => {
     sounds.playKeypadClick();
-    const element = document.createElement('a');
-    const file = new Blob([getShareReceiptText()], { type: 'text/plain' });
-    element.href = URL.createObjectURL(file);
-    element.download = `SuperPay_Receipt_${transaction.upiRefNumber.replace(/\//g, '_')}.txt`;
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-    setSharedToast('Receipt downloaded successfully!');
-    setTimeout(() => setSharedToast(null), 2500);
+    setShowHelpModal(true);
   };
 
-  const handleReportIssue = () => {
+  const handleRaiseDispute = () => {
     sounds.playKeypadClick();
     setTicketRaised(
-      `Dispute #NPCI-${Math.floor(100000 + Math.random() * 900000)} registered. Our 24x7 resolution team will contact your bank within 2 hours.`
+      `Dispute #NPCI-${Math.floor(100000 + Math.random() * 900000)} created. Your bank is notified and resolution will arrive within 2 hours.`
     );
-    setTimeout(() => setTicketRaised(null), 4500);
+    setTimeout(() => {
+      setTicketRaised(null);
+      setShowHelpModal(false);
+    }, 3500);
   };
 
+  const initialLetter = (transaction.title.trim()[0] || 'P').toUpperCase();
+
   return (
-    <div className="fixed sm:absolute inset-0 z-50 bg-[#F7F8FC] dark:bg-[#0B0C10] text-slate-900 dark:text-white flex flex-col w-full h-full overflow-y-auto no-scrollbar animate-in slide-in-from-bottom-4 duration-250 select-none">
-      {/* Top App Bar with back button */}
-      <div className="sticky top-0 z-30 bg-white/95 dark:bg-[#121319]/95 backdrop-blur-md px-4 py-3.5 flex items-center justify-between border-b border-slate-200/80 dark:border-slate-800/80">
+    <div className="fixed inset-0 z-50 bg-[#F7F8FA] dark:bg-[#0E0E12] text-slate-900 dark:text-white flex flex-col w-full h-full overflow-hidden select-none animate-in fade-in duration-200">
+      {/* Top Header Bar matching super.money video (Frame 00:15) */}
+      <div className="sticky top-0 z-20 bg-[#F7F8FA] dark:bg-[#0E0E12] px-4 py-3 flex items-center justify-between border-b border-slate-200/50 dark:border-slate-800/50">
+        {/* Left: Back button */}
         <button
           type="button"
           onClick={() => {
             sounds.playKeypadClick();
             onClose();
           }}
-          className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-200 transition-colors"
-          title="Back to Previous Screen"
+          className="w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 flex items-center justify-center text-slate-800 dark:text-slate-200 transition-colors cursor-pointer"
+          title="Back"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-5 h-5 stroke-[2.2]" />
         </button>
 
-        <div className="flex items-center gap-2">
-          <img src="./logo.svg" alt="Super Pay" className="w-5 h-5 rounded-md" />
-          <h2 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">
-            Transaction Details
-          </h2>
+        {/* Center: Recipient avatar + Name + UPI ID */}
+        <div className="flex items-center gap-2.5 min-w-0 max-w-[200px] sm:max-w-xs">
+          {/* Pastel square avatar */}
+          <div className="w-9 h-9 rounded-xl bg-[#E8F8EE] text-[#00875A] dark:bg-[#003822]/40 dark:text-[#36B37E] flex items-center justify-center font-black text-sm shrink-0">
+            {initialLetter}
+          </div>
+          <div className="min-w-0 text-left">
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white truncate leading-tight">
+              {transaction.title}
+            </h2>
+            <p className="text-[11px] font-mono text-slate-400 truncate">
+              {transaction.upiId || 'paytm.s16g8iz@pty'}
+            </p>
+          </div>
         </div>
 
+        {/* Right: Help button pill */}
         <button
           type="button"
-          onClick={() => {
-            sounds.playKeypadClick();
-            onClose();
-          }}
-          className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+          onClick={handleHelp}
+          className="px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1A1A22] text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 flex items-center gap-1.5 shadow-xs cursor-pointer transition-all"
         >
-          <X className="w-4 h-4" />
+          <MessageSquare className="w-3.5 h-3.5 text-slate-500" />
+          <span>Help</span>
         </button>
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 px-4 py-5 max-w-lg mx-auto w-full space-y-4 pb-20">
-        {/* Amount & Status Hero Card */}
-        <div className="bg-white dark:bg-[#15161D] rounded-3xl p-6 text-center shadow-sm border border-slate-200/80 dark:border-slate-800/80 flex flex-col items-center">
-          {/* Status Icon */}
-          <div
-            className={`w-16 h-16 rounded-full flex items-center justify-center mb-3 shadow-md ${
-              transaction.status === 'FAILED'
-                ? 'bg-red-500/10 text-red-500 border-2 border-red-500/30'
-                : transaction.status === 'SUCCESS'
-                ? 'bg-emerald-500/15 text-emerald-500 border-2 border-emerald-500/30 shadow-emerald-500/10'
-                : 'bg-amber-500/15 text-amber-500 border-2 border-amber-500/30'
-            }`}
-          >
-            {transaction.status === 'FAILED' ? (
-              <X className="w-8 h-8 text-red-500 stroke-[3]" />
-            ) : transaction.status === 'SUCCESS' ? (
-              <Check className="w-9 h-9 stroke-[3]" />
-            ) : isDebit ? (
-              <ArrowUpRight className="w-8 h-8" />
-            ) : (
-              <ArrowDownLeft className="w-8 h-8" />
-            )}
-          </div>
+      {/* Toast Feedback */}
+      {sharedToast && (
+        <div className="mx-4 mt-2 px-3.5 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold text-center animate-in fade-in">
+          {sharedToast}
+        </div>
+      )}
 
-          {/* Amount */}
-          <p
-            className={`text-4xl sm:text-5xl font-black font-mono tracking-tight tabular-nums ${
-              transaction.status === 'FAILED'
-                ? 'text-red-500 line-through opacity-80'
-                : 'text-slate-900 dark:text-white'
-            }`}
-          >
-            {isDebit ? '-' : '+'}₹{transaction.amount.toLocaleString('en-IN')}
-          </p>
+      {/* Main Scrollable Content */}
+      <div className="flex-1 overflow-y-auto no-scrollbar px-4 sm:px-5 py-3 space-y-4 pb-28">
+        {/* MAIN PAYMENT SUCCESS CARD (Exact super.money look from video frame 00:15) */}
+        <div className="bg-white dark:bg-[#1A1A22] rounded-3xl p-5 border border-slate-150 dark:border-slate-800 shadow-sm space-y-3.5">
+          {/* Top Row: Amount & Status on Left, Big Green Checkmark on Right */}
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              {/* Big bold amount */}
+              <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight tabular-nums font-sans">
+                ₹{transaction.amount.toLocaleString('en-IN')}
+              </h1>
 
-          {/* Prominent Receiver Name Header Card inside Hero */}
-          <div className="mt-3.5 w-full max-w-sm px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 flex flex-col items-center">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-              {isDebit ? 'Paid To (Receiver)' : 'Received From'}
-            </span>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-wide text-center break-words mt-0.5">
-              {receiverNameCaps}
-            </h2>
-            {transaction.upiId && (
-              <p className="text-xs font-mono font-medium text-[#5B3DF5] dark:text-[#8B7CFA] mt-0.5">
-                {transaction.upiId}
+              {/* Payment status text */}
+              <p
+                className={`text-sm sm:text-base font-bold mt-1 ${
+                  isFailed
+                    ? 'text-red-500'
+                    : 'text-slate-900 dark:text-white'
+                }`}
+              >
+                {isFailed ? 'Payment Failed' : 'Payment Successful'}
               </p>
-            )}
-          </div>
 
-          {/* Status Label & Date */}
-          <div className="flex items-center gap-1.5 mt-2.5 text-xs font-semibold">
-            <span
-              className={`w-2 h-2 rounded-full ${
-                transaction.status === 'SUCCESS'
-                  ? 'bg-emerald-500 animate-pulse'
-                  : transaction.status === 'FAILED'
-                  ? 'bg-red-500'
-                  : 'bg-amber-500'
+              {/* Timestamp */}
+              <p className="text-xs text-slate-400 mt-0.5">
+                {formattedFullDate}
+              </p>
+            </div>
+
+            {/* Signature Big Square Badge (Green with white Checkmark, or Red with X) */}
+            <div
+              className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shrink-0 shadow-md ${
+                isFailed
+                  ? 'bg-[#FF4D4F] text-white shadow-red-500/20'
+                  : 'bg-[#00D09C] text-white shadow-[#00D09C]/25'
               }`}
-            />
-            <span
-              className={
-                transaction.status === 'SUCCESS'
-                  ? 'text-emerald-600 dark:text-emerald-400 font-bold'
-                  : transaction.status === 'FAILED'
-                  ? 'text-red-500 font-bold'
-                  : 'text-amber-500 font-bold'
-              }
             >
-              {transaction.status === 'SUCCESS'
-                ? 'Paid Successfully'
-                : transaction.status === 'FAILED'
-                ? 'Payment Failed'
-                : 'Payment Pending'}
-            </span>
-            <span className="text-slate-300 dark:text-slate-600">·</span>
-            <span className="text-slate-500 dark:text-slate-400 font-medium">
-              {formattedDate}
-            </span>
-          </div>
-
-          {transaction.status === 'FAILED' && (
-            <div className="mt-3 px-3.5 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs font-medium max-w-sm">
-              Payment was declined by issuing bank. If money was deducted, it will be refunded within 2 business days.
-            </div>
-          )}
-
-          {/* Cashback Banner */}
-          {transaction.cashback > 0 && (
-            <div className="mt-3.5 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold border border-emerald-500/30 shadow-xs">
-              <Sparkles className="w-4 h-4 fill-emerald-500 text-emerald-600" />
-              <span>+₹{transaction.cashback.toFixed(2)} Instant Cashback Credited</span>
-            </div>
-          )}
-        </div>
-
-        {/* Account & Transfer Details Card */}
-        <div className="bg-white dark:bg-[#15161D] rounded-3xl p-5 shadow-sm border border-slate-200/80 dark:border-slate-800/80 space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/80">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Account & Transfer Details
-            </span>
-            <span className="text-[11px] font-semibold text-[#5B3DF5] bg-[#5B3DF5]/10 px-2 py-0.5 rounded-md">
-              UPI Rail
-            </span>
-          </div>
-
-          {/* Beneficiary / Paid To or Sender for Credit */}
-          <div className="flex justify-between items-start gap-3">
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 shrink-0 mt-0.5">
-              {isDebit ? 'Paid To (Receiver)' : 'Received From'}
-            </span>
-            <div className="text-right">
-              {/* Account name in CAPS */}
-              <p className="text-base sm:text-lg font-black tracking-wide text-slate-900 dark:text-white">
-                {receiverNameCaps}
-              </p>
-              {transaction.upiId && (
-                <p className="text-xs font-mono font-medium text-[#5B3DF5] dark:text-[#8B7CFA] mt-0.5">
-                  {transaction.upiId}
-                </p>
+              {isFailed ? (
+                <X className="w-8 h-8 sm:w-9 sm:h-9 stroke-[3.5]" />
+              ) : (
+                <Check className="w-8 h-8 sm:w-9 sm:h-9 stroke-[3.5]" />
               )}
             </div>
           </div>
 
-          {/* Note if available */}
-          {transaction.note && (
-            <div className="flex justify-between items-start pt-2.5 border-t border-slate-100 dark:border-slate-800/60 gap-3">
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 shrink-0">Payment Note</span>
-              <p className="text-xs text-right font-medium text-slate-700 dark:text-slate-300 max-w-[200px]">
-                {transaction.note}
+          {/* Cashback Banner matching super.money */}
+          {transaction.cashback > 0 && !isFailed && (
+            <div className="bg-[#E8F8EE] dark:bg-[#003822]/40 rounded-xl px-3.5 py-2.5 flex items-center gap-2 text-[#00875A] dark:text-[#36B37E]">
+              <span className="text-base">💵</span>
+              <p className="text-xs sm:text-sm font-bold">
+                You have earned ₹{transaction.cashback} cashback
               </p>
             </div>
           )}
 
-          {/* Sender / Debited From or Credited To */}
-          <div className="flex justify-between items-start pt-2.5 border-t border-slate-100 dark:border-slate-800/60 gap-3">
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 shrink-0 mt-0.5">
-              {isDebit ? 'Debited From' : 'Credited To'}
-            </span>
+          {/* Divider line */}
+          <hr className="border-slate-100 dark:border-slate-800/80 my-2" />
+
+          {/* Paid to: */}
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-slate-400 font-medium">Paid to:</span>
             <div className="text-right">
-              {/* Name in CAPS */}
-              <p className="text-sm sm:text-base font-extrabold tracking-wide text-slate-900 dark:text-white">
-                {senderNameCaps}
+              <p className="font-mono font-bold text-slate-900 dark:text-white">
+                {transaction.upiId || 'paytm.s16g8iz@pty'}
               </p>
-              <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 mt-0.5">
-                {bankAccount?.bankName || 'HDFC Bank'}
-              </p>
-              {/* Account Number Last 4 digits only for debit */}
-              {isDebit && (
-                <p className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 mt-0.5">
-                  A/c No: •••• •••• {senderLast4}
-                </p>
-              )}
+              <div className="flex items-center justify-end gap-1.5 text-slate-500 dark:text-slate-400 mt-0.5">
+                <span className="text-[10px]">🏦</span>
+                <span>Paytm Payments Bank</span>
+                <span className="w-2.5 h-2.5 rounded-full border border-slate-300 dark:border-slate-600 inline-block" />
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* UPI Reference & Order Metadata Card */}
-        <div className="bg-white dark:bg-[#15161D] rounded-3xl p-5 shadow-sm border border-slate-200/80 dark:border-slate-800/80 space-y-3">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block pb-1 border-b border-slate-100 dark:border-slate-800/80">
-            UPI Verification & IDs
-          </span>
+          {/* Divider line */}
+          <hr className="border-slate-100 dark:border-slate-800/80 my-2" />
 
-          {/* UPI Ref / UTR with copy */}
-          <div className="flex justify-between items-center text-xs">
-            <span className="text-slate-500 font-medium">UPI Ref (UTR)</span>
+          {/* UPI Reference ID */}
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-slate-400 font-medium">UPI Reference ID</span>
             <button
               type="button"
               onClick={handleCopyUtr}
-              className="flex items-center gap-1.5 font-mono font-bold text-[#5B3DF5] dark:text-[#8B7CFA] bg-[#5B3DF5]/10 px-2.5 py-1 rounded-lg hover:bg-[#5B3DF5]/20 transition-colors"
-              title="Click to copy UTR"
+              className="flex items-center gap-1.5 font-mono font-bold text-slate-900 dark:text-white hover:text-[#5B3DF5] cursor-pointer transition-colors"
+              title="Copy UPI Ref"
             >
               <span>{transaction.upiRefNumber}</span>
               {copied ? (
                 <Check className="w-3.5 h-3.5 text-emerald-500" />
               ) : (
-                <Copy className="w-3.5 h-3.5" />
+                <Copy className="w-3.5 h-3.5 text-slate-400" />
               )}
             </button>
           </div>
 
-          {/* Payment Type */}
-          <div className="flex justify-between items-center text-xs">
-            <span className="text-slate-500 font-medium">Payment Type</span>
-            <span className="font-semibold text-slate-700 dark:text-slate-300">
-              UPI P2M Instant Settlement
-            </span>
-          </div>
+          {/* Divider line */}
+          <hr className="border-slate-100 dark:border-slate-800/80 my-2" />
 
-          {/* NPCI Rail Status */}
-          <div className="flex justify-between items-center text-xs">
-            <span className="text-slate-500 font-medium">Security Status</span>
-            <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              NPCI Verified & Encrypted
-            </span>
+          {/* Payment method */}
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-slate-400 font-medium">Payment method</span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 text-slate-900 dark:text-white font-medium">
+                <span className="w-4 h-4 rounded-full bg-blue-500/20 text-blue-600 inline-flex items-center justify-center text-[10px] font-bold">
+                  🏦
+                </span>
+                <span>{bankName.split(' ')[0]} {bankLast4}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  sounds.playKeypadClick();
+                  setShowBalance(!showBalance);
+                }}
+                className="font-bold text-[#5B3DF5] dark:text-[#8B7CFA] hover:underline cursor-pointer"
+              >
+                {showBalance ? `₹${availableBalance.toLocaleString('en-IN')}` : 'Check balance'}
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Notification Feedback Toast */}
-        {sharedToast && (
-          <div className="p-3 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs text-center font-bold animate-in fade-in">
-            {sharedToast}
-          </div>
-        )}
-
-        {ticketRaised && (
-          <div className="p-3.5 rounded-2xl bg-[#5B3DF5]/15 border border-[#5B3DF5]/30 text-[#5B3DF5] dark:text-[#8B7CFA] text-xs text-center font-bold animate-in fade-in leading-relaxed">
-            {ticketRaised}
-          </div>
-        )}
-
-        {/* Action Buttons Section */}
-        <div className="space-y-2.5 pt-2">
-          {/* Share via WhatsApp */}
+        {/* View more and Share Pill Buttons Row matching video */}
+        <div className="grid grid-cols-2 gap-3 pt-0.5">
           <button
             type="button"
-            onClick={handleShareWhatsApp}
-            className="w-full py-3.5 rounded-2xl text-sm font-bold text-white bg-[#25D366] hover:bg-[#20ba59] active:scale-98 transition-all flex items-center justify-center gap-2 shadow-md shadow-[#25D366]/20 cursor-pointer"
+            onClick={() => setShowFullViewMore(!showFullViewMore)}
+            className="py-3 px-4 rounded-full bg-white dark:bg-[#1A1A22] border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center justify-center gap-1.5 shadow-xs hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-all"
           >
-            <MessageCircle className="w-5 h-5 fill-white" />
-            <span>Share Receipt via WhatsApp</span>
+            <FileText className="w-4 h-4 text-slate-500" />
+            <span>{showFullViewMore ? 'Hide details' : 'View more'}</span>
           </button>
 
-          {/* Repeat Payment if Debit with editable amount */}
-          {isDebit && onRepeatPayment && (
-            <div className="rounded-3xl p-4 bg-gradient-to-b from-[#5B3DF5]/10 via-[#5B3DF5]/5 to-transparent dark:from-[#5B3DF5]/20 dark:via-[#5B3DF5]/10 border border-[#5B3DF5]/30 space-y-3 shadow-xs">
-              {/* Header */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-xl bg-[#5B3DF5] text-white flex items-center justify-center shadow-xs">
-                    <Repeat className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider block">
-                      Repeat This Payment
-                    </span>
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400">
-                      Paid to {receiverNameCaps}
-                    </span>
-                  </div>
-                </div>
+          <button
+            type="button"
+            onClick={handleShare}
+            className="py-3 px-4 rounded-full bg-white dark:bg-[#1A1A22] border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center justify-center gap-1.5 shadow-xs hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-all"
+          >
+            <Share2 className="w-4 h-4 text-slate-500" />
+            <span>Share</span>
+          </button>
+        </div>
 
-                {/* Edit Amount Toggle button */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    sounds.playKeypadClick();
-                    setIsEditingAmount(!isEditingAmount);
-                  }}
-                  className={`px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-                    isEditingAmount
-                      ? 'bg-[#5B3DF5] text-white shadow-xs'
-                      : 'bg-[#5B3DF5]/15 text-[#5B3DF5] dark:text-[#A16CFF] hover:bg-[#5B3DF5]/25'
-                  }`}
-                  title="Edit amount to pay"
-                >
-                  <Pencil className="w-3 h-3" />
-                  <span>{isEditingAmount ? 'Done Editing' : 'Edit Amount'}</span>
-                </button>
-              </div>
+        {/* View More Drawer if expanded */}
+        {showFullViewMore && (
+          <div className="bg-white dark:bg-[#1A1A22] rounded-2xl p-4 border border-slate-200 dark:border-slate-800 text-xs space-y-2 animate-in fade-in">
+            <div className="flex justify-between text-slate-500">
+              <span>Security Rail:</span>
+              <span className="font-semibold text-emerald-600">NPCI 256-Bit Encrypted</span>
+            </div>
+            <div className="flex justify-between text-slate-500">
+              <span>Debit Account:</span>
+              <span className="font-semibold text-slate-900 dark:text-white">{bankName} · **{bankLast4}</span>
+            </div>
+            <div className="flex justify-between text-slate-500">
+              <span>Transaction Type:</span>
+              <span className="font-semibold text-slate-900 dark:text-white">UPI P2M Instant Rail</span>
+            </div>
+          </div>
+        )}
 
-              {/* Amount Box */}
-              <div className="p-3.5 rounded-2xl bg-white dark:bg-[#1A1A22] border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                    Amount to Pay
-                  </span>
-                  <div className="flex items-center gap-1.5">
-                    {isEditingAmount ? (
-                      <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <Check className="w-3 h-3" />
-                        Editable
-                      </span>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          sounds.playKeypadClick();
-                          setIsEditingAmount(true);
-                        }}
-                        className="text-[10px] font-bold text-[#5B3DF5] dark:text-[#A16CFF] hover:underline flex items-center gap-1"
-                      >
-                        <Pencil className="w-2.5 h-2.5" />
-                        Tap to change
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Amount Entry & Currency Symbol */}
-                <div className="flex items-center justify-center gap-1.5">
-                  <span className="text-2xl sm:text-3xl font-black text-[#5B3DF5]">₹</span>
-                  <input
-                    type="number"
-                    min="1"
-                    max="500000"
-                    value={repeatAmount}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      if (val === '' || Number(val) >= 0) {
-                        setRepeatAmount(val);
-                      }
-                    }}
-                    onFocus={() => setIsEditingAmount(true)}
-                    placeholder="0"
-                    className="w-full text-center text-3xl sm:text-4xl font-black font-mono tracking-tight bg-transparent text-slate-900 dark:text-white border-b-2 border-[#5B3DF5] focus:outline-none py-1 tabular-nums selection:bg-[#5B3DF5]/30"
-                  />
-                </div>
-
-                {/* Quick Amount Suggestion Chips */}
-                <div className="flex items-center justify-center gap-1.5 flex-wrap pt-1">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      sounds.playKeypadClick();
-                      setRepeatAmount(transaction.amount.toString());
-                    }}
-                    className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-colors cursor-pointer ${
-                      Number(repeatAmount) === transaction.amount
-                        ? 'bg-[#5B3DF5] text-white shadow-xs'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                    }`}
-                  >
-                    Original (₹{transaction.amount.toLocaleString('en-IN')})
-                  </button>
-
-                  {[100, 500, 1000, 2000].map((quickAdd) => (
-                    <button
-                      key={quickAdd}
-                      type="button"
-                      onClick={() => {
-                        sounds.playKeypadClick();
-                        const curr = parseFloat(repeatAmount) || 0;
-                        setRepeatAmount((curr + quickAdd).toString());
-                      }}
-                      className="px-2 py-1 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
-                    >
-                      +₹{quickAdd}
-                    </button>
-                  ))}
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      sounds.playKeypadClick();
-                      setRepeatAmount('');
-                    }}
-                    className="px-2 py-1 rounded-full text-[11px] font-bold bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors cursor-pointer"
-                  >
-                    Clear
-                  </button>
-                </div>
-
-                {/* Note line */}
-                <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center gap-2">
-                  <span className="text-[11px] font-semibold text-slate-400 shrink-0">Note:</span>
-                  <input
-                    type="text"
-                    value={repeatNote}
-                    onChange={(e) => setRepeatNote(e.target.value)}
-                    placeholder="Payment note (optional)"
-                    className="flex-1 text-xs bg-slate-50 dark:bg-slate-800/60 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:border-[#5B3DF5]"
-                  />
-                </div>
-              </div>
-
-              {/* Action Button with Dynamic Amount */}
+        {/* Editable Repeat Payment Box (Preserving custom amount edit requested by user) */}
+        {isEditingAmount && isDebit && onRepeatPayment && (
+          <div className="rounded-3xl p-4 bg-gradient-to-b from-[#5B3DF5]/10 via-[#5B3DF5]/5 to-transparent dark:from-[#5B3DF5]/20 border border-[#5B3DF5]/30 space-y-3 shadow-xs animate-in fade-in">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
+                Edit Amount to Repeat
+              </span>
               <button
                 type="button"
-                disabled={!repeatAmount || parseFloat(repeatAmount) <= 0}
-                onClick={() => {
+                onClick={() => setIsEditingAmount(false)}
+                className="text-xs font-bold text-slate-500 hover:text-slate-800"
+              >
+                Cancel
+              </button>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-white dark:bg-[#1A1A22] border border-slate-200 dark:border-slate-800 space-y-2">
+              <div className="flex items-center justify-center gap-1.5">
+                <span className="text-3xl font-black text-[#5B3DF5]">₹</span>
+                <input
+                  type="number"
+                  min="1"
+                  max="500000"
+                  value={repeatAmount}
+                  onChange={(e) => setRepeatAmount(e.target.value)}
+                  className="w-full text-center text-3xl font-black font-mono tracking-tight bg-transparent text-slate-900 dark:text-white border-b-2 border-[#5B3DF5] py-1 outline-none tabular-nums"
+                  placeholder="0"
+                />
+              </div>
+
+              {/* Quick Preset chips */}
+              <div className="flex items-center justify-center gap-1.5 flex-wrap pt-1">
+                <button
+                  type="button"
+                  onClick={() => setRepeatAmount(transaction.amount.toString())}
+                  className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200"
+                >
+                  Original (₹{transaction.amount})
+                </button>
+                {[100, 500, 1000].map((extra) => (
+                  <button
+                    key={extra}
+                    type="button"
+                    onClick={() => {
+                      const curr = parseFloat(repeatAmount) || 0;
+                      setRepeatAmount((curr + extra).toString());
+                    }}
+                    className="px-2 py-1 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200"
+                  >
+                    +₹{extra}
+                  </button>
+                ))}
+              </div>
+
+              {/* Note input */}
+              <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
+                <span className="text-[11px] font-semibold text-slate-400">Note:</span>
+                <input
+                  type="text"
+                  value={repeatNote}
+                  onChange={(e) => setRepeatNote(e.target.value)}
+                  className="flex-1 text-xs bg-slate-50 dark:bg-slate-800/60 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 outline-none"
+                  placeholder="Payment note"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* PAST TRANSACTIONS SECTION (Exact layout matching super.money video) */}
+        <div className="space-y-2.5 pt-2">
+          <div>
+            <h3 className="text-base font-black text-slate-900 dark:text-white tracking-tight">
+              Past Transactions
+            </h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              {monthYearLabel}
+            </p>
+          </div>
+
+          {/* Past Transaction Item Card */}
+          <div className="w-full bg-white dark:bg-[#1A1A22] rounded-2xl p-3.5 border border-slate-150 dark:border-slate-800 shadow-xs flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              {/* Purple/Blue Square with ArrowUpRight */}
+              <div className="w-9 h-9 rounded-xl bg-[#5B3DF5] text-white flex items-center justify-center font-bold shadow-xs">
+                <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
+              </div>
+              <div>
+                <p className="font-bold text-sm text-slate-900 dark:text-white">
+                  You Sent
+                </p>
+                <p className="text-xs text-slate-400">
+                  {formattedShortDate}
+                </p>
+              </div>
+            </div>
+
+            <div className="text-right">
+              <p className="font-black text-sm text-slate-900 dark:text-white tabular-nums">
+                ₹{transaction.amount.toLocaleString('en-IN')}
+              </p>
+              <div className="flex items-center justify-end gap-1 text-[11px] text-slate-400 mt-0.5">
+                <span>From</span>
+                <span className="text-[10px]">🏦</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* FIXED BOTTOM ACTION BAR matching super.money video (Frame 00:20 - 00:24) */}
+      <div className="fixed bottom-0 left-0 right-0 z-30 p-4 bg-white/95 dark:bg-[#121319]/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800/80 flex items-center justify-center">
+        <div className="w-full max-w-lg flex items-center gap-3">
+          {/* Left Button: "Pay again" (White pill button with border) */}
+          {isDebit && onRepeatPayment && (
+            <button
+              type="button"
+              onClick={() => {
+                if (isEditingAmount) {
                   const num = parseFloat(repeatAmount);
                   const finalAmt = !isNaN(num) && num > 0 ? num : transaction.amount;
                   sounds.playKeypadClick();
                   onClose();
                   onRepeatPayment(transaction, finalAmt, repeatNote);
-                }}
-                className="w-full py-3.5 rounded-2xl text-sm font-black text-white bg-gradient-to-r from-[#5B3DF5] via-[#7C3AED] to-[#00F0FF] hover:opacity-95 shadow-md shadow-[#5B3DF5]/25 flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Repeat className="w-4 h-4" />
-                <span>
-                  Repeat & Pay ₹{parseFloat(repeatAmount) > 0 ? parseFloat(repeatAmount).toLocaleString('en-IN') : '0'}
-                </span>
-              </button>
-            </div>
+                } else {
+                  // Direct 1-tap repeat or quick prompt
+                  sounds.playKeypadClick();
+                  onClose();
+                  onRepeatPayment(transaction);
+                }
+              }}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                setIsEditingAmount(true);
+              }}
+              className="flex-1 py-3.5 px-4 rounded-full bg-white dark:bg-[#1A1A22] border-2 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm font-bold shadow-xs hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>Pay again</span>
+              {!isEditingAmount && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    sounds.playKeypadClick();
+                    setIsEditingAmount(true);
+                  }}
+                  className="p-1 hover:text-[#5B3DF5]"
+                  title="Edit amount before paying"
+                >
+                  <Pencil className="w-3 h-3 text-slate-400" />
+                </button>
+              )}
+            </button>
           )}
 
-          {/* Share Link & Download Buttons */}
-          <div className="grid grid-cols-2 gap-2.5">
-            <button
-              type="button"
-              onClick={handleShareGeneral}
-              className="py-3 rounded-2xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-[#1A1A22] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
-            >
-              <Share2 className="w-4 h-4 text-slate-500" />
-              <span>Share Receipt</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handleDownload}
-              className="py-3 rounded-2xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-[#1A1A22] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
-            >
-              <Download className="w-4 h-4 text-slate-500" />
-              <span>Download Text</span>
-            </button>
-          </div>
-
-          {/* Help / Dispute */}
+          {/* Right Button: "Done" (Super.money Signature Green Pill Button) */}
           <button
             type="button"
-            onClick={handleReportIssue}
-            className="w-full py-2.5 text-center text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+            onClick={() => {
+              sounds.playKeypadClick();
+              onClose();
+            }}
+            className="flex-1 py-3.5 px-4 rounded-full bg-[#B4F726] hover:bg-[#a6ec15] text-slate-900 text-sm font-black shadow-sm shadow-[#B4F726]/30 active:scale-98 transition-all flex items-center justify-center cursor-pointer"
           >
-            <HelpCircle className="w-3.5 h-3.5" />
-            <span>Having an issue with this payment? Raise NPCI Dispute</span>
+            Done
           </button>
         </div>
       </div>
+
+      {/* Help / Dispute Dialog Modal */}
+      {showHelpModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#1A1A22] rounded-3xl p-5 max-w-sm w-full space-y-3.5 shadow-2xl border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <HelpCircle className="w-5 h-5 text-[#5B3DF5]" />
+                Payment Support
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowHelpModal(false)}
+                className="p-1 text-slate-400 hover:text-slate-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Having an issue with this transaction to {transaction.title}? We can raise an automated NPCI dispute directly with {bankName}.
+            </p>
+
+            {ticketRaised ? (
+              <div className="p-3 rounded-xl bg-emerald-500/15 text-emerald-600 font-bold text-xs">
+                {ticketRaised}
+              </div>
+            ) : (
+              <div className="space-y-2 pt-1">
+                <button
+                  type="button"
+                  onClick={handleRaiseDispute}
+                  className="w-full py-2.5 rounded-xl bg-[#5B3DF5] text-white text-xs font-bold shadow-xs hover:bg-[#4d32d0] transition-colors"
+                >
+                  Raise NPCI Bank Dispute
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowHelpModal(false)}
+                  className="w-full py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold"
+                >
+                  Close
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,8 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Clock, RefreshCw, Share2, Sparkles, X } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  Check,
+  Copy,
+  FileText,
+  HelpCircle,
+  MessageSquare,
+  RotateCcw,
+  Share2,
+  ShieldCheck,
+  Sparkles,
+  X,
+} from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { PaymentStatus, Transaction } from '../types';
 import { sounds } from '../services/audio';
+import { shareGeneral } from '../services/share';
 
 interface PaymentStatusOverlayProps {
   status: PaymentStatus;
@@ -22,16 +36,19 @@ export const PaymentStatusOverlay: React.FC<PaymentStatusOverlayProps> = ({
   status,
   amount,
   recipientName,
-  upiId,
+  upiId = 'paytm.s16g8iz@pty',
   cashbackEarned = 0,
-  failureReason = 'Bank server timeout. No money was deducted.',
+  failureReason = 'Bank server declined this transaction. No money was deducted.',
+  transaction,
   onDone,
   onViewReceipt,
   onRetry,
-  onSimulateFail,
 }) => {
-  const [displayAmount, setDisplayAmount] = useState(0);
   const [countdown, setCountdown] = useState(5);
+  const [copied, setCopied] = useState(false);
+  const [sharedToast, setSharedToast] = useState<string | null>(null);
+  const [showBalance, setShowBalance] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   // 5-second processing countdown timer
   useEffect(() => {
@@ -44,335 +61,389 @@ export const PaymentStatusOverlay: React.FC<PaymentStatusOverlayProps> = ({
     }
   }, [status]);
 
-  // Sound and confetti triggers on state change
+  // Audio and confetti triggers on state change
   useEffect(() => {
     if (status === 'processing') {
       sounds.playPaymentInitiate();
     } else if (status === 'success') {
       sounds.playPaymentSuccess();
-
-      // Confetti burst (tactile and pleasant)
       try {
         confetti({
-          particleCount: 45,
-          spread: 60,
-          origin: { y: 0.45 },
-          colors: ['#5B3DF5', '#1DB954', '#8B7CFA', '#FFD700'],
+          particleCount: 50,
+          spread: 70,
+          origin: { y: 0.35 },
+          colors: ['#00D09C', '#B4F726', '#5B3DF5', '#FFD700'],
           disableForReducedMotion: true,
         });
       } catch {
         // fallback
       }
-
-      // Settle number animation
-      const duration = 600;
-      const startTime = performance.now();
-      const step = (currentTime: number) => {
-        const progress = Math.min((currentTime - startTime) / duration, 1);
-        setDisplayAmount(Math.floor(progress * amount));
-        if (progress < 1) {
-          requestAnimationFrame(step);
-        } else {
-          setDisplayAmount(amount);
-        }
-      };
-      requestAnimationFrame(step);
     } else if (status === 'failed') {
       sounds.playPaymentFailure();
     }
-  }, [status, amount]);
+  }, [status]);
+
+  const initialLetter = (recipientName.trim()[0] || 'P').toUpperCase();
+  const upiRef = transaction?.upiRefNumber || `6651${Math.floor(10000000 + Math.random() * 90000000)}`;
+
+  const now = new Date();
+  const formattedFullDate = now.toLocaleString('en-IN', {
+    month: 'long',
+    day: 'numeric',
+  }) + ' at ' + now.toLocaleString('en-IN', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+
+  const monthYearLabel = now.toLocaleString('en-IN', { month: 'long' }) + " '" + now.getFullYear().toString().slice(-2);
+  const day = now.getDate();
+  const ordinal = day === 1 || day === 21 || day === 31 ? 'st' : day === 2 || day === 22 ? 'nd' : day === 3 || day === 23 ? 'rd' : 'th';
+  const formattedShortDate = `${day}${ordinal} ${now.toLocaleString('en-IN', { month: 'short' })} • ${now.toLocaleString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true })}`;
+
+  const handleCopyUtr = () => {
+    sounds.playKeypadClick();
+    navigator.clipboard?.writeText(upiRef);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleShare = async () => {
+    sounds.playKeypadClick();
+    const res = await shareGeneral({
+      title: `Super Pay Receipt - ${recipientName}`,
+      text: `⚡ SUPER PAY RECEIPT: Paid ₹${amount} to ${recipientName} (${upiId}). UPI Ref: ${upiRef}`,
+    });
+    if (res === 'copied') {
+      setSharedToast('Receipt copied to clipboard!');
+      setTimeout(() => setSharedToast(null), 2500);
+    }
+  };
+
+  // =========================================================================
+  // PROCESSING STATE (Clean countdown & security shield modal)
+  // =========================================================================
+  if (status === 'processing') {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 select-none animate-in fade-in">
+        <div className="w-full max-w-sm bg-white dark:bg-[#1A1A22] rounded-3xl p-6 text-center shadow-2xl border border-slate-200 dark:border-slate-800">
+          <div className="relative w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+            <div className="absolute inset-0 rounded-full border-4 border-[#5B3DF5]/20 animate-spin border-t-[#5B3DF5]" />
+            <div className="w-14 h-14 rounded-full bg-[#5B3DF5]/10 text-[#5B3DF5] flex items-center justify-center font-black text-xl font-mono">
+              {countdown}s
+            </div>
+          </div>
+
+          <h3 className="text-xl font-black text-slate-900 dark:text-white">
+            Authorizing UPI Rail
+          </h3>
+          <p className="text-xs text-slate-400 mt-1">
+            Communicating with bank server...
+          </p>
+
+          <div className="mt-4 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
+            <p className="text-2xl font-black font-mono text-slate-900 dark:text-white">
+              ₹{amount.toLocaleString('en-IN')}
+            </p>
+            <p className="text-xs font-bold text-slate-700 dark:text-slate-300 mt-0.5">
+              Paying {recipientName}
+            </p>
+            <p className="text-[11px] font-mono text-slate-400">{upiId}</p>
+          </div>
+
+          <p className="text-[11px] text-amber-500 font-medium mt-4">
+            Please do not press back or close the app
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // =========================================================================
+  // SUCCESS & FAILED STATES: Exact super.money full-screen layout from video!
+  // =========================================================================
+  const isFailed = status === 'failed';
 
   return (
-    <div className="fixed sm:absolute inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 animate-in fade-in duration-200">
-      <div
-        className={`w-full max-w-[22rem] bg-white dark:bg-[#1A1A20] rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 text-center relative overflow-hidden transition-all duration-300 ${
-          status === 'failed' ? 'animate-shake' : ''
-        }`}
-      >
-        {/* Ambient background glow */}
-        <div
-          className={`absolute -top-24 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full blur-3xl pointer-events-none opacity-40 transition-colors duration-500 ${
-            status === 'processing'
-              ? 'bg-[#5B3DF5]'
-              : status === 'success'
-              ? 'bg-[#1DB954]'
-              : status === 'failed'
-              ? 'bg-[#FF4D4F]'
-              : 'bg-amber-500'
-          }`}
-        />
+    <div className="fixed inset-0 z-50 bg-[#F7F8FA] dark:bg-[#0E0E12] text-slate-900 dark:text-white flex flex-col w-full h-full overflow-hidden select-none animate-in fade-in duration-200">
+      {/* Top Header Bar matching super.money video (Frame 00:15) */}
+      <div className="sticky top-0 z-20 bg-[#F7F8FA] dark:bg-[#0E0E12] px-4 py-3 flex items-center justify-between border-b border-slate-200/50 dark:border-slate-800/50">
+        {/* Left: Back button */}
+        <button
+          type="button"
+          onClick={() => {
+            sounds.playKeypadClick();
+            onDone();
+          }}
+          className="w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 flex items-center justify-center text-slate-800 dark:text-slate-200 transition-colors cursor-pointer"
+          title="Back"
+        >
+          <ArrowLeft className="w-5 h-5 stroke-[2.2]" />
+        </button>
 
-        {/* ========================================================================= */}
-        {/* STATE 1: PROCESSING                                                        */}
-        {/* ========================================================================= */}
-        {status === 'processing' && (
-          <div className="py-7 flex flex-col items-center relative">
-            {/* Top Right "Fa" Minute Button to simulate payment failure within 5s */}
-            {onSimulateFail && (
+        {/* Center: Recipient avatar + Name + UPI ID */}
+        <div className="flex items-center gap-2.5 min-w-0 max-w-[200px] sm:max-w-xs">
+          <div className="w-9 h-9 rounded-xl bg-[#E8F8EE] text-[#00875A] dark:bg-[#003822]/40 dark:text-[#36B37E] flex items-center justify-center font-black text-sm shrink-0">
+            {initialLetter}
+          </div>
+          <div className="min-w-0 text-left">
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white truncate leading-tight">
+              {recipientName}
+            </h2>
+            <p className="text-[11px] font-mono text-slate-400 truncate">
+              {upiId}
+            </p>
+          </div>
+        </div>
+
+        {/* Right: Help button */}
+        <button
+          type="button"
+          onClick={() => {
+            sounds.playKeypadClick();
+            onViewReceipt();
+          }}
+          className="px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1A1A22] text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 flex items-center gap-1.5 shadow-xs cursor-pointer"
+        >
+          <MessageSquare className="w-3.5 h-3.5 text-slate-500" />
+          <span>Help</span>
+        </button>
+      </div>
+
+      {/* Shared Feedback Toast */}
+      {sharedToast && (
+        <div className="mx-4 mt-2 px-3.5 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold text-center animate-in fade-in">
+          {sharedToast}
+        </div>
+      )}
+
+      {/* Main Scrollable Area */}
+      <div className="flex-1 overflow-y-auto no-scrollbar px-4 sm:px-5 py-3 space-y-4 pb-28">
+        {/* MAIN PAYMENT SUCCESS CARD */}
+        <div className="bg-white dark:bg-[#1A1A22] rounded-3xl p-5 border border-slate-150 dark:border-slate-800 shadow-sm space-y-3.5">
+          {/* Top Row: Amount & Status on Left, Big Green Checkmark on Right */}
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight tabular-nums font-sans">
+                ₹{amount.toLocaleString('en-IN')}
+              </h1>
+
+              <p
+                className={`text-sm sm:text-base font-bold mt-1 ${
+                  isFailed ? 'text-red-500' : 'text-slate-900 dark:text-white'
+                }`}
+              >
+                {isFailed ? 'Payment Failed' : 'Payment Successful'}
+              </p>
+
+              <p className="text-xs text-slate-400 mt-0.5">
+                {formattedFullDate}
+              </p>
+            </div>
+
+            {/* Signature Big Square Badge */}
+            <div
+              className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shrink-0 shadow-md ${
+                isFailed
+                  ? 'bg-[#FF4D4F] text-white shadow-red-500/20'
+                  : 'bg-[#00D09C] text-white shadow-[#00D09C]/25'
+              }`}
+            >
+              {isFailed ? (
+                <X className="w-8 h-8 sm:w-9 sm:h-9 stroke-[3.5]" />
+              ) : (
+                <Check className="w-8 h-8 sm:w-9 sm:h-9 stroke-[3.5]" />
+              )}
+            </div>
+          </div>
+
+          {/* Cashback Banner matching super.money */}
+          {cashbackEarned > 0 && !isFailed && (
+            <div className="bg-[#E8F8EE] dark:bg-[#003822]/40 rounded-xl px-3.5 py-2.5 flex items-center gap-2 text-[#00875A] dark:text-[#36B37E]">
+              <span className="text-base">💵</span>
+              <p className="text-xs sm:text-sm font-bold">
+                You have earned ₹{cashbackEarned.toFixed(1)} cashback
+              </p>
+            </div>
+          )}
+
+          {isFailed && (
+            <div className="bg-red-50 dark:bg-red-950/40 rounded-xl p-3 text-red-600 dark:text-red-400 text-xs font-medium">
+              {failureReason}
+            </div>
+          )}
+
+          <hr className="border-slate-100 dark:border-slate-800/80 my-2" />
+
+          {/* Paid to */}
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-slate-400 font-medium">Paid to:</span>
+            <div className="text-right">
+              <p className="font-mono font-bold text-slate-900 dark:text-white">
+                {upiId}
+              </p>
+              <div className="flex items-center justify-end gap-1.5 text-slate-500 dark:text-slate-400 mt-0.5">
+                <span className="text-[10px]">🏦</span>
+                <span>Paytm Payments Bank</span>
+                <span className="w-2.5 h-2.5 rounded-full border border-slate-300 dark:border-slate-600 inline-block" />
+              </div>
+            </div>
+          </div>
+
+          <hr className="border-slate-100 dark:border-slate-800/80 my-2" />
+
+          {/* UPI Reference ID */}
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-slate-400 font-medium">UPI Reference ID</span>
+            <button
+              type="button"
+              onClick={handleCopyUtr}
+              className="flex items-center gap-1.5 font-mono font-bold text-slate-900 dark:text-white hover:text-[#5B3DF5] cursor-pointer"
+            >
+              <span>{upiRef}</span>
+              {copied ? (
+                <Check className="w-3.5 h-3.5 text-emerald-500" />
+              ) : (
+                <Copy className="w-3.5 h-3.5 text-slate-400" />
+              )}
+            </button>
+          </div>
+
+          <hr className="border-slate-100 dark:border-slate-800/80 my-2" />
+
+          {/* Payment method */}
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-slate-400 font-medium">Payment method</span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 text-slate-900 dark:text-white font-medium">
+                <span className="w-4 h-4 rounded-full bg-blue-500/20 text-blue-600 inline-flex items-center justify-center text-[10px] font-bold">
+                  🏦
+                </span>
+                <span>Canara 9461</span>
+              </div>
               <button
                 type="button"
                 onClick={() => {
                   sounds.playKeypadClick();
-                  onSimulateFail();
+                  setShowBalance(!showBalance);
                 }}
-                title="Fail payment (Fa)"
-                aria-label="Simulate payment failure"
-                className="absolute top-0 right-0 z-30 flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-500/10 hover:bg-red-500/20 active:scale-90 border border-red-500/30 text-red-500 hover:text-red-400 text-[10px] font-bold font-mono transition-all cursor-pointer shadow-xs"
+                className="font-bold text-[#5B3DF5] dark:text-[#8B7CFA] hover:underline cursor-pointer"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
-                <span>Fa</span>
+                {showBalance ? '₹24,850.50' : 'Check balance'}
               </button>
-            )}
-
-            {/* Pulsing Breathing Gradient Loader */}
-            <div className="relative w-28 h-28 flex items-center justify-center my-3">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#5B3DF5] to-[#A16CFF] opacity-30 animate-ping" />
-              <div className="absolute inset-2 rounded-full bg-gradient-to-tr from-[#5B3DF5] to-[#A16CFF] opacity-40 animate-pulse-glow" />
-              <div className="relative z-10 w-16 h-16 rounded-full bg-gradient-to-tr from-[#5B3DF5] to-[#A16CFF] flex items-center justify-center shadow-lg shadow-[#5B3DF5]/40 animate-spin">
-                <div className="w-12 h-12 rounded-full bg-white dark:bg-[#1A1A20] flex items-center justify-center">
-                  <RefreshCw className="w-6 h-6 text-[#5B3DF5] animate-spin" />
-                </div>
-              </div>
             </div>
+          </div>
+        </div>
 
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-3">
-              Processing Payment
+        {/* View more and Share Pill Buttons Row */}
+        <div className="grid grid-cols-2 gap-3 pt-0.5">
+          <button
+            type="button"
+            onClick={() => setShowDetails(!showDetails)}
+            className="py-3 px-4 rounded-full bg-white dark:bg-[#1A1A22] border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center justify-center gap-1.5 shadow-xs hover:bg-slate-50 cursor-pointer transition-all"
+          >
+            <FileText className="w-4 h-4 text-slate-500" />
+            <span>{showDetails ? 'Hide details' : 'View more'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleShare}
+            className="py-3 px-4 rounded-full bg-white dark:bg-[#1A1A22] border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center justify-center gap-1.5 shadow-xs hover:bg-slate-50 cursor-pointer transition-all"
+          >
+            <Share2 className="w-4 h-4 text-slate-500" />
+            <span>Share</span>
+          </button>
+        </div>
+
+        {/* View More Drawer */}
+        {showDetails && (
+          <div className="bg-white dark:bg-[#1A1A22] rounded-2xl p-4 border border-slate-200 dark:border-slate-800 text-xs space-y-2 animate-in fade-in">
+            <div className="flex justify-between text-slate-500">
+              <span>Security Rail:</span>
+              <span className="font-semibold text-emerald-600">NPCI 256-Bit Encrypted</span>
+            </div>
+            <div className="flex justify-between text-slate-500">
+              <span>Debit Account:</span>
+              <span className="font-semibold text-slate-900 dark:text-white">Canara Bank · **9461</span>
+            </div>
+            <div className="flex justify-between text-slate-500">
+              <span>Transaction Type:</span>
+              <span className="font-semibold text-slate-900 dark:text-white">UPI P2M Instant Rail</span>
+            </div>
+          </div>
+        )}
+
+        {/* PAST TRANSACTIONS SECTION */}
+        <div className="space-y-2.5 pt-2">
+          <div>
+            <h3 className="text-base font-black text-slate-900 dark:text-white tracking-tight">
+              Past Transactions
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-[240px] animate-pulse">
-              Securing connection with issuing bank & NPCI rails...
+            <p className="text-xs text-slate-400 mt-0.5">
+              {monthYearLabel}
             </p>
+          </div>
 
-            {/* 5-second countdown progress bar */}
-            <div className="w-full max-w-[210px] mt-3">
-              <div className="flex justify-between items-center text-[10px] text-slate-400 font-mono mb-1">
-                <span>Auto-verifying:</span>
-                <span className="font-bold text-[#5B3DF5] dark:text-[#8B7CFA]">{countdown}s</span>
+          <div className="w-full bg-white dark:bg-[#1A1A22] rounded-2xl p-3.5 border border-slate-150 dark:border-slate-800 shadow-xs flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-[#5B3DF5] text-white flex items-center justify-center font-bold shadow-xs">
+                <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
               </div>
-              <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-[#5B3DF5] to-[#8B7CFA] transition-all duration-1000 ease-linear rounded-full"
-                  style={{ width: `${Math.max(5, (countdown / 5) * 100)}%` }}
-                />
+              <div>
+                <p className="font-bold text-sm text-slate-900 dark:text-white">
+                  You Sent
+                </p>
+                <p className="text-xs text-slate-400">
+                  {formattedShortDate}
+                </p>
               </div>
             </div>
 
-            {/* Context dimmed */}
-            <div className="mt-5 pt-3.5 border-t border-slate-100 dark:border-slate-800/80 w-full flex flex-col items-center">
-              <p className="text-3xl font-black font-mono tabular-nums text-slate-800 dark:text-slate-200">
+            <div className="text-right">
+              <p className="font-black text-sm text-slate-900 dark:text-white tabular-nums">
                 ₹{amount.toLocaleString('en-IN')}
               </p>
-              <div className="mt-2 w-full px-3 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 flex flex-col items-center">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                  Paying To
-                </span>
-                <p className="text-base font-black text-slate-900 dark:text-white truncate max-w-full text-center mt-0.5">
-                  {recipientName.toUpperCase()}
-                </p>
-                {upiId && (
-                  <p className="text-[11px] font-mono text-slate-400 mt-0.5">{upiId}</p>
-                )}
+              <div className="flex items-center justify-end gap-1 text-[11px] text-slate-400 mt-0.5">
+                <span>From</span>
+                <span className="text-[10px]">🏦</span>
               </div>
             </div>
-
-            <p className="text-[11px] text-amber-500 dark:text-amber-400 font-medium mt-3">
-              Please do not press back or close the app
-            </p>
           </div>
-        )}
+        </div>
+      </div>
 
-        {/* ========================================================================= */}
-        {/* STATE 2A: SUCCESS                                                          */}
-        {/* ========================================================================= */}
-        {status === 'success' && (
-          <div className="py-4 flex flex-col items-center animate-in zoom-in-95 duration-300">
-            {/* Draw-on SVG stroke checkmark inside green circle with spring bounce */}
-            <div className="relative w-24 h-24 flex items-center justify-center my-3">
-              <div className="absolute inset-0 rounded-full bg-emerald-500/20 animate-pulse" />
-              <div className="w-20 h-20 rounded-full bg-[#1DB954] flex items-center justify-center shadow-xl shadow-emerald-500/30 scale-100 transition-transform">
-                <svg
-                  className="w-10 h-10 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={3.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path
-                    className="animate-draw"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-            </div>
+      {/* FIXED BOTTOM ACTION BAR matching super.money video (Frame 00:20 - 00:24) */}
+      <div className="fixed bottom-0 left-0 right-0 z-30 p-4 bg-white/95 dark:bg-[#121319]/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800/80 flex items-center justify-center">
+        <div className="w-full max-w-lg flex items-center gap-3">
+          {/* Left Button: Pay again or Retry */}
+          <button
+            type="button"
+            onClick={() => {
+              sounds.playKeypadClick();
+              if (isFailed) {
+                onRetry();
+              } else {
+                onRetry();
+              }
+            }}
+            className="flex-1 py-3.5 px-4 rounded-full bg-white dark:bg-[#1A1A22] border-2 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm font-bold shadow-xs hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>{isFailed ? 'Retry' : 'Pay again'}</span>
+          </button>
 
-            <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1">
-              Payment Successful!
-            </h3>
-
-            {/* Settle amount with counter */}
-            <div className="mt-2 text-4xl sm:text-5xl font-black font-mono tabular-nums text-slate-900 dark:text-white">
-              ₹{displayAmount.toLocaleString('en-IN')}
-            </div>
-
-            {/* Prominent Paid To Receiver Card */}
-            <div className="mt-3.5 w-full max-w-sm px-4 py-2.5 rounded-2xl bg-slate-100/90 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-xs flex flex-col items-center">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Paid To (Receiver)
-              </span>
-              <p className="text-lg sm:text-xl font-black tracking-wide text-slate-900 dark:text-white text-center break-words mt-0.5">
-                {recipientName.toUpperCase()}
-              </p>
-              {upiId && (
-                <p className="text-xs font-mono font-medium text-[#5B3DF5] dark:text-[#8B7CFA] mt-0.5">
-                  {upiId}
-                </p>
-              )}
-            </div>
-
-            {/* Real Cashback Badge (super.money style) */}
-            {cashbackEarned > 0 && (
-              <div className="mt-4 px-4 py-2.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-2 text-emerald-700 dark:text-emerald-300 animate-in slide-in-from-bottom-2 duration-300">
-                <div className="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-xs">
-                  <Sparkles className="w-4 h-4 fill-current" />
-                </div>
-                <div className="text-left text-xs">
-                  <p className="font-bold text-emerald-800 dark:text-emerald-300">
-                    +₹{cashbackEarned.toFixed(2)} Real Cash Credited!
-                  </p>
-                  <p className="text-[11px] text-emerald-600 dark:text-emerald-400">
-                    Directly deposited to your linked bank account.
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* UPI Reference ID */}
-            <p className="text-[11px] font-mono text-slate-400 mt-4">
-              UPI Ref: UPI/{Math.floor(100000000000 + Math.random() * 900000000000)}
-            </p>
-
-            {/* Action buttons */}
-            <div className="mt-6 flex flex-col gap-2.5 w-full">
-              <button
-                type="button"
-                onClick={onViewReceipt}
-                className="w-full py-3 rounded-full text-xs font-bold text-[#5B3DF5] bg-[#5B3DF5]/10 hover:bg-[#5B3DF5]/15 transition-colors flex items-center justify-center gap-1.5"
-              >
-                <Share2 className="w-3.5 h-3.5" />
-                View & Share Receipt
-              </button>
-              <button
-                type="button"
-                onClick={onDone}
-                className="w-full py-3 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#5B3DF5] to-[#8B7CFA] hover:opacity-95 shadow-md shadow-[#5B3DF5]/30 transition-all active:scale-98"
-              >
-                Done
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* ========================================================================= */}
-        {/* STATE 2B: FAILURE                                                          */}
-        {/* ========================================================================= */}
-        {status === 'failed' && (
-          <div className="py-4 flex flex-col items-center">
-            {/* Draw-on X inside red circle */}
-            <div className="relative w-24 h-24 flex items-center justify-center my-3">
-              <div className="absolute inset-0 rounded-full bg-red-500/20" />
-              <div className="w-20 h-20 rounded-full bg-[#FF4D4F] flex items-center justify-center shadow-xl shadow-red-500/30">
-                <svg
-                  className="w-10 h-10 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={3.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path className="animate-draw" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </div>
-            </div>
-
-            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
-              Payment Failed
-            </h3>
-
-            <div className="mt-2 text-2xl font-bold font-mono tabular-nums text-slate-700 dark:text-slate-300">
-              ₹{amount.toLocaleString('en-IN')}
-            </div>
-
-            <div className="mt-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-600 dark:text-red-400">
-              <p className="font-semibold">{failureReason}</p>
-              <p className="text-[11px] text-slate-500 mt-0.5">
-                If any money was debited, it will be refunded within 2 business days.
-              </p>
-            </div>
-
-            {/* Action buttons */}
-            <div className="mt-6 flex flex-col gap-2 w-full">
-              <button
-                type="button"
-                onClick={onRetry}
-                className="w-full py-3 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#5B3DF5] to-[#8B7CFA] hover:opacity-95 shadow-md shadow-[#5B3DF5]/30 transition-all active:scale-98 cursor-pointer"
-              >
-                Retry Payment
-              </button>
-              <button
-                type="button"
-                onClick={onViewReceipt}
-                className="w-full py-2.5 rounded-full text-xs font-semibold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 transition-colors cursor-pointer"
-              >
-                View Transaction Details
-              </button>
-              <button
-                type="button"
-                onClick={onDone}
-                className="w-full py-2 rounded-full text-xs font-semibold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors cursor-pointer"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* ========================================================================= */}
-        {/* STATE 2C: PENDING                                                          */}
-        {/* ========================================================================= */}
-        {status === 'pending' && (
-          <div className="py-4 flex flex-col items-center">
-            <div className="w-20 h-20 rounded-full bg-amber-500/20 border-2 border-amber-500 flex items-center justify-center my-3 text-amber-500 animate-pulse">
-              <Clock className="w-10 h-10" />
-            </div>
-
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-1">
-              Payment Pending
-            </h3>
-
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 max-w-[250px]">
-              Your payment is taking longer than usual with the recipient bank. We'll update status shortly.
-            </p>
-
-            <div className="mt-6 flex flex-col gap-2.5 w-full">
-              <button
-                type="button"
-                onClick={onViewReceipt}
-                className="w-full py-3 rounded-full text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 transition-colors"
-              >
-                Check Status in History
-              </button>
-              <button
-                type="button"
-                onClick={onDone}
-                className="w-full py-2.5 rounded-full text-xs font-semibold text-[#5B3DF5]"
-              >
-                Go to Home
-              </button>
-            </div>
-          </div>
-        )}
+          {/* Right Button: Done */}
+          <button
+            type="button"
+            onClick={() => {
+              sounds.playKeypadClick();
+              onDone();
+            }}
+            className="flex-1 py-3.5 px-4 rounded-full bg-[#B4F726] hover:bg-[#a6ec15] text-slate-900 text-sm font-black shadow-sm shadow-[#B4F726]/30 active:scale-98 transition-all flex items-center justify-center cursor-pointer"
+          >
+            Done
+          </button>
+        </div>
       </div>
     </div>
   );
