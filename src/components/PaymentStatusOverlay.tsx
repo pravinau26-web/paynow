@@ -14,6 +14,8 @@ import confetti from 'canvas-confetti';
 import { PaymentStatus, Transaction } from '../types';
 import { sounds } from '../services/audio';
 import { shareGeneral } from '../services/share';
+import { RepeatPaymentModal } from './RepeatPaymentModal';
+import { Pencil } from 'lucide-react';
 
 interface PaymentStatusOverlayProps {
   status: PaymentStatus;
@@ -25,7 +27,7 @@ interface PaymentStatusOverlayProps {
   transaction?: Transaction | null;
   onDone: () => void;
   onViewReceipt: () => void;
-  onRetry: () => void;
+  onRetry: (customAmount?: number, customNote?: string) => void;
   onSimulateFail?: () => void;
 }
 
@@ -45,6 +47,7 @@ export const PaymentStatusOverlay: React.FC<PaymentStatusOverlayProps> = ({
   const [sharedToast, setSharedToast] = useState<string | null>(null);
   const [showFullDetails, setShowFullDetails] = useState(false);
   const [stepStage, setStepStage] = useState<'animating' | 'receipt'>('animating');
+  const [showRepeatModal, setShowRepeatModal] = useState(false);
 
   // Trigger sounds & confetti
   useEffect(() => {
@@ -350,16 +353,19 @@ export const PaymentStatusOverlay: React.FC<PaymentStatusOverlayProps> = ({
       {/* FIXED BOTTOM ACTION BAR matching super.money video (Frame 00:23 - 00:26) */}
       <div className="fixed bottom-0 left-0 right-0 z-30 p-4 bg-white/95 dark:bg-[#121319]/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800/80 flex items-center justify-center">
         <div className="w-full max-w-lg flex items-center gap-3">
-          {/* Left Button: "Try again" (if failed) / "Pay again" (if success) */}
+          {/* Left Button: "Try again" (if failed) / "Pay again" (if success) with edit amount modal */}
           <button
             type="button"
             onClick={() => {
               sounds.playKeypadClick();
-              onRetry();
+              setShowRepeatModal(true);
             }}
             className="flex-1 py-3.5 px-4 rounded-full bg-white dark:bg-[#1A1A22] border-2 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm font-bold shadow-xs hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             <span>{isFailed ? 'Try again' : 'Pay again'}</span>
+            <span className="p-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">
+              <Pencil className="w-3 h-3 text-[#5B3DF5]" />
+            </span>
           </button>
 
           {/* Right Button: "Done" (Bright super.money lime-green pill button) */}
@@ -375,6 +381,19 @@ export const PaymentStatusOverlay: React.FC<PaymentStatusOverlayProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Repeat Payment Modal with Amount & Note Editing */}
+      <RepeatPaymentModal
+        isOpen={showRepeatModal}
+        onClose={() => setShowRepeatModal(false)}
+        recipientName={recipientName}
+        upiId={upiId}
+        originalAmount={amount}
+        initialNote={isFailed ? 'Retry payment' : 'Repeat payment'}
+        onConfirmPay={(newAmt, newNote) => {
+          onRetry(newAmt, newNote);
+        }}
+      />
     </div>
   );
 };

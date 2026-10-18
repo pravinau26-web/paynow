@@ -16,11 +16,12 @@ import {
 import { StatusBar } from '../components/StatusBar';
 import { sounds } from '../services/audio';
 import { BankAccount, Transaction } from '../types';
+import { RepeatPaymentModal } from '../components/RepeatPaymentModal';
 
 interface HistoryScreenProps {
   transactions: Transaction[];
   onSelectTransaction: (tx: Transaction) => void;
-  onRepeatPayment?: (tx: Transaction) => void;
+  onRepeatPayment?: (tx: Transaction, customAmount?: number, customNote?: string) => void;
   bankAccount?: BankAccount;
 }
 
@@ -36,6 +37,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
   const [filterType, setFilterType] = useState<FilterType>('all');
   const [showFilters, setShowFilters] = useState(false);
   const [statementToast, setStatementToast] = useState<string | null>(null);
+  const [repeatTx, setRepeatTx] = useState<Transaction | null>(null);
 
   // Filter transactions
   const filtered = transactions.filter((tx) => {
@@ -376,9 +378,9 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
                             onClick={(e) => {
                               e.stopPropagation();
                               sounds.playKeypadClick();
-                              onRepeatPayment(tx);
+                              setRepeatTx(tx);
                             }}
-                            className="hidden sm:flex flex-col items-center justify-center p-2 rounded-xl text-xs font-bold text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ml-1 cursor-pointer"
+                            className="flex flex-col items-center justify-center p-2 rounded-xl text-xs font-bold text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ml-1 cursor-pointer"
                             title="Pay again"
                           >
                             <RotateCcw className="w-4 h-4 text-emerald-600 mb-0.5" />
@@ -394,6 +396,24 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
           ))
         )}
       </div>
+
+      {/* Repeat Payment Modal with Amount & Note Editing */}
+      <RepeatPaymentModal
+        isOpen={!!repeatTx}
+        onClose={() => setRepeatTx(null)}
+        recipientName={repeatTx?.title || ''}
+        upiId={repeatTx?.upiId}
+        originalAmount={repeatTx?.amount || 0}
+        initialNote={repeatTx?.note || 'Repeat payment'}
+        bankName={bankAccount?.bankName}
+        bankLast4={bankAccount?.accountNumberMasked.slice(-4)}
+        onConfirmPay={(newAmt, newNote) => {
+          if (repeatTx && onRepeatPayment) {
+            onRepeatPayment(repeatTx, newAmt, newNote);
+          }
+          setRepeatTx(null);
+        }}
+      />
     </div>
   );
 };

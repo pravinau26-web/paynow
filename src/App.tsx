@@ -557,13 +557,14 @@ export default function App() {
     setActivePayment(null);
   };
 
-  const handleRetryPayment = () => {
+  const handleRetryPayment = (customAmount?: number, customNote?: string) => {
     if (activePayment) {
+      const finalAmount = customAmount !== undefined && customAmount > 0 ? customAmount : activePayment.amount;
       handleInitiatePayment({
         recipientName: activePayment.recipientName,
         upiId: activePayment.upiId,
-        amount: activePayment.amount,
-        note: 'Retry payment',
+        amount: finalAmount,
+        note: customNote || 'Repeat payment',
         bankAccountId: banks[0]?.id || 'bank-hdfc',
         category: 'shopping',
       });
