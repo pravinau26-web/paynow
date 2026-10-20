@@ -18,6 +18,7 @@ import {
   Users,
   X,
 } from 'lucide-react';
+import { BiometricPrompt } from '../components/BiometricPrompt';
 import { PinPad } from '../components/PinPad';
 import { StatusBar } from '../components/StatusBar';
 import { sounds } from '../services/audio';
@@ -29,6 +30,7 @@ interface SendMoneyScreenProps {
   banks: BankAccount[];
   initialContact?: Contact | null;
   userPin?: string;
+  biometricEnabled?: boolean;
   onInitiatePayment: (payload: {
     recipientName: string;
     upiId: string;
@@ -36,6 +38,7 @@ interface SendMoneyScreenProps {
     note: string;
     bankAccountId: string;
     category: 'transfer';
+    skipAuth?: boolean;
   }) => void;
   onAddContact?: (contact: Contact) => void;
 }
@@ -46,6 +49,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
   banks,
   initialContact,
   userPin = '1234',
+  biometricEnabled = true,
   onInitiatePayment,
   onAddContact,
 }) => {
@@ -57,6 +61,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
   const [selectedBankId, setSelectedBankId] = useState(banks[0]?.id || 'bank-canara');
   const [showBankPicker, setShowBankPicker] = useState(false);
   const [showPinModal, setShowPinModal] = useState(false);
+  const [showBiometricModal, setShowBiometricModal] = useState(false);
   const [pin, setPin] = useState('');
   const [pinError, setPinError] = useState(false);
   const [pinErrorMessage, setPinErrorMessage] = useState('');
@@ -109,6 +114,42 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
     const num = parseFloat(amount);
     if (isNaN(num) || num <= 0) return;
     sounds.playKeypadClick();
+    if (biometricEnabled) {
+      setShowBiometricModal(true);
+    } else {
+      setPin('');
+      setPinError(false);
+      setPinErrorMessage('');
+      setShowPinModal(true);
+    }
+  };
+
+  const handleBiometricSuccess = () => {
+    setShowBiometricModal(false);
+    sounds.playPaymentInitiate();
+    const parsedAmount = parseFloat(amount);
+    const recipientTitle = selectedContact
+      ? selectedContact.name
+      : searchQuery.trim().toUpperCase() || 'RECEIVER';
+    const recipientUpi = selectedContact
+      ? selectedContact.upiId
+      : searchQuery.includes('@')
+      ? searchQuery
+      : `${searchQuery.toLowerCase()}@paynow`;
+
+    onInitiatePayment({
+      recipientName: recipientTitle,
+      upiId: recipientUpi,
+      amount: parsedAmount,
+      note: note || 'Money transfer via PayNow',
+      bankAccountId: selectedBank.id,
+      category: 'transfer',
+      skipAuth: true,
+    });
+  };
+
+  const handleBiometricCancelToPin = () => {
+    setShowBiometricModal(false);
     setPin('');
     setPinError(false);
     setPinErrorMessage('');
@@ -138,6 +179,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
           note: note || 'Money transfer via PayNow',
           bankAccountId: selectedBank.id,
           category: 'transfer',
+          skipAuth: true,
         });
       } else {
         sounds.playErrorSound();
@@ -581,11 +623,36 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
               }}
               onSubmit={handlePinSubmit}
               isError={pinError}
-              showBiometric={false}
+              showBiometric={biometricEnabled}
+              onBiometricClick={() => {
+                setShowPinModal(false);
+                setShowBiometricModal(true);
+              }}
             />
           </div>
         </div>
       )}
+
+      {/* Fingerprint / FaceID Transaction Authorization Simulation Modal */}
+      <BiometricPrompt
+        isOpen={showBiometricModal}
+        onSuccess={handleBiometricSuccess}
+        onCancel={() => setShowBiometricModal(false)}
+        onUsePin={handleBiometricCancelToPin}
+        title="Authorize Payment"
+        subtitle={`Verify biometric to pay ₹${parseFloat(amount || '0').toLocaleString('en-IN')}`}
+        contextType="transaction"
+        transactionDetails={{
+          amount: parseFloat(amount || '0'),
+          recipientName: selectedContact?.name || searchQuery || 'Receiver',
+          upiId:
+            selectedContact?.upiId ||
+            (searchQuery.includes('@') ? searchQuery : `${searchQuery.toLowerCase()}@paynow`),
+          bankName: selectedBank.bankName,
+          accountNumberMasked: selectedBank.accountNumberMasked,
+          note: note || 'Money transfer via PayNow',
+        }}
+      />
     </div>
   );
 };

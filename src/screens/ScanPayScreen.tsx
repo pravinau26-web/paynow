@@ -20,12 +20,14 @@ import { StatusBar } from '../components/StatusBar';
 import { PRESET_MERCHANTS } from '../services/mockData';
 import { sounds } from '../services/audio';
 import { BankAccount, MerchantQr } from '../types';
+import { BiometricPrompt } from '../components/BiometricPrompt';
 
 interface ScanPayScreenProps {
   onBack: () => void;
   banks: BankAccount[];
   initialMerchant?: MerchantQr | null;
   userPin?: string;
+  biometricEnabled?: boolean;
   onInitiatePayment: (payload: {
     recipientName: string;
     upiId: string;
@@ -33,6 +35,7 @@ interface ScanPayScreenProps {
     note: string;
     bankAccountId: string;
     category: 'shopping' | 'food' | 'travel' | 'bills';
+    skipAuth?: boolean;
   }) => void;
 }
 
@@ -41,6 +44,7 @@ export const ScanPayScreen: React.FC<ScanPayScreenProps> = ({
   banks,
   initialMerchant,
   userPin = '1234',
+  biometricEnabled = true,
   onInitiatePayment,
 }) => {
   const [flashlightOn, setFlashlightOn] = useState(false);
@@ -51,6 +55,7 @@ export const ScanPayScreen: React.FC<ScanPayScreenProps> = ({
   const [selectedBankId, setSelectedBankId] = useState<string>(banks[0]?.id || 'bank-hdfc');
   const [showBankPicker, setShowBankPicker] = useState<boolean>(false);
   const [showPinModal, setShowPinModal] = useState<boolean>(false);
+  const [showBiometricModal, setShowBiometricModal] = useState<boolean>(false);
   const [pin, setPin] = useState<string>('');
   const [pinError, setPinError] = useState<boolean>(false);
   const [pinErrorMessage, setPinErrorMessage] = useState<string>('');
@@ -484,6 +489,43 @@ export const ScanPayScreen: React.FC<ScanPayScreenProps> = ({
     const num = parseFloat(amount);
     if (isNaN(num) || num <= 0) return;
     sounds.playKeypadClick();
+    if (biometricEnabled) {
+      setShowBiometricModal(true);
+    } else {
+      setPin('');
+      setPinError(false);
+      setPinErrorMessage('');
+      setShowPinModal(true);
+    }
+  };
+
+  const handleBiometricSuccess = () => {
+    setShowBiometricModal(false);
+    sounds.playPaymentInitiate();
+    const parsedAmount = parseFloat(amount);
+    if (scannedMerchant) {
+      const finalPayeeName = (payeeName.trim() || scannedMerchant.name).toUpperCase();
+      onInitiatePayment({
+        recipientName: finalPayeeName,
+        upiId: scannedMerchant.upiId,
+        amount: parsedAmount,
+        note: note || 'Store scan & pay',
+        bankAccountId: selectedBankId,
+        category:
+          scannedMerchant.category.includes('Food') ||
+          scannedMerchant.category.includes('Cafe') ||
+          scannedMerchant.category.includes('Coffee')
+            ? 'food'
+            : scannedMerchant.category.includes('Transit')
+            ? 'travel'
+            : 'shopping',
+        skipAuth: true,
+      });
+    }
+  };
+
+  const handleBiometricCancelToPin = () => {
+    setShowBiometricModal(false);
     setPin('');
     setPinError(false);
     setPinErrorMessage('');
@@ -513,6 +555,7 @@ export const ScanPayScreen: React.FC<ScanPayScreenProps> = ({
                 : scannedMerchant.category.includes('Transit')
                 ? 'travel'
                 : 'shopping',
+            skipAuth: true,
           });
         }
       } else {
@@ -1123,7 +1166,11 @@ export const ScanPayScreen: React.FC<ScanPayScreenProps> = ({
               }}
               onSubmit={handlePinSubmit}
               isError={pinError}
-              showBiometric={false}
+              showBiometric={biometricEnabled}
+              onBiometricClick={() => {
+                setShowPinModal(false);
+                setShowBiometricModal(true);
+              }}
             />
 
             <button
@@ -1150,6 +1197,25 @@ export const ScanPayScreen: React.FC<ScanPayScreenProps> = ({
           </div>
         </div>
       )}
+
+      {/* Fingerprint / FaceID Transaction Authorization Simulation Modal */}
+      <BiometricPrompt
+        isOpen={showBiometricModal}
+        onSuccess={handleBiometricSuccess}
+        onCancel={() => setShowBiometricModal(false)}
+        onUsePin={handleBiometricCancelToPin}
+        title="Authorize Payment"
+        subtitle={`Verify biometric to pay ₹${parseFloat(amount || '0').toLocaleString('en-IN')}`}
+        contextType="transaction"
+        transactionDetails={{
+          amount: parseFloat(amount || '0'),
+          recipientName: (payeeName.trim() || scannedMerchant?.name || 'Merchant').toUpperCase(),
+          upiId: scannedMerchant?.upiId,
+          bankName: selectedBank.bankName,
+          accountNumberMasked: selectedBank.accountNumberMasked,
+          note: note || 'Store scan & pay',
+        }}
+      />
     </div>
   );
 };

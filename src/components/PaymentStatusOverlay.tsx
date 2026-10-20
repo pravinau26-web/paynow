@@ -42,6 +42,7 @@ export const PaymentStatusOverlay: React.FC<PaymentStatusOverlayProps> = ({
   onDone,
   onViewReceipt,
   onRetry,
+  onSimulateFail,
 }) => {
   const [copied, setCopied] = useState(false);
   const [sharedToast, setSharedToast] = useState<string | null>(null);
@@ -125,10 +126,27 @@ export const PaymentStatusOverlay: React.FC<PaymentStatusOverlayProps> = ({
   if (status === 'processing' || (stepStage === 'animating' && (status === 'success' || status === 'failed'))) {
     return (
       <div className="fixed inset-0 z-50 bg-[#F7F8FA] dark:bg-[#0E0E12] text-slate-900 dark:text-white flex flex-col justify-between items-center p-6 select-none animate-in fade-in">
-        {/* Top Spacer */}
-        <div className="w-full flex justify-end">
+        {/* Top Header Row with NPCI Secure and FA Fail Simulation Button */}
+        <div className="w-full flex items-center justify-between">
           <span className="text-[10px] font-mono text-slate-400">NPCI SECURE</span>
+
+          {status === 'processing' && onSimulateFail && (
+            <button
+              type="button"
+              onClick={() => {
+                sounds.playKeypadClick();
+                onSimulateFail();
+              }}
+              title="Simulate Payment Failure (FA)"
+              className="px-3 py-1 rounded-full bg-red-500/10 hover:bg-red-500/20 active:scale-90 border border-red-500/30 text-red-500 font-black text-xs tracking-wider flex items-center gap-1.5 cursor-pointer shadow-xs transition-all"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
+              <span>FA</span>
+            </button>
+          )}
         </div>
+
+
 
         {/* Center Animated 3D Squircle with faint QR watermark behind (Frame 00:17 - 00:20) */}
         <div className="flex flex-col items-center text-center max-w-xs relative my-auto">

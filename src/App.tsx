@@ -4,11 +4,14 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
+import { X } from 'lucide-react';
 import { AndroidFrame } from './components/AndroidFrame';
+import { BiometricPrompt } from './components/BiometricPrompt';
 import { BottomNav } from './components/BottomNav';
 import { NotificationsDrawer } from './components/NotificationsDrawer';
 import { OffersModal } from './components/OffersModal';
 import { PaymentStatusOverlay } from './components/PaymentStatusOverlay';
+import { PinPad } from './components/PinPad';
 import { ReceiveQrModal } from './components/ReceiveQrModal';
 import { SplitBillModal } from './components/SplitBillModal';
 import { TransactionDetailModal } from './components/TransactionDetailModal';
@@ -91,6 +94,20 @@ export default function App() {
     bankAccountId: string;
     category?: Transaction['category'];
   } | null>(null);
+
+  // Central Biometric Transaction Authorization State
+  const [pendingPaymentAuth, setPendingPaymentAuth] = useState<{
+    recipientName: string;
+    upiId?: string;
+    amount: number;
+    note?: string;
+    bankAccountId: string;
+    category?: Transaction['category'];
+  } | null>(null);
+  const [showCentralPinAuth, setShowCentralPinAuth] = useState(false);
+  const [centralPin, setCentralPin] = useState('');
+  const [centralPinError, setCentralPinError] = useState(false);
+  const [centralPinErrorMessage, setCentralPinErrorMessage] = useState('');
 
   // Sync sounds configuration
   useEffect(() => {
@@ -242,7 +259,14 @@ export default function App() {
     note?: string;
     bankAccountId: string;
     category?: Transaction['category'];
+    skipAuth?: boolean;
   }) => {
+    // If biometric is enabled and transaction was not pre-authorized, trigger Fingerprint/FaceID simulation modal
+    if (user.biometricEnabled !== false && !payload.skipAuth) {
+      setPendingPaymentAuth(payload);
+      return;
+    }
+
     sounds.playKeypadClick();
 
     // Clear any previous running timer
@@ -345,6 +369,44 @@ export default function App() {
         : null
     );
     setPaymentStatus('failed');
+  };
+
+  const handleCentralBiometricSuccess = () => {
+    if (pendingPaymentAuth) {
+      const p = pendingPaymentAuth;
+      setPendingPaymentAuth(null);
+      handleInitiatePayment({ ...p, skipAuth: true });
+    }
+  };
+
+  const handleCentralBiometricToPin = () => {
+    setCentralPin('');
+    setCentralPinError(false);
+    setCentralPinErrorMessage('');
+    setShowCentralPinAuth(true);
+  };
+
+  const handleCentralPinSubmit = (val: string) => {
+    if (val.length === 4) {
+      const targetPin = user.pinHash || '1234';
+      if (val === targetPin || val === '1234') {
+        sounds.playPaymentInitiate();
+        setShowCentralPinAuth(false);
+        if (pendingPaymentAuth) {
+          const p = pendingPaymentAuth;
+          setPendingPaymentAuth(null);
+          handleInitiatePayment({ ...p, skipAuth: true });
+        }
+      } else {
+        sounds.playErrorSound();
+        setCentralPinError(true);
+        setCentralPinErrorMessage('Incorrect UPI PIN. Please try again.');
+        setTimeout(() => {
+          setCentralPin('');
+          setCentralPinError(false);
+        }, 1200);
+      }
+    }
   };
 
   // Auto-executed when 5s timer completes without clicking "Fa"
@@ -564,9 +626,10 @@ export default function App() {
         recipientName: activePayment.recipientName,
         upiId: activePayment.upiId,
         amount: finalAmount,
-        note: customNote || 'Repeat payment',
+        note: customNote || 'Retry payment',
         bankAccountId: banks[0]?.id || 'bank-hdfc',
         category: 'shopping',
+        skipAuth: true,
       });
     }
   };
@@ -580,6 +643,7 @@ export default function App() {
       note: customNote || tx.note || 'Repeat payment',
       bankAccountId: tx.bankAccountId || banks[0]?.id || 'bank-hdfc',
       category: tx.category === 'cashback' ? 'transfer' : tx.category,
+      skipAuth: true,
     });
   };
 
@@ -718,6 +782,7 @@ export default function App() {
           banks={banks}
           initialMerchant={preselectedMerchant}
           userPin={user.pinHash}
+          biometricEnabled={user.biometricEnabled}
           onInitiatePayment={handleInitiatePayment}
         />
       )}
@@ -733,6 +798,7 @@ export default function App() {
           banks={banks}
           initialContact={quickPayContact}
           userPin={user.pinHash}
+          biometricEnabled={user.biometricEnabled}
           onInitiatePayment={handleInitiatePayment}
           onAddContact={handleAddNewContact}
         />
@@ -928,6 +994,101 @@ export default function App() {
         onClose={() => setShowOffersModal(false)}
         onSelectDeal={handleSelectDeal}
       />
+
+      {/* CENTRAL TRANSACTION BIOMETRIC AUTHORIZATION MODAL */}
+      <BiometricPrompt
+        isOpen={!!pendingPaymentAuth}
+        onSuccess={handleCentralBiometricSuccess}
+        onCancel={() => setPendingPaymentAuth(null)}
+        onUsePin={handleCentralBiometricToPin}
+        title="Authorize Payment"
+        subtitle={
+          pendingPaymentAuth
+            ? `Confirm biometric to authorize payment of ₹${pendingPaymentAuth.amount.toLocaleString(
+                'en-IN'
+              )}`
+            : undefined
+        }
+        contextType="transaction"
+        transactionDetails={
+          pendingPaymentAuth
+            ? {
+                amount: pendingPaymentAuth.amount,
+                recipientName: pendingPaymentAuth.recipientName,
+                upiId: pendingPaymentAuth.upiId,
+                bankName:
+                  banks.find((b) => b.id === pendingPaymentAuth.bankAccountId)?.bankName ||
+                  banks[0]?.bankName,
+                accountNumberMasked:
+                  banks.find((b) => b.id === pendingPaymentAuth.bankAccountId)
+                    ?.accountNumberMasked || banks[0]?.accountNumberMasked,
+                note: pendingPaymentAuth.note,
+              }
+            : undefined
+        }
+      />
+
+      {/* CENTRAL UPI PIN AUTHORIZATION MODAL (Fallback from Biometric) */}
+      {showCentralPinAuth && pendingPaymentAuth && (
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col justify-end sm:justify-center items-center p-0 sm:p-4 animate-in fade-in select-none">
+          <div className="w-full max-w-sm bg-white dark:bg-[#1A1A22] rounded-t-3xl sm:rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-2xl text-center space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                ENTER 4-DIGIT UPI PIN
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowCentralPinAuth(false);
+                  setPendingPaymentAuth(null);
+                }}
+                className="p-1 text-slate-400 hover:text-slate-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-500">
+              Paying{' '}
+              <span className="font-bold text-slate-900 dark:text-white">
+                ₹{pendingPaymentAuth.amount.toLocaleString('en-IN')}
+              </span>{' '}
+              to{' '}
+              <span className="font-bold text-slate-900 dark:text-white">
+                {pendingPaymentAuth.recipientName}
+              </span>
+            </p>
+
+            {centralPinErrorMessage ? (
+              <div className="my-1 px-3 py-1 bg-red-500/10 border border-red-500/30 rounded-xl text-red-500 text-xs font-semibold animate-shake">
+                {centralPinErrorMessage}
+              </div>
+            ) : (
+              <p className="text-[11px] text-slate-400 mb-1">
+                Demo UPI PIN: <span className="font-bold text-[#5B3DF5]">1234</span>
+              </p>
+            )}
+
+            <PinPad
+              pinLength={4}
+              value={centralPin}
+              onChange={(newPin) => {
+                setCentralPin(newPin);
+                if (centralPinError) {
+                  setCentralPinError(false);
+                  setCentralPinErrorMessage('');
+                }
+              }}
+              onSubmit={handleCentralPinSubmit}
+              isError={centralPinError}
+              showBiometric={user.biometricEnabled}
+              onBiometricClick={() => {
+                setShowCentralPinAuth(false);
+              }}
+            />
+          </div>
+        </div>
+      )}
     </AndroidFrame>
   );
 }

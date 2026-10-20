@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BiometricPrompt } from '../components/BiometricPrompt';
 import { PinPad } from '../components/PinPad';
 import { StatusBar } from '../components/StatusBar';
@@ -21,6 +21,16 @@ export const PinLoginScreen: React.FC<PinLoginScreenProps> = ({
   const [errorMsg, setErrorMsg] = useState('');
   const [attemptsRemaining, setAttemptsRemaining] = useState(5);
   const [showBiometricModal, setShowBiometricModal] = useState(false);
+
+  // Auto-trigger Fingerprint/FaceID simulation modal on login screen if biometricEnabled is true
+  useEffect(() => {
+    if (user.biometricEnabled) {
+      const timer = setTimeout(() => {
+        setShowBiometricModal(true);
+      }, 350);
+      return () => clearTimeout(timer);
+    }
+  }, [user.biometricEnabled]);
 
   const handlePinChange = (val: string) => {
     setPin(val);
@@ -121,13 +131,15 @@ export const PinLoginScreen: React.FC<PinLoginScreenProps> = ({
         </p>
       </div>
 
-      {/* Android Biometric Modal */}
+      {/* Fingerprint / FaceID Biometric Simulation Modal */}
       <BiometricPrompt
         isOpen={showBiometricModal}
         onSuccess={handleBiometricUnlock}
         onCancel={() => setShowBiometricModal(false)}
-        title="Unlock PayNow"
-        subtitle="Confirm fingerprint to access your account"
+        title="Unlock Super Pay"
+        subtitle="Confirm fingerprint or Face ID to access your account"
+        contextType="login"
+        userName={user.name}
       />
     </div>
   );

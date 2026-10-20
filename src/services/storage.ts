@@ -44,7 +44,14 @@ export const storage = {
   getUserProfile(): UserProfile {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.USER_PROFILE);
-      if (data) return JSON.parse(data);
+      if (data) {
+        const parsed = JSON.parse(data);
+        return {
+          ...DEFAULT_USER,
+          ...parsed,
+          biometricEnabled: parsed.biometricEnabled !== false,
+        };
+      }
     } catch {
       // fallback
     }
