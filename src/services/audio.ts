@@ -1,5 +1,6 @@
 // Web Audio API & HTML5 Audio Service with pre-buffered waveforms & custom upload support
 import { SOUND_DATA_URIS } from './soundAssets';
+import { USER_PAYMENT_SUCCESS_SOUND } from './userSuccessSoundB64';
 
 const CUSTOM_TONES_STORAGE_KEY = 'paynow_custom_audio_tones_v1';
 
@@ -168,7 +169,7 @@ class SoundService {
         this.initiateBuffer = await this.decodeBufferSafely(SOUND_DATA_URIS.initiate);
       }
       if (!this.successBuffer) {
-        this.successBuffer = await this.decodeBufferSafely(SOUND_DATA_URIS.success);
+        this.successBuffer = await this.decodeBufferSafely(USER_PAYMENT_SUCCESS_SOUND);
       }
       if (!this.failureBuffer) {
         this.failureBuffer = await this.decodeBufferSafely(SOUND_DATA_URIS.failure);
@@ -387,29 +388,42 @@ class SoundService {
       }
     }
 
-    // 1. Custom user-uploaded sound priority
-    if (this.customSuccessUri) {
-      if (this.customSuccessBuffer && this.playBuffer(this.customSuccessBuffer, 1.0)) {
-        return;
-      }
-      const ok = await this.playAudioElement(this.customSuccessUri, 1.0);
-      if (ok) return;
-    }
-
-    // 2. Default Studio Pre-decoded AudioBuffer
+    // 1. Zero-latency pre-decoded AudioBuffer with Web Audio API
     if (this.successBuffer && this.playBuffer(this.successBuffer, 1.0)) {
       return;
     }
 
-    // 3. Fast decode & buffer play
-    const decoded = await this.decodeBufferSafely(SOUND_DATA_URIS.success);
+    // 2. Direct HTML5 audio element playing the exact user MP3
+    try {
+      if (this.activeAudioEl) {
+        try {
+          this.activeAudioEl.pause();
+          this.activeAudioEl.currentTime = 0;
+        } catch {
+          // Ignore
+        }
+      }
+      const audio = new Audio('./assets/aistudio/paymentsuccesscound_6904ab15.mp3');
+      audio.volume = 1.0;
+      this.activeAudioEl = audio;
+      const playPromise = audio.play();
+      if (playPromise) {
+        await playPromise;
+        return;
+      }
+    } catch {
+      // Fallback
+    }
+
+    // 3. Fast decode from base64
+    const decoded = await this.decodeBufferSafely(USER_PAYMENT_SUCCESS_SOUND);
     if (decoded) {
       this.successBuffer = decoded;
       if (this.playBuffer(decoded, 1.0)) return;
     }
 
-    // 4. HTML5 Audio Element
-    const html5Success = await this.playAudioElement(SOUND_DATA_URIS.success, 1.0);
+    // 4. HTML5 audio element fallback with base64 data URI
+    const html5Success = await this.playAudioElement(USER_PAYMENT_SUCCESS_SOUND, 1.0);
     if (!html5Success) {
       this.playSynthesizedSuccessChime();
     }

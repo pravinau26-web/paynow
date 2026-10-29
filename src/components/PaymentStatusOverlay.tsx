@@ -81,14 +81,14 @@ export const PaymentStatusOverlay: React.FC<PaymentStatusOverlayProps> = ({
       } catch {
         // fallback
       }
-      // Transition to full receipt after 1.8 seconds
+      // Transition to full receipt after 2.4 seconds to allow full sound and video animation to play
       const t = setTimeout(() => {
         setStepStage('receipt');
         // Drop down simulated bank SMS notification matching video (Frame 00:32)
         setTimeout(() => setShowSmsNotif(true), 1200);
         // Show promotional sale banner matching video (Frame 00:24)
         setTimeout(() => setShowDiwaliBanner(true), 2500);
-      }, 1800);
+      }, 2400);
       return () => clearTimeout(t);
     } else if (status === 'failed') {
       sounds.playPaymentFailure();
@@ -214,33 +214,24 @@ export const PaymentStatusOverlay: React.FC<PaymentStatusOverlayProps> = ({
                 <X className="w-14 h-14 stroke-[3]" />
               </div>
             ) : (
-              /* EXACT 3D FLOATING BLOCKS ANIMATION MATCHING paymentsuccess_c2099cf5.mp4 (Frame 00:00) */
-              <div className="relative flex items-center justify-center my-6 animate-in zoom-in-75 duration-300">
-                {/* 1. Top-Left: Magenta Hollow Square Ring */}
-                <div className="absolute -top-12 -left-14 w-12 h-12 border-[5px] border-[#FF1493] rounded-xl -rotate-12 shadow-lg shadow-pink-500/30 animate-pulse pointer-events-none" />
-
-                {/* 2. Top-Center: Lime Green 3D Prism Cube */}
-                <div className="absolute -top-16 left-4 w-7 h-9 rounded-md bg-gradient-to-tr from-[#84CC16] to-[#B4F726] rotate-12 shadow-md shadow-lime-500/30 pointer-events-none" />
-
-                {/* 3. Top-Right: Sky Blue Cube */}
-                <div className="absolute -top-12 -right-14 w-10 h-10 rounded-xl bg-gradient-to-br from-[#38BDF8] to-[#0284C7] rotate-45 shadow-lg shadow-sky-500/30 pointer-events-none" />
-
-                {/* 4. Middle-Left: Royal Blue 3D Cube */}
-                <div className="absolute top-6 -left-16 w-8 h-8 rounded-lg bg-gradient-to-tr from-[#2563EB] to-[#60A5FA] -rotate-12 shadow-md shadow-blue-500/30 pointer-events-none" />
-
-                {/* 5. Middle-Right: Orange/Coral 3D Block */}
-                <div className="absolute top-2 -right-14 w-7 h-10 rounded-lg bg-gradient-to-tr from-[#F97316] to-[#FB923C] rotate-12 shadow-md shadow-orange-500/30 pointer-events-none" />
-
-                {/* 6. Bottom-Right: Purple Tetris Geometric Block */}
-                <div className="absolute -bottom-10 -right-10 w-11 h-12 rounded-xl bg-gradient-to-tr from-[#9333EA] to-[#C084FC] rotate-12 shadow-lg shadow-purple-500/30 pointer-events-none" />
-
-                {/* 7. Bottom-Left: Emerald Cube */}
-                <div className="absolute -bottom-8 -left-10 w-9 h-9 rounded-xl bg-gradient-to-tr from-[#10B981] to-[#34D399] rotate-45 shadow-md shadow-emerald-500/30 pointer-events-none" />
-
-                {/* Center Green Checkmark Squircle Badge (Frame 00:00) */}
-                <div className="relative z-10 w-28 h-28 rounded-3xl bg-[#00D09C] shadow-2xl shadow-[#00D09C]/50 flex items-center justify-center text-white ring-4 ring-[#00D09C]/30">
-                  <Check className="w-16 h-16 stroke-[4]" />
-                </div>
+              /* EXACT 3D FLOATING BLOCKS ANIMATION MATCHING c1121d69-f43e-4cea-a604-fa97ec79045c_06af75a4.mp4 */
+              <div className="relative flex items-center justify-center my-0 select-none animate-in zoom-in-90 duration-300">
+                <video
+                  src="./assets/aistudio/payment_success_badge_anim.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-72 h-72 sm:w-80 sm:h-80 object-contain mix-blend-multiply pointer-events-none"
+                >
+                  <source src="./assets/aistudio/payment_success_badge_anim.webm" type="video/webm" />
+                  <source src="./assets/aistudio/payment_success_badge_anim.mp4" type="video/mp4" />
+                  <img
+                    src="./assets/aistudio/payment_success_badge_anim.gif"
+                    alt="Payment successful animation"
+                    className="w-72 h-72 sm:w-80 sm:h-80 object-contain mix-blend-multiply"
+                  />
+                </video>
               </div>
             )}
 
