@@ -115,11 +115,11 @@ export const ReceiveQrModal: React.FC<ReceiveQrModalProps> = ({
 
   return (
     <div className="fixed sm:absolute inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs p-3 animate-in fade-in duration-200">
-      <div className="w-full max-w-[21.5rem] bg-white dark:bg-[#1A1A20] rounded-3xl p-4 sm:p-5 shadow-2xl border border-slate-200 dark:border-slate-800 text-center relative max-h-[92vh] overflow-y-auto no-scrollbar">
+      <div className="w-full max-w-[21.5rem] bg-white rounded-3xl p-4 sm:p-5 shadow-2xl border border-slate-200 text-center relative max-h-[92vh] overflow-y-auto no-scrollbar">
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-3.5 right-3.5 w-7 h-7 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+          className="absolute top-3.5 right-3.5 w-7 h-7 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
         >
           <X className="w-4 h-4" />
         </button>
@@ -128,13 +128,13 @@ export const ReceiveQrModal: React.FC<ReceiveQrModalProps> = ({
           {user.name.slice(0, 2).toUpperCase()}
         </div>
 
-        <h3 className="text-sm font-bold text-slate-900 dark:text-white leading-tight">
+        <h3 className="text-sm font-bold text-slate-900 leading-tight">
           {user.name}
         </h3>
         <p className="text-[11px] text-slate-400">Scan to pay with any UPI App</p>
 
         {/* Real Dynamic QR Code Canvas Box */}
-        <div className="mt-3 p-3 bg-white rounded-2xl border-2 border-slate-100 dark:border-slate-800 shadow-inner flex flex-col items-center justify-center relative">
+        <div className="mt-3 p-3 bg-white rounded-2xl border-2 border-slate-100 shadow-inner flex flex-col items-center justify-center relative">
           <div className="relative p-1.5 bg-white rounded-xl">
             <canvas
               ref={canvasRef}
@@ -175,7 +175,7 @@ export const ReceiveQrModal: React.FC<ReceiveQrModalProps> = ({
               + Add amount to request specific payment
             </button>
           ) : (
-            <div className="flex items-center gap-1.5 p-1.5 rounded-xl bg-slate-50 dark:bg-[#121217] border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-1.5 p-1.5 rounded-xl bg-slate-50 border border-slate-200">
               <span className="text-xs font-bold font-mono text-slate-400 pl-1.5">₹</span>
               <input
                 type="number"
@@ -183,7 +183,7 @@ export const ReceiveQrModal: React.FC<ReceiveQrModalProps> = ({
                 placeholder="Enter amount (e.g. 500)"
                 value={customAmount}
                 onChange={(e) => setCustomAmount(e.target.value)}
-                className="flex-1 bg-transparent text-xs font-bold font-mono outline-none text-slate-800 dark:text-slate-100"
+                className="flex-1 bg-transparent text-xs font-bold font-mono outline-none text-slate-800"
                 autoFocus
               />
               {customAmount && (
@@ -200,8 +200,8 @@ export const ReceiveQrModal: React.FC<ReceiveQrModalProps> = ({
         </div>
 
         {/* UPI ID Copy Bar */}
-        <div className="mt-2.5 flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-[#121217] border border-slate-100 dark:border-slate-800 text-xs">
-          <span className="font-mono text-[11px] font-medium text-slate-700 dark:text-slate-300 truncate">
+        <div className="mt-2.5 flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100 text-xs">
+          <span className="font-mono text-[11px] font-medium text-slate-700 truncate">
             {user.upiId}
           </span>
           <button
@@ -250,7 +250,7 @@ export const ReceiveQrModal: React.FC<ReceiveQrModalProps> = ({
             <button
               type="button"
               onClick={handleDownload}
-              className="py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 transition-colors flex items-center justify-center gap-1 cursor-pointer"
+              className="py-2 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors flex items-center justify-center gap-1 cursor-pointer"
             >
               <Download className="w-3.5 h-3.5" />
               Save Image

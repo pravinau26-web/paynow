@@ -1018,7 +1018,7 @@ export default function App() {
       {/* CENTRAL UPI PIN AUTHORIZATION MODAL (Fallback from Biometric) */}
       {showCentralPinAuth && pendingPaymentAuth && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col justify-end sm:justify-center items-center p-0 sm:p-4 animate-in fade-in select-none">
-          <div className="w-full max-w-sm bg-white dark:bg-[#1A1A22] rounded-t-3xl sm:rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-2xl text-center space-y-4">
+          <div className="w-full max-w-sm bg-white rounded-t-3xl sm:rounded-3xl p-6 border border-slate-200 shadow-2xl text-center space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                 ENTER 4-DIGIT UPI PIN
@@ -1037,11 +1037,11 @@ export default function App() {
 
             <p className="text-xs text-slate-500">
               Paying{' '}
-              <span className="font-bold text-slate-900 dark:text-white">
+              <span className="font-bold text-slate-900">
                 ₹{pendingPaymentAuth.amount.toLocaleString('en-IN')}
               </span>{' '}
               to{' '}
-              <span className="font-bold text-slate-900 dark:text-white">
+              <span className="font-bold text-slate-900">
                 {pendingPaymentAuth.recipientName}
               </span>
             </p>

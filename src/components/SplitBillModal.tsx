@@ -66,8 +66,8 @@ export const SplitBillModal: React.FC<SplitBillModalProps> = ({
 
   return (
     <div className="fixed sm:absolute inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-3 animate-in fade-in duration-200">
-      <div className="w-full max-w-[22rem] bg-white dark:bg-[#1A1A20] rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white max-h-[85vh] sm:max-h-[38rem] overflow-y-auto">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+      <div className="w-full max-w-[22rem] bg-white rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl border-t sm:border border-slate-200 text-slate-900 max-h-[85vh] sm:max-h-[38rem] overflow-y-auto">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-[#5B3DF5]/10 text-[#5B3DF5] flex items-center justify-center">
               <Users className="w-4 h-4" />
@@ -77,7 +77,7 @@ export const SplitBillModal: React.FC<SplitBillModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100"
           >
             <X className="w-4 h-4" />
           </button>
@@ -105,8 +105,8 @@ export const SplitBillModal: React.FC<SplitBillModalProps> = ({
         </div>
 
         {/* Split Breakdown Result */}
-        <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-500/20 text-center my-2">
-          <span className="text-xs text-emerald-800 dark:text-emerald-300 font-semibold">
+        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-500/20 text-center my-2">
+          <span className="text-xs text-emerald-800 font-semibold">
             Each Person Pays ({peopleCount} people including you)
           </span>
           <p className="text-2xl font-black font-mono text-emerald-600 mt-0.5">
@@ -129,8 +129,8 @@ export const SplitBillModal: React.FC<SplitBillModalProps> = ({
                   onClick={() => toggleContact(c.id)}
                   className={`w-full p-2.5 rounded-2xl border flex items-center justify-between text-left transition-all ${
                     isSelected
-                      ? 'border-[#5B3DF5] bg-[#5B3DF5]/5 dark:bg-[#5B3DF5]/10'
-                      : 'border-slate-200 dark:border-slate-800'
+                      ? 'border-[#5B3DF5] bg-[#5B3DF5]/5'
+                      : 'border-slate-200'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
@@ -145,7 +145,7 @@ export const SplitBillModal: React.FC<SplitBillModalProps> = ({
 
                   <div
                     className={`w-5 h-5 rounded-full flex items-center justify-center ${
-                      isSelected ? 'bg-[#5B3DF5] text-white' : 'border border-slate-300 dark:border-slate-700'
+                      isSelected ? 'bg-[#5B3DF5] text-white' : 'border border-slate-300'
                     }`}
                   >
                     {isSelected && <Check className="w-3 h-3" />}

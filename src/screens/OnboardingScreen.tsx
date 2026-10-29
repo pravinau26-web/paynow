@@ -174,7 +174,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-[#FAFAFC] dark:bg-[#0E0E12] text-slate-900 dark:text-white relative overflow-hidden select-none">
+    <div className="flex-1 flex flex-col bg-[#FAFAFC] text-slate-900 relative overflow-hidden select-none">
       <StatusBar dark={false} />
 
       {/* Simulated SMS Notification Banner */}
@@ -208,7 +208,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
       {step === 'splash' && (
         <div className="flex-1 flex flex-col items-center justify-between p-8 text-center animate-in fade-in duration-300">
           <div className="pt-6">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#5B3DF5]/10 text-[#5B3DF5] dark:text-[#8B7CFA] text-xs font-bold">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#5B3DF5]/10 text-[#5B3DF5] text-xs font-bold">
               <Sparkles className="w-3.5 h-3.5 fill-current" />
               <span>SUPERCHARGED UPI 2.0</span>
             </div>
@@ -225,13 +225,13 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
               />
             </div>
 
-            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
               Super Pay
             </h1>
-            <p className="text-xs font-bold text-[#5B3DF5] dark:text-[#8B7CFA] uppercase tracking-wider mt-1">
+            <p className="text-xs font-bold text-[#5B3DF5] uppercase tracking-wider mt-1">
               Next-Gen UPI Payments
             </p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 max-w-[270px] leading-relaxed">
+            <p className="text-xs text-slate-500 mt-2 max-w-[270px] leading-relaxed">
               Scan any QR code. Real instant cashback (0.30% – 0.40%) deposited directly to your bank account on every payment.
             </p>
           </div>
@@ -264,7 +264,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
               <span className="text-xs font-extrabold tracking-wider text-[#5B3DF5]">SUPER PAY SETUP</span>
             </div>
             <h2 className="text-2xl font-bold">Your Account Details</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               Enter your name and mobile number to discover linked bank accounts.
             </p>
           </div>
@@ -273,7 +273,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
             <div className="space-y-4">
               {/* Account Holder Name (CAPS) */}
               <div>
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 mb-1.5">
+                <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5 mb-1.5">
                   <User className="w-3.5 h-3.5 text-[#5B3DF5]" />
                   <span>Account Holder Name (CAPS)</span>
                 </label>
@@ -283,18 +283,18 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
                   value={name}
                   onChange={(e) => setName(e.target.value.toUpperCase())}
                   placeholder="E.G. RAHUL SHARMA"
-                  className="w-full px-4 py-3 rounded-2xl bg-white dark:bg-[#1A1A20] border border-slate-200 dark:border-slate-800 text-sm font-bold tracking-wider outline-none focus:ring-2 focus:ring-[#5B3DF5]"
+                  className="w-full px-4 py-3 rounded-2xl bg-white border border-slate-200 text-sm font-bold tracking-wider outline-none focus:ring-2 focus:ring-[#5B3DF5]"
                 />
               </div>
 
               {/* Mobile Number */}
               <div>
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 mb-1.5">
+                <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5 mb-1.5">
                   <Smartphone className="w-3.5 h-3.5 text-[#5B3DF5]" />
                   <span>Mobile Number (Linked with Bank)</span>
                 </label>
-                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white dark:bg-[#1A1A20] border border-slate-200 dark:border-slate-800 shadow-xs focus-within:ring-2 focus-within:ring-[#5B3DF5]">
-                  <div className="flex items-center gap-1.5 border-r border-slate-200 dark:border-slate-700 pr-3 font-bold text-xs">
+                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white border border-slate-200 shadow-xs focus-within:ring-2 focus-within:ring-[#5B3DF5]">
+                  <div className="flex items-center gap-1.5 border-r border-slate-200 pr-3 font-bold text-xs">
                     <span>🇮🇳</span>
                     <span>+91</span>
                   </div>
@@ -309,7 +309,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
                 </div>
               </div>
 
-              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-[#15151b] border border-slate-100 dark:border-slate-800/80 text-[11px] text-slate-500 flex items-center gap-2">
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 text-[11px] text-slate-500 flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
                 <span>Device SIM binding is encrypted via standard NPCI UPI protocols.</span>
               </div>
@@ -334,8 +334,8 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
         <div className="flex-1 flex flex-col p-6 animate-in slide-in-from-right duration-250">
           <div className="mt-2 mb-5">
             <h2 className="text-2xl font-bold">Verify OTP</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Enter 6-digit OTP sent to <span className="font-semibold text-slate-900 dark:text-slate-100">+91 {phone}</span>
+            <p className="text-xs text-slate-500 mt-1">
+              Enter 6-digit OTP sent to <span className="font-semibold text-slate-900">+91 {phone}</span>
             </p>
           </div>
 
@@ -347,10 +347,10 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
                     key={i}
                     className={`w-11 h-13 rounded-xl border flex items-center justify-center font-mono text-xl font-bold transition-all ${
                       otp[i]
-                        ? 'border-[#5B3DF5] bg-[#5B3DF5]/10 text-slate-900 dark:text-white'
+                        ? 'border-[#5B3DF5] bg-[#5B3DF5]/10 text-slate-900'
                         : i === otp.length
-                        ? 'border-[#5B3DF5] bg-white dark:bg-[#1A1A20] ring-2 ring-[#5B3DF5]/20'
-                        : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-[#1A1A20]'
+                        ? 'border-[#5B3DF5] bg-white ring-2 ring-[#5B3DF5]/20'
+                        : 'border-slate-200 bg-white'
                     }`}
                   >
                     {otp[i] || ''}
@@ -378,7 +378,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
                 </button>
               </div>
 
-              <div className="mt-6 p-3.5 rounded-2xl bg-[#5B3DF5]/10 border border-[#5B3DF5]/20 text-xs text-[#5B3DF5] dark:text-[#8B7CFA]">
+              <div className="mt-6 p-3.5 rounded-2xl bg-[#5B3DF5]/10 border border-[#5B3DF5]/20 text-xs text-[#5B3DF5]">
                 <p className="font-bold">💡 One-Time Setup</p>
                 <p className="text-[11px] mt-0.5 opacity-90">
                   Subsequent payments in Super Pay will only require your PIN or biometric recognition.
@@ -407,7 +407,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
           <div className="mt-1 mb-4 flex items-center justify-between">
             <div>
               <h2 className="text-xl font-bold">Select Primary Bank</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 Discovered 3 bank accounts linked to SIM
               </p>
             </div>
@@ -416,7 +416,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
               type="button"
               onClick={randomizeAccounts}
               title="Generate new random account numbers"
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-[#5B3DF5] hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-100 text-[11px] font-bold text-[#5B3DF5] hover:bg-slate-200 transition-colors"
             >
               <RefreshCw className="w-3 h-3" />
               <span>Randomize A/c</span>
@@ -426,9 +426,9 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
           <div className="flex-1 flex flex-col justify-between">
             <div className="space-y-3">
               {/* Account Holder Name in CAPS card */}
-              <div className="p-3 rounded-2xl bg-slate-100 dark:bg-[#15151B] border border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+              <div className="p-3 rounded-2xl bg-slate-100 border border-slate-200/80 flex items-center justify-between">
                 <span className="text-[11px] font-semibold text-slate-500">ACCOUNT HOLDER:</span>
-                <span className="text-xs font-extrabold tracking-wider text-slate-900 dark:text-white">
+                <span className="text-xs font-extrabold tracking-wider text-slate-900">
                   {name.trim().toUpperCase() || 'RAHUL SHARMA'}
                 </span>
               </div>
@@ -445,8 +445,8 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
                     }}
                     className={`w-full p-4 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer ${
                       isSelected
-                        ? 'border-[#5B3DF5] bg-[#5B3DF5]/8 dark:bg-[#5B3DF5]/15 shadow-sm ring-1 ring-[#5B3DF5]'
-                        : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-[#1A1A20] hover:border-slate-300'
+                        ? 'border-[#5B3DF5] bg-[#5B3DF5]/8 shadow-sm ring-1 ring-[#5B3DF5]'
+                        : 'border-slate-200 bg-white hover:border-slate-300'
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -454,10 +454,10 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
                         {bank.logo}
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-slate-900 dark:text-white">
+                        <p className="text-sm font-bold text-slate-900">
                           {bank.bankName}
                         </p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+                        <p className="text-xs text-slate-500 font-mono">
                           Savings · A/c **{bank.accountNumberMasked.slice(-4)}
                         </p>
                       </div>
@@ -467,7 +467,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
                       className={`w-6 h-6 rounded-full flex items-center justify-center ${
                         isSelected
                           ? 'bg-[#5B3DF5] text-white shadow-xs'
-                          : 'border-2 border-slate-300 dark:border-slate-700'
+                          : 'border-2 border-slate-300'
                       }`}
                     >
                       {isSelected && <Check className="w-3.5 h-3.5" />}
@@ -477,7 +477,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
               })}
 
               {/* UPI ID Customization */}
-              <div className="p-3.5 rounded-2xl bg-white dark:bg-[#1A1A20] border border-slate-200 dark:border-slate-800">
+              <div className="p-3.5 rounded-2xl bg-white border border-slate-200">
                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                   Your Super Pay UPI Handle
                 </span>
@@ -514,7 +514,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
               <Lock className="w-6 h-6" />
             </div>
             <h2 className="text-2xl font-bold">Set 4-Digit PIN</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               You will use this PIN to authorize payments and unlock the app.
             </p>
           </div>
@@ -537,7 +537,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
               <ShieldCheck className="w-6 h-6" />
             </div>
             <h2 className="text-2xl font-bold">Confirm your PIN</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               Re-enter the 4-digit PIN to confirm
             </p>
             {pinErrorMsg && (
@@ -580,16 +580,16 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
               <Fingerprint className="w-10 h-10" />
             </div>
             <h2 className="text-2xl font-bold">Enable Biometric Login?</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 max-w-[270px] leading-relaxed">
+            <p className="text-xs text-slate-500 mt-2 max-w-[270px] leading-relaxed">
               Unlock Super Pay instantly with Fingerprint or Face ID without entering your PIN every time.
             </p>
           </div>
 
-          <div className="w-full p-4 rounded-2xl bg-white dark:bg-[#1A1A20] border border-slate-200 dark:border-slate-800 text-left flex items-center justify-between">
+          <div className="w-full p-4 rounded-2xl bg-white border border-slate-200 text-left flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Fingerprint className="w-6 h-6 text-[#5B3DF5]" />
               <div>
-                <p className="text-xs font-bold text-slate-900 dark:text-white">
+                <p className="text-xs font-bold text-slate-900">
                   Biometric Recognition
                 </p>
                 <p className="text-[11px] text-slate-400">Fingerprint & Face Authentication</p>
@@ -645,19 +645,19 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
               </div>
             </div>
 
-            <h2 className="text-2xl font-black text-slate-900 dark:text-white">
+            <h2 className="text-2xl font-black text-slate-900">
               All Set, {name.trim().toUpperCase()}!
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 max-w-[260px] leading-relaxed">
+            <p className="text-xs text-slate-500 mt-2 max-w-[260px] leading-relaxed">
               Your primary bank account is linked and ready for lightning fast UPI payments.
             </p>
 
-            <div className="mt-5 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-500/25 text-xs text-emerald-800 dark:text-emerald-300 text-left w-full space-y-1">
+            <div className="mt-5 p-4 rounded-2xl bg-emerald-50 border border-emerald-500/25 text-xs text-emerald-800 text-left w-full space-y-1">
               <div className="flex items-center gap-2 font-bold">
                 <Sparkles className="w-4 h-4 text-emerald-600" />
                 <span>Super Cashback Activated</span>
               </div>
-              <p className="text-[11px] text-emerald-700 dark:text-emerald-400">
+              <p className="text-[11px] text-emerald-700">
                 Earn real instant cashback (0.30% – 0.40%) on merchant QR scans, credited straight to your bank account!
               </p>
             </div>

@@ -40,7 +40,7 @@ export const RewardsScreen: React.FC<RewardsScreenProps> = ({
   const progressPercent = Math.min(Math.round((totalCashback / nextTierGoal) * 100), 100);
 
   return (
-    <div className="flex-1 flex flex-col bg-[#FAFAFC] dark:bg-[#0E0E12] text-slate-900 dark:text-white pb-32 sm:pb-36 overflow-y-auto no-scrollbar select-none">
+    <div className="flex-1 flex flex-col bg-[#FAFAFC] text-slate-900 pb-32 sm:pb-36 overflow-y-auto no-scrollbar select-none">
       <StatusBar dark={false} />
 
       {/* Header */}
@@ -97,53 +97,53 @@ export const RewardsScreen: React.FC<RewardsScreenProps> = ({
         </div>
 
         {/* Why PayNow Cashback is Different */}
-        <div className="bg-white dark:bg-[#1A1A20] rounded-3xl p-4 border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-3">
+        <div className="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs space-y-3">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
             The super.money Promise
           </span>
 
           <div className="grid grid-cols-3 gap-2 text-center text-xs">
-            <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-500/20">
+            <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-500/20">
               <CheckCircle2 className="w-5 h-5 text-[#1DB954] mx-auto mb-1" />
-              <p className="font-bold text-slate-800 dark:text-slate-200">No Scratch Cards</p>
+              <p className="font-bold text-slate-800">No Scratch Cards</p>
               <p className="text-[10px] text-slate-400 mt-0.5">Real cash every time</p>
             </div>
 
-            <div className="p-3 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 border border-[#5B3DF5]/20">
+            <div className="p-3 rounded-2xl bg-indigo-50 border border-[#5B3DF5]/20">
               <TrendingUp className="w-5 h-5 text-[#5B3DF5] mx-auto mb-1" />
-              <p className="font-bold text-slate-800 dark:text-slate-200">Auto Credit</p>
+              <p className="font-bold text-slate-800">Auto Credit</p>
               <p className="text-[10px] text-slate-400 mt-0.5">Direct to bank A/c</p>
             </div>
 
-            <div className="p-3 rounded-2xl bg-purple-50 dark:bg-purple-950/30 border border-purple-500/20">
+            <div className="p-3 rounded-2xl bg-purple-50 border border-purple-500/20">
               <Zap className="w-5 h-5 text-purple-600 mx-auto mb-1" />
-              <p className="font-bold text-slate-800 dark:text-slate-200">Instant</p>
+              <p className="font-bold text-slate-800">Instant</p>
               <p className="text-[10px] text-slate-400 mt-0.5">Under 2 seconds</p>
             </div>
           </div>
         </div>
 
         {/* Cashback Ledger */}
-        <div className="bg-white dark:bg-[#1A1A20] rounded-3xl p-4 border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-3">
+        <div className="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
               Cashback Credit History
             </span>
           </div>
 
-          <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
+          <div className="divide-y divide-slate-100">
             {cashbackTxList.map((tx) => (
               <div
                 key={tx.id}
                 onClick={() => onSelectTransaction(tx)}
-                className="py-3 flex items-center justify-between cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/40 rounded-xl px-2 transition-colors"
+                className="py-3 flex items-center justify-between cursor-pointer hover:bg-slate-50 rounded-xl px-2 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-[#1DB954] flex items-center justify-center">
                     <Sparkles className="w-4 h-4 fill-current" />
                   </div>
                   <div className="text-xs">
-                    <p className="font-bold text-slate-900 dark:text-white">
+                    <p className="font-bold text-slate-900">
                       {tx.title}
                     </p>
                     <p className="text-[11px] text-slate-400">

@@ -40,16 +40,16 @@ export const RechargeScreen: React.FC<RechargeScreenProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-[#FAFAFC] dark:bg-[#0E0E12] text-slate-900 dark:text-white pb-32 sm:pb-36 overflow-y-auto no-scrollbar select-none">
+    <div className="flex-1 flex flex-col bg-[#FAFAFC] text-slate-900 pb-32 sm:pb-36 overflow-y-auto no-scrollbar select-none">
       <StatusBar dark={false} />
 
       {/* Top App Bar */}
-      <div className="px-5 py-3 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
+      <div className="px-5 py-3 flex items-center justify-between border-b border-slate-100">
         <button
           type="button"
           onClick={onBack}
           aria-label="Back"
-          className="w-10 h-10 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+          className="w-10 h-10 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-100"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -65,7 +65,7 @@ export const RechargeScreen: React.FC<RechargeScreenProps> = ({
 
       <div className="p-5 space-y-4">
         {/* Mobile Number & Operator Selector Card */}
-        <div className="p-4 rounded-3xl bg-white dark:bg-[#1A1A20] border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-3">
+        <div className="p-4 rounded-3xl bg-white border border-slate-200/80 shadow-xs space-y-3">
           <div>
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
               Mobile Number
@@ -77,13 +77,13 @@ export const RechargeScreen: React.FC<RechargeScreenProps> = ({
                 value={phone}
                 onChange={(e) => setPhone(e.target.value.replace(/[^\d\s]/g, ''))}
                 placeholder="Enter 10 digit number"
-                className="flex-1 bg-transparent text-base font-bold font-mono outline-none text-slate-900 dark:text-white"
+                className="flex-1 bg-transparent text-base font-bold font-mono outline-none text-slate-900"
               />
             </div>
           </div>
 
           {/* Operator Pills */}
-          <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+          <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
             <span className="text-slate-400 font-medium">Operator:</span>
             <div className="flex items-center gap-1.5">
               {(['Jio', 'Airtel', 'Vi'] as const).map((op) => (
@@ -97,7 +97,7 @@ export const RechargeScreen: React.FC<RechargeScreenProps> = ({
                   className={`px-3 py-1 rounded-full font-bold text-xs transition-all ${
                     operator === op
                       ? 'bg-[#5B3DF5] text-white shadow-xs'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                      : 'bg-slate-100 text-slate-600'
                   }`}
                 >
                   {op}
@@ -107,7 +107,7 @@ export const RechargeScreen: React.FC<RechargeScreenProps> = ({
           </div>
 
           <div className="flex items-center justify-between text-[11px] text-slate-400">
-            <span>Circle: <strong className="text-slate-700 dark:text-slate-300">{circle}</strong></span>
+            <span>Circle: <strong className="text-slate-700">{circle}</strong></span>
             <button
               type="button"
               onClick={() => {
@@ -132,7 +132,7 @@ export const RechargeScreen: React.FC<RechargeScreenProps> = ({
                 key={c.id}
                 type="button"
                 onClick={() => handlePickContact(c)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-[#1A1A20] border border-slate-200 dark:border-slate-800 shrink-0 text-xs font-semibold hover:border-[#5B3DF5] transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200 shrink-0 text-xs font-semibold hover:border-[#5B3DF5] transition-colors"
               >
                 <div className={`w-4 h-4 rounded-full ${c.avatarBg} text-[9px] text-white flex items-center justify-center font-bold`}>
                   {c.initials}
@@ -155,8 +155,8 @@ export const RechargeScreen: React.FC<RechargeScreenProps> = ({
               }}
               className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${
                 selectedCategory === cat
-                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
-                  : 'bg-white dark:bg-[#1A1A20] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
+                  ? 'bg-slate-900 text-white'
+                  : 'bg-white text-slate-600 border border-slate-200'
               }`}
             >
               {cat}
@@ -169,20 +169,20 @@ export const RechargeScreen: React.FC<RechargeScreenProps> = ({
           {filteredPlans.map((plan) => (
             <div
               key={plan.id}
-              className="p-4 rounded-3xl bg-white dark:bg-[#1A1A20] border border-slate-200/80 dark:border-slate-800/80 shadow-xs hover:border-[#5B3DF5]/60 transition-all flex flex-col justify-between gap-3"
+              className="p-4 rounded-3xl bg-white border border-slate-200/80 shadow-xs hover:border-[#5B3DF5]/60 transition-all flex flex-col justify-between gap-3"
             >
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl font-black font-mono tracking-tight text-slate-900 dark:text-white">
+                    <span className="text-2xl font-black font-mono tracking-tight text-slate-900">
                       ₹{plan.price}
                     </span>
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-[10px] flex items-center gap-0.5">
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 font-bold text-[10px] flex items-center gap-0.5">
                       <Sparkles className="w-2.5 h-2.5 fill-current" />
                       +₹{plan.cashback.toFixed(2)} Cashback
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
                     {plan.description}
                   </p>
                 </div>
@@ -200,10 +200,10 @@ export const RechargeScreen: React.FC<RechargeScreenProps> = ({
               </div>
 
               {/* Badges row */}
-              <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 font-mono">
-                <span>Validity: <strong className="text-slate-700 dark:text-slate-300">{plan.validity}</strong></span>
-                <span>Data: <strong className="text-slate-700 dark:text-slate-300">{plan.data}</strong></span>
-                <span>Voice: <strong className="text-slate-700 dark:text-slate-300">{plan.voice}</strong></span>
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                <span>Validity: <strong className="text-slate-700">{plan.validity}</strong></span>
+                <span>Data: <strong className="text-slate-700">{plan.data}</strong></span>
+                <span>Voice: <strong className="text-slate-700">{plan.voice}</strong></span>
               </div>
             </div>
           ))}

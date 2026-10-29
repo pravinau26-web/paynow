@@ -234,13 +234,13 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-[#FAFAFC] dark:bg-[#0E0E12] text-slate-900 dark:text-white pb-32 sm:pb-36 overflow-y-auto no-scrollbar select-none">
+    <div className="flex-1 flex flex-col bg-[#FAFAFC] text-slate-900 pb-32 sm:pb-36 overflow-y-auto no-scrollbar select-none">
       <StatusBar dark={false} />
 
       {/* Top Profile Header */}
       <div className="px-5 pt-3 pb-4 flex flex-col items-center text-center">
         {showToast && (
-          <div className="mb-3 px-4 py-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="mb-3 px-4 py-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 text-xs font-bold flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
             <CheckCircle2 className="w-4 h-4 text-emerald-500" />
             <span>Profile updated successfully!</span>
           </div>
@@ -254,7 +254,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           <button
             type="button"
             onClick={handleOpenEditProfile}
-            className="absolute -top-1 -right-1 w-7 h-7 rounded-full bg-[#5B3DF5] text-white flex items-center justify-center border-2 border-white dark:border-[#0E0E12] shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer"
+            className="absolute -top-1 -right-1 w-7 h-7 rounded-full bg-[#5B3DF5] text-white flex items-center justify-center border-2 border-white shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer"
             title="Edit Profile Name & Details"
           >
             <Pencil className="w-3.5 h-3.5" />
@@ -263,7 +263,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           <button
             type="button"
             onClick={onOpenMyQr}
-            className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center border-2 border-white dark:border-[#0E0E12] shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer"
+            className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center border-2 border-white shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer"
             title="My UPI QR Code"
           >
             <QrCode className="w-3.5 h-3.5" />
@@ -271,7 +271,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+          <h2 className="text-lg font-bold text-slate-900">
             {user.name}
           </h2>
           <button
@@ -293,7 +293,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         <button
           type="button"
           onClick={handleOpenEditProfile}
-          className="mt-3.5 inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white dark:bg-[#1A1A20] hover:bg-[#5B3DF5]/10 hover:border-[#5B3DF5] text-[#5B3DF5] text-xs font-bold border border-slate-200 dark:border-slate-800 shadow-xs transition-all active:scale-95 cursor-pointer"
+          className="mt-3.5 inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-[#5B3DF5]/10 hover:border-[#5B3DF5] text-[#5B3DF5] text-xs font-bold border border-slate-200 shadow-xs transition-all active:scale-95 cursor-pointer"
         >
           <Pencil className="w-3.5 h-3.5" />
           <span>Edit Profile Details</span>
@@ -302,7 +302,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
       <div className="px-5 space-y-4">
         {/* Linked Bank Accounts */}
-        <div className="bg-white dark:bg-[#1A1A20] rounded-3xl p-4 border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-3">
+        <div className="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
               Linked Bank Accounts
@@ -323,8 +323,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 key={bank.id}
                 className={`p-3.5 rounded-2xl border transition-all flex items-center justify-between ${
                   bank.isPrimary
-                    ? 'border-[#5B3DF5] bg-[#5B3DF5]/5 dark:bg-[#5B3DF5]/10'
-                    : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-[#15151b]'
+                    ? 'border-[#5B3DF5] bg-[#5B3DF5]/5'
+                    : 'border-slate-200 bg-slate-50/50'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -333,7 +333,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   </div>
                   <div className="text-xs">
                     <div className="flex items-center gap-1.5">
-                      <p className="font-bold text-slate-900 dark:text-white">
+                      <p className="font-bold text-slate-900">
                         {bank.bankName}
                       </p>
                       {bank.isPrimary && (
@@ -366,7 +366,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         </div>
 
         {/* Security & Preferences */}
-        <div className="bg-white dark:bg-[#1A1A20] rounded-3xl p-4 border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-1 divide-y divide-slate-100 dark:divide-slate-800/80">
+        <div className="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs space-y-1 divide-y divide-slate-100">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2 px-1">
             Security & Controls
           </span>
@@ -375,12 +375,12 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           <button
             type="button"
             onClick={handleStartChangePin}
-            className="w-full py-3 px-1 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/40 rounded-xl transition-colors"
+            className="w-full py-3 px-1 flex items-center justify-between text-left hover:bg-slate-50 rounded-xl transition-colors"
           >
             <div className="flex items-center gap-3">
               <KeyRound className="w-5 h-5 text-[#5B3DF5]" />
               <div>
-                <p className="text-xs font-bold text-slate-900 dark:text-white">Change App PIN</p>
+                <p className="text-xs font-bold text-slate-900">Change App PIN</p>
                 <p className="text-[11px] text-slate-400">Update your 4-digit security PIN</p>
               </div>
             </div>
@@ -392,7 +392,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             <div className="flex items-center gap-3">
               <Fingerprint className="w-5 h-5 text-[#5B3DF5]" />
               <div>
-                <p className="text-xs font-bold text-slate-900 dark:text-white">Android Biometrics</p>
+                <p className="text-xs font-bold text-slate-900">Android Biometrics</p>
                 <p className="text-[11px] text-slate-400">Unlock with Fingerprint or Face</p>
               </div>
             </div>
@@ -412,7 +412,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             <div className="flex items-center gap-3">
               <Volume2 className="w-5 h-5 text-[#5B3DF5]" />
               <div>
-                <p className="text-xs font-bold text-slate-900 dark:text-white">Audio & Keypad Clicks</p>
+                <p className="text-xs font-bold text-slate-900">Audio & Keypad Clicks</p>
                 <p className="text-[11px] text-slate-400">Sound effects on tap & payment</p>
               </div>
             </div>
@@ -430,7 +430,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           {/* Sound Testing & Custom Upload Section */}
           <div className="pt-3 pb-1 px-1">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+              <span className="text-[11px] font-bold text-slate-500 flex items-center gap-1.5">
                 <Volume2 className="w-3.5 h-3.5 text-[#5B3DF5]" />
                 UPI Sound Effects & Custom Tones
               </span>
@@ -443,7 +443,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             </p>
 
             {soundToast && (
-              <div className="mb-3 px-3.5 py-2 rounded-xl bg-[#5B3DF5]/10 border border-[#5B3DF5]/30 text-[#5B3DF5] dark:text-[#A16CFF] text-xs font-bold flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
+              <div className="mb-3 px-3.5 py-2 rounded-xl bg-[#5B3DF5]/10 border border-[#5B3DF5]/30 text-[#5B3DF5] text-xs font-bold flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
                 <Music className="w-3.5 h-3.5 shrink-0" />
                 <span className="truncate">{soundToast}</span>
               </div>
@@ -451,7 +451,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
             <div className="space-y-2.5">
               {/* 1. SUCCESS SOUND */}
-              <div className="p-3.5 rounded-2xl bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 space-y-2.5">
+              <div className="p-3.5 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 space-y-2.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
                     <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500">
@@ -459,7 +459,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <p className="text-xs font-bold text-slate-900 dark:text-white">
+                        <p className="text-xs font-bold text-slate-900">
                           Payment Success Tone
                         </p>
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -476,7 +476,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                     className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
                       customTones.isCustomSuccess
                         ? 'bg-emerald-500 text-white shadow-xs'
-                        : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                        : 'bg-slate-200 text-slate-600'
                     }`}
                   >
                     {customTones.isCustomSuccess ? 'Custom' : 'Default'}
@@ -504,7 +504,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                       sounds.playKeypadClick();
                       successFileInputRef.current?.click();
                     }}
-                    className="flex-1 py-1.5 px-3 rounded-xl bg-white dark:bg-[#1A1A20] border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs hover:bg-emerald-50 dark:hover:bg-slate-800 active:scale-95 transition-all cursor-pointer"
+                    className="flex-1 py-1.5 px-3 rounded-xl bg-white border border-emerald-500/40 text-emerald-600 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs hover:bg-emerald-50 active:scale-95 transition-all cursor-pointer"
                   >
                     <Upload className="w-3 h-3" />
                     <span>{customTones.isCustomSuccess ? 'Change Audio' : 'Upload File'}</span>
@@ -528,7 +528,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                       type="button"
                       onClick={() => handleResetTone('success')}
                       title="Reset to default chime"
-                      className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-300 transition-colors cursor-pointer"
+                      className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 transition-colors cursor-pointer"
                     >
                       <RefreshCw className="w-3.5 h-3.5" />
                     </button>
@@ -537,7 +537,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </div>
 
               {/* 2. FAILURE SOUND */}
-              <div className="p-3.5 rounded-2xl bg-rose-500/5 dark:bg-rose-500/10 border border-rose-500/20 space-y-2.5">
+              <div className="p-3.5 rounded-2xl bg-rose-500/5 border border-rose-500/20 space-y-2.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
                     <div className="w-8 h-8 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-500">
@@ -545,7 +545,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <p className="text-xs font-bold text-slate-900 dark:text-white">
+                        <p className="text-xs font-bold text-slate-900">
                           Payment Failure Tone
                         </p>
                         <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
@@ -562,7 +562,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                     className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
                       customTones.isCustomFailure
                         ? 'bg-rose-500 text-white shadow-xs'
-                        : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                        : 'bg-slate-200 text-slate-600'
                     }`}
                   >
                     {customTones.isCustomFailure ? 'Custom' : 'Default'}
@@ -590,7 +590,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                       sounds.playKeypadClick();
                       failureFileInputRef.current?.click();
                     }}
-                    className="flex-1 py-1.5 px-3 rounded-xl bg-white dark:bg-[#1A1A20] border border-rose-500/40 text-rose-600 dark:text-rose-400 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs hover:bg-rose-50 dark:hover:bg-slate-800 active:scale-95 transition-all cursor-pointer"
+                    className="flex-1 py-1.5 px-3 rounded-xl bg-white border border-rose-500/40 text-rose-600 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs hover:bg-rose-50 active:scale-95 transition-all cursor-pointer"
                   >
                     <Upload className="w-3 h-3" />
                     <span>{customTones.isCustomFailure ? 'Change Audio' : 'Upload File'}</span>
@@ -614,7 +614,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                       type="button"
                       onClick={() => handleResetTone('failure')}
                       title="Reset to default decline buzzer"
-                      className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-300 transition-colors cursor-pointer"
+                      className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 transition-colors cursor-pointer"
                     >
                       <RefreshCw className="w-3.5 h-3.5" />
                     </button>
@@ -623,7 +623,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </div>
 
               {/* 3. INITIATE SOUND */}
-              <div className="p-3.5 rounded-2xl bg-[#5B3DF5]/5 dark:bg-[#5B3DF5]/10 border border-[#5B3DF5]/20 space-y-2.5">
+              <div className="p-3.5 rounded-2xl bg-[#5B3DF5]/5 border border-[#5B3DF5]/20 space-y-2.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
                     <div className="w-8 h-8 rounded-full bg-[#5B3DF5]/20 flex items-center justify-center text-[#5B3DF5]">
@@ -631,7 +631,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <p className="text-xs font-bold text-slate-900 dark:text-white">
+                        <p className="text-xs font-bold text-slate-900">
                           Transaction Initiate Tone
                         </p>
                         <span className="w-1.5 h-1.5 rounded-full bg-[#5B3DF5]" />
@@ -648,7 +648,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                     className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
                       customTones.isCustomInitiate
                         ? 'bg-[#5B3DF5] text-white shadow-xs'
-                        : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                        : 'bg-slate-200 text-slate-600'
                     }`}
                   >
                     {customTones.isCustomInitiate ? 'Custom' : 'Default'}
@@ -676,7 +676,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                       sounds.playKeypadClick();
                       initiateFileInputRef.current?.click();
                     }}
-                    className="flex-1 py-1.5 px-3 rounded-xl bg-white dark:bg-[#1A1A20] border border-[#5B3DF5]/40 text-[#5B3DF5] dark:text-[#A16CFF] text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-95 transition-all cursor-pointer"
+                    className="flex-1 py-1.5 px-3 rounded-xl bg-white border border-[#5B3DF5]/40 text-[#5B3DF5] text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs hover:bg-slate-50 active:scale-95 transition-all cursor-pointer"
                   >
                     <Upload className="w-3 h-3" />
                     <span>{customTones.isCustomInitiate ? 'Change Audio' : 'Upload File'}</span>
@@ -700,7 +700,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                       type="button"
                       onClick={() => handleResetTone('initiate')}
                       title="Reset to default pulse"
-                      className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-300 transition-colors cursor-pointer"
+                      className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 transition-colors cursor-pointer"
                     >
                       <RefreshCw className="w-3.5 h-3.5" />
                     </button>
@@ -712,7 +712,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         </div>
 
         {/* Account Actions */}
-        <div className="bg-white dark:bg-[#1A1A20] rounded-3xl p-4 border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-2">
+        <div className="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs space-y-2">
           {/* Lock App */}
           <button
             type="button"
@@ -720,7 +720,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               sounds.playKeypadClick();
               onLockApp();
             }}
-            className="w-full py-2.5 px-3 rounded-2xl flex items-center gap-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors text-amber-600 dark:text-amber-400"
+            className="w-full py-2.5 px-3 rounded-2xl flex items-center gap-3 text-left hover:bg-slate-50 transition-colors text-amber-600"
           >
             <Lock className="w-4 h-4" />
             <span className="text-xs font-bold">Lock App (Show PIN Screen)</span>
@@ -733,7 +733,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               sounds.playKeypadClick();
               setShowResetConfirmModal(true);
             }}
-            className="w-full py-2.5 px-3 rounded-2xl flex items-center gap-3 text-left hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors text-slate-500 hover:text-red-500 cursor-pointer"
+            className="w-full py-2.5 px-3 rounded-2xl flex items-center gap-3 text-left hover:bg-red-50 transition-colors text-slate-500 hover:text-red-500 cursor-pointer"
           >
             <RotateCcw className="w-4 h-4" />
             <span className="text-xs font-bold">Reset Demo to First-Time Onboarding</span>
@@ -744,8 +744,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Change PIN Modal */}
       {showChangePinModal && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 backdrop-blur-xs animate-in fade-in">
-          <div className="w-full max-w-sm bg-white dark:bg-[#1A1A20] rounded-t-3xl p-6 shadow-2xl border-t border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white flex flex-col items-center">
-            <div className="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mb-3" />
+          <div className="w-full max-w-sm bg-white rounded-t-3xl p-6 shadow-2xl border-t border-slate-200 text-slate-900 flex flex-col items-center">
+            <div className="w-12 h-1.5 bg-slate-300 rounded-full mb-3" />
 
             <div className="flex justify-between items-center w-full pb-2">
               <h3 className="text-base font-bold">Change App PIN</h3>
@@ -758,7 +758,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </button>
             </div>
 
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-2 text-center">
+            <p className="text-xs text-slate-500 mt-1 mb-2 text-center">
               {changePinStep === 'old'
                 ? 'Enter your current 4-digit PIN (default: 1234)'
                 : changePinStep === 'new'
@@ -804,8 +804,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Add Bank Modal */}
       {showAddBankModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in">
-          <div className="w-full max-w-xs bg-white dark:bg-[#1A1A20] rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 text-center">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+          <div className="w-full max-w-xs bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 text-center">
+            <h3 className="text-base font-bold text-slate-900">
               Link Bank Account
             </h3>
             <p className="text-xs text-slate-400 mt-1">
@@ -822,7 +822,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                     setShowAddBankModal(false);
                     alert(`${b} linked successfully! Account XXXXXX3912 ready.`);
                   }}
-                  className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold flex items-center justify-between"
+                  className="w-full p-3 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-bold flex items-center justify-between"
                 >
                   <span>{b}</span>
                   <ChevronRight className="w-4 h-4 text-slate-400" />
@@ -833,7 +833,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             <button
               type="button"
               onClick={() => setShowAddBankModal(false)}
-              className="w-full py-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-300"
+              className="w-full py-2.5 rounded-full bg-slate-100 text-xs font-semibold text-slate-600"
             >
               Cancel
             </button>
@@ -844,14 +844,14 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Edit Profile Modal */}
       {showEditProfileModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in">
-          <div className="w-full max-w-sm bg-white dark:bg-[#1A1A20] rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-5 animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+          <div className="w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 space-y-5 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-full bg-[#5B3DF5]/10 text-[#5B3DF5] flex items-center justify-center">
                   <Pencil className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                  <h3 className="text-base font-bold text-slate-900">
                     Edit Profile Details
                   </h3>
                   <p className="text-[11px] text-slate-400">Update your name, mobile, and UPI ID</p>
@@ -860,7 +860,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <button
                 type="button"
                 onClick={() => setShowEditProfileModal(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-slate-700"
+                className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:text-slate-700"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -876,7 +876,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             <form onSubmit={handleSaveProfile} className="space-y-4">
               {/* Full Name */}
               <div className="space-y-1.5 text-left">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                   <User className="w-3.5 h-3.5 text-[#5B3DF5]" />
                   Full Name
                 </label>
@@ -888,13 +888,13 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                     setEditName(e.target.value);
                   }}
                   placeholder="e.g. Pravin Kumar"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#141419] text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#5B3DF5]/40"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#5B3DF5]/40"
                 />
               </div>
 
               {/* Phone Number */}
               <div className="space-y-1.5 text-left">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                   <Phone className="w-3.5 h-3.5 text-[#5B3DF5]" />
                   Mobile Number
                 </label>
@@ -904,14 +904,14 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   value={editPhone}
                   onChange={(e) => setEditPhone(e.target.value)}
                   placeholder="+91 98765 43210"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#141419] text-sm text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-[#5B3DF5]/40"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-[#5B3DF5]/40"
                 />
               </div>
 
               {/* UPI ID */}
               <div className="space-y-1.5 text-left">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                  <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                     <AtSign className="w-3.5 h-3.5 text-[#5B3DF5]" />
                     UPI Address (VPA)
                   </label>
@@ -934,7 +934,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   value={editUpiId}
                   onChange={(e) => setEditUpiId(e.target.value)}
                   placeholder="name@paynow"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#141419] text-sm text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-[#5B3DF5]/40"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-[#5B3DF5]/40"
                 />
               </div>
 
@@ -942,7 +942,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowEditProfileModal(false)}
-                  className="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors"
+                  className="flex-1 py-2.5 rounded-xl bg-slate-100 text-xs font-bold text-slate-600 hover:bg-slate-200 transition-colors"
                 >
                   Cancel
                 </button>
@@ -962,7 +962,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Super Pay Reset Demo Confirmation Modal */}
       {showResetConfirmModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-xs p-4 animate-in fade-in">
-          <div className="w-full max-w-sm bg-white dark:bg-[#1A1A20] rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 text-center animate-in zoom-in-95 duration-200 space-y-4">
+          <div className="w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 text-center animate-in zoom-in-95 duration-200 space-y-4">
             <div className="relative mx-auto w-16 h-16 flex items-center justify-center">
               <img
                 src="./logo.svg"
@@ -972,13 +972,13 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             </div>
 
             <div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#5B3DF5]/10 text-[#5B3DF5] dark:text-[#8B7CFA] text-[10px] font-extrabold uppercase tracking-wider mb-1">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#5B3DF5]/10 text-[#5B3DF5] text-[10px] font-extrabold uppercase tracking-wider mb-1">
                 SUPER PAY RESET
               </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+              <h3 className="text-lg font-bold text-slate-900">
                 Reset to Onboarding?
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+              <p className="text-xs text-slate-500 mt-2 leading-relaxed">
                 This will clear all new transactions, reset bank balances, and take you through the complete Super Pay onboarding setup with custom name and account numbers.
               </p>
             </div>
@@ -1003,7 +1003,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   sounds.playKeypadClick();
                   setShowResetConfirmModal(false);
                 }}
-                className="w-full py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs transition-colors cursor-pointer"
+                className="w-full py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition-colors cursor-pointer"
               >
                 Cancel
               </button>

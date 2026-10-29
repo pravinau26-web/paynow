@@ -106,7 +106,7 @@ export const PinPad: React.FC<PinPadProps> = ({
                   ? 'bg-red-500 scale-110 shadow-sm shadow-red-500/50'
                   : isFilled
                   ? 'bg-[#5B3DF5] scale-125 shadow-md shadow-[#5B3DF5]/40 ring-2 ring-[#8B7CFA]/30'
-                  : 'bg-slate-200 dark:bg-slate-700/80 border border-slate-300 dark:border-slate-600'
+                  : 'bg-slate-200 border border-slate-300'
               }`}
             />
           );
@@ -121,10 +121,10 @@ export const PinPad: React.FC<PinPadProps> = ({
             type="button"
             disabled={disabled}
             onClick={() => handleKeyPress(digit)}
-            className={`h-13 w-13 sm:h-14 sm:w-14 mx-auto rounded-full text-xl sm:text-2xl font-semibold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer transition-all duration-150 active:scale-90 active:bg-slate-200 dark:active:bg-slate-800 ${
+            className={`h-13 w-13 sm:h-14 sm:w-14 mx-auto rounded-full text-xl sm:text-2xl font-semibold text-slate-800 flex items-center justify-center cursor-pointer transition-all duration-150 active:scale-90 active:bg-slate-200 ${
               activeKey === digit
-                ? 'bg-slate-200 dark:bg-slate-800 scale-95 ring-2 ring-[#5B3DF5]'
-                : 'hover:bg-slate-100 dark:hover:bg-slate-800/60'
+                ? 'bg-slate-200 scale-95 ring-2 ring-[#5B3DF5]'
+                : 'hover:bg-slate-100'
             }`}
           >
             {digit}
@@ -155,10 +155,10 @@ export const PinPad: React.FC<PinPadProps> = ({
           type="button"
           disabled={disabled}
           onClick={() => handleKeyPress('0')}
-          className={`h-13 w-13 sm:h-14 sm:w-14 mx-auto rounded-full text-xl sm:text-2xl font-semibold text-slate-800 dark:text-slate-100 flex items-center justify-center cursor-pointer transition-all duration-150 active:scale-90 active:bg-slate-200 dark:active:bg-slate-800 ${
+          className={`h-13 w-13 sm:h-14 sm:w-14 mx-auto rounded-full text-xl sm:text-2xl font-semibold text-slate-800 flex items-center justify-center cursor-pointer transition-all duration-150 active:scale-90 active:bg-slate-200 ${
             activeKey === '0'
-              ? 'bg-slate-200 dark:bg-slate-800 scale-95 ring-2 ring-[#5B3DF5]'
-              : 'hover:bg-slate-100 dark:hover:bg-slate-800/60'
+              ? 'bg-slate-200 scale-95 ring-2 ring-[#5B3DF5]'
+              : 'hover:bg-slate-100'
           }`}
         >
           0
@@ -169,7 +169,7 @@ export const PinPad: React.FC<PinPadProps> = ({
           disabled={disabled}
           onClick={handleDelete}
           aria-label="Delete"
-          className="h-13 w-13 sm:h-14 sm:w-14 mx-auto rounded-full text-slate-600 dark:text-slate-300 flex items-center justify-center cursor-pointer transition-all duration-150 active:scale-90 hover:bg-slate-100 dark:hover:bg-slate-800/60"
+          className="h-13 w-13 sm:h-14 sm:w-14 mx-auto rounded-full text-slate-600 flex items-center justify-center cursor-pointer transition-all duration-150 active:scale-90 hover:bg-slate-100"
         >
           <Delete className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>

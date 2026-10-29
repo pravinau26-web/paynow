@@ -73,11 +73,11 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({
 
   return (
     <div className="fixed sm:absolute inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="w-full max-w-[22rem] h-full bg-white dark:bg-[#1A1A20] shadow-2xl flex flex-col p-4 sm:p-5 overflow-hidden animate-in slide-in-from-right duration-250">
+      <div className="w-full max-w-[22rem] h-full bg-white shadow-2xl flex flex-col p-4 sm:p-5 overflow-hidden animate-in slide-in-from-right duration-250">
         {/* Drawer Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div>
-            <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+            <h3 className="text-sm sm:text-base font-bold text-slate-900">
               Notifications
             </h3>
             <p className="text-[11px] text-slate-400">
@@ -109,7 +109,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100"
             >
               <X className="w-4 h-4" />
             </button>
@@ -120,10 +120,10 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({
         <div className="flex-1 overflow-y-auto py-3 space-y-2.5">
           {notifications.length === 0 ? (
             <div className="py-20 text-center text-slate-400 text-xs flex flex-col items-center">
-              <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-2">
+              <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-2">
                 <Check className="w-6 h-6 text-slate-400" />
               </div>
-              <p className="font-bold text-slate-700 dark:text-slate-300">All caught up!</p>
+              <p className="font-bold text-slate-700">All caught up!</p>
               <p className="text-[11px] text-slate-400 mt-1">No pending notifications</p>
             </div>
           ) : (
@@ -134,18 +134,18 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({
                 onClick={() => handleItemClick(item)}
                 className={`w-full p-3.5 rounded-2xl border text-left transition-all active:scale-[0.99] group ${
                   item.read
-                    ? 'bg-slate-50/70 dark:bg-[#121217] border-slate-100 dark:border-slate-800/80 text-slate-600 dark:text-slate-400 hover:border-slate-300'
-                    : 'bg-[#5B3DF5]/5 dark:bg-[#5B3DF5]/10 border-[#5B3DF5]/20 text-slate-900 dark:text-white hover:border-[#5B3DF5]/40 shadow-xs'
+                    ? 'bg-slate-50/70 border-slate-100 text-slate-600 hover:border-slate-300'
+                    : 'bg-[#5B3DF5]/5 border-[#5B3DF5]/20 text-slate-900 hover:border-[#5B3DF5]/40 shadow-xs'
                 }`}
               >
                 <div className="flex items-start gap-3">
                   <div
                     className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
                       item.type === 'cashback'
-                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                        ? 'bg-emerald-500/10 text-emerald-600'
                         : item.type === 'payment'
-                        ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
-                        : 'bg-purple-500/10 text-purple-600 dark:text-purple-400'
+                        ? 'bg-blue-500/10 text-blue-600'
+                        : 'bg-purple-500/10 text-purple-600'
                     }`}
                   >
                     {item.type === 'cashback' ? (
@@ -166,11 +166,11 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({
                         {item.timestamp}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">
+                    <p className="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">
                       {item.message}
                     </p>
 
-                    <div className="flex items-center justify-between mt-2 pt-1 border-t border-slate-100 dark:border-slate-800/60">
+                    <div className="flex items-center justify-between mt-2 pt-1 border-t border-slate-100">
                       <span className="text-[10px] font-semibold text-[#5B3DF5] flex items-center gap-0.5">
                         View Details <ChevronRight className="w-3 h-3" />
                       </span>
@@ -200,7 +200,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({
         <button
           type="button"
           onClick={onClose}
-          className="w-full py-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition-colors mt-2"
+          className="w-full py-2.5 rounded-full bg-slate-100 text-xs font-semibold text-slate-700 hover:bg-slate-200 transition-colors mt-2"
         >
           Close Drawer
         </button>
@@ -209,8 +209,8 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({
       {/* Individual Notification Detailed Modal */}
       {selectedNotif && (
         <div className="fixed sm:absolute inset-0 z-60 flex items-center justify-center bg-black/70 backdrop-blur-xs p-3 animate-in fade-in">
-          <div className="w-full max-w-[20rem] bg-white dark:bg-[#1A1A20] rounded-3xl p-5 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 shadow-2xl animate-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+          <div className="w-full max-w-[20rem] bg-white rounded-3xl p-5 text-slate-900 border border-slate-200 shadow-2xl animate-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <div
                   className={`w-7 h-7 rounded-lg flex items-center justify-center ${
@@ -225,7 +225,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({
                     <Receipt className="w-4 h-4" />
                   )}
                 </div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
                   Notification Info
                 </h4>
               </div>
@@ -239,10 +239,10 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({
             </div>
 
             <div className="my-4 space-y-2">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white leading-snug">
+              <h3 className="text-sm font-bold text-slate-900 leading-snug">
                 {selectedNotif.title}
               </h3>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-[#121217] p-3 rounded-2xl border border-slate-100 dark:border-slate-800">
+              <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-2xl border border-slate-100">
                 {selectedNotif.message}
               </p>
 
@@ -288,7 +288,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({
               <button
                 type="button"
                 onClick={handleCloseDetail}
-                className="w-full py-2 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300"
+                className="w-full py-2 rounded-full bg-slate-100 text-xs font-semibold text-slate-700"
               >
                 Close
               </button>

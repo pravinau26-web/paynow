@@ -22,7 +22,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
       {/* Spacious, ergonomic bottom navigation bar */}
       <nav
         aria-label="App Navigation"
-        className="pointer-events-auto w-full max-w-[25.5rem] h-[4.25rem] bg-white/98 dark:bg-[#15151D]/98 backdrop-blur-xl rounded-[1.75rem] shadow-[0_12px_32px_rgba(0,0,0,0.14)] dark:shadow-[0_14px_36px_rgba(0,0,0,0.55)] border border-slate-200/90 dark:border-slate-800/90 px-2 flex items-center justify-between select-none"
+        className="pointer-events-auto w-full max-w-[25.5rem] h-[4.25rem] bg-white/98 backdrop-blur-xl rounded-[1.75rem] shadow-[0_12px_32px_rgba(0,0,0,0.14)] border border-slate-200/90 px-2 flex items-center justify-between select-none"
       >
         {/* Tab 1: Home */}
         <button
@@ -30,8 +30,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           onClick={() => handleNav('home')}
           className={`flex flex-col items-center justify-center flex-1 h-full py-1.5 transition-all cursor-pointer group ${
             currentScreen === 'home'
-              ? 'text-[#5B3DF5] dark:text-[#8B7CFA] font-bold'
-              : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
+              ? 'text-[#5B3DF5] font-bold'
+              : 'text-slate-400 hover:text-slate-600'
           }`}
         >
           <div className="relative flex flex-col items-center">
@@ -41,7 +41,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             />
             <span className="text-[11px] tracking-tight mt-1 leading-none">Home</span>
             {currentScreen === 'home' && (
-              <span className="w-1.5 h-1.5 rounded-full bg-[#5B3DF5] dark:bg-[#8B7CFA] mt-1 shadow-xs" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#5B3DF5] mt-1 shadow-xs" />
             )}
           </div>
         </button>
@@ -52,8 +52,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           onClick={() => handleNav('history')}
           className={`flex flex-col items-center justify-center flex-1 h-full py-1.5 transition-all cursor-pointer group ${
             currentScreen === 'history'
-              ? 'text-[#5B3DF5] dark:text-[#8B7CFA] font-bold'
-              : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
+              ? 'text-[#5B3DF5] font-bold'
+              : 'text-slate-400 hover:text-slate-600'
           }`}
         >
           <div className="relative flex flex-col items-center">
@@ -63,7 +63,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             />
             <span className="text-[11px] tracking-tight mt-1 leading-none">History</span>
             {currentScreen === 'history' && (
-              <span className="w-1.5 h-1.5 rounded-full bg-[#5B3DF5] dark:bg-[#8B7CFA] mt-1 shadow-xs" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#5B3DF5] mt-1 shadow-xs" />
             )}
           </div>
         </button>
@@ -75,7 +75,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             onClick={() => handleNav('scan')}
             aria-label="Scan & Pay"
             title="Scan any UPI QR Code"
-            className="w-[3.75rem] h-[3.75rem] rounded-full bg-gradient-to-tr from-[#5B3DF5] via-[#7C3AED] to-[#00F0FF] text-white flex items-center justify-center shadow-[0_8px_22px_rgba(91,61,245,0.48)] hover:shadow-[0_10px_26px_rgba(91,61,245,0.65)] hover:scale-105 active:scale-95 transition-all ring-4 ring-white dark:ring-[#15151D] cursor-pointer"
+            className="w-[3.75rem] h-[3.75rem] rounded-full bg-gradient-to-tr from-[#5B3DF5] via-[#7C3AED] to-[#00F0FF] text-white flex items-center justify-center shadow-[0_8px_22px_rgba(91,61,245,0.48)] hover:shadow-[0_10px_26px_rgba(91,61,245,0.65)] hover:scale-105 active:scale-95 transition-all ring-4 ring-white cursor-pointer"
           >
             <QrCode className="w-7 h-7 drop-shadow-sm" strokeWidth={2.2} />
           </button>
@@ -87,8 +87,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           onClick={() => handleNav('rewards')}
           className={`flex flex-col items-center justify-center flex-1 h-full py-1.5 transition-all cursor-pointer group ${
             currentScreen === 'rewards'
-              ? 'text-[#5B3DF5] dark:text-[#8B7CFA] font-bold'
-              : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
+              ? 'text-[#5B3DF5] font-bold'
+              : 'text-slate-400 hover:text-slate-600'
           }`}
         >
           <div className="relative flex flex-col items-center">
@@ -98,7 +98,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             />
             <span className="text-[11px] tracking-tight mt-1 leading-none">Rewards</span>
             {currentScreen === 'rewards' && (
-              <span className="w-1.5 h-1.5 rounded-full bg-[#5B3DF5] dark:bg-[#8B7CFA] mt-1 shadow-xs" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#5B3DF5] mt-1 shadow-xs" />
             )}
           </div>
         </button>
@@ -109,8 +109,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           onClick={() => handleNav('profile')}
           className={`flex flex-col items-center justify-center flex-1 h-full py-1.5 transition-all cursor-pointer group ${
             currentScreen === 'profile'
-              ? 'text-[#5B3DF5] dark:text-[#8B7CFA] font-bold'
-              : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
+              ? 'text-[#5B3DF5] font-bold'
+              : 'text-slate-400 hover:text-slate-600'
           }`}
         >
           <div className="relative flex flex-col items-center">
@@ -120,7 +120,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             />
             <span className="text-[11px] tracking-tight mt-1 leading-none">Profile</span>
             {currentScreen === 'profile' && (
-              <span className="w-1.5 h-1.5 rounded-full bg-[#5B3DF5] dark:bg-[#8B7CFA] mt-1 shadow-xs" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#5B3DF5] mt-1 shadow-xs" />
             )}
           </div>
         </button>

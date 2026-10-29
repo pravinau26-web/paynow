@@ -11,10 +11,14 @@ export const applyTheme = (_mode?: string): boolean => {
   try {
     const root = document.documentElement;
     root.classList.remove('dark');
+    root.style.colorScheme = 'light';
+    if (document.body) {
+      document.body.style.colorScheme = 'light';
+    }
 
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (metaThemeColor) {
-      metaThemeColor.setAttribute('content', '#5B3DF5');
+      metaThemeColor.setAttribute('content', '#FAFAFC');
     }
     return false;
   } catch {

@@ -204,7 +204,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
   };
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col bg-[#F7F8FA] dark:bg-[#0E0E12] text-slate-900 dark:text-white overflow-hidden select-none">
+    <div className="flex-1 min-h-0 flex flex-col bg-[#F7F8FA] text-slate-900 overflow-hidden select-none">
       <StatusBar dark={false} />
 
       {/* ========================================================================= */}
@@ -217,13 +217,13 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
             <button
               type="button"
               onClick={onBack}
-              className="w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 flex items-center justify-center text-slate-800 dark:text-slate-200 cursor-pointer"
+              className="w-10 h-10 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-800 cursor-pointer"
             >
               <ArrowLeft className="w-5 h-5 stroke-[2.2]" />
             </button>
             <button
               type="button"
-              className="p-2 text-slate-700 dark:text-slate-300 hover:text-[#5B3DF5]"
+              className="p-2 text-slate-700 hover:text-[#5B3DF5]"
               title="Help"
             >
               <MessageSquare className="w-5 h-5" />
@@ -236,9 +236,9 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
               <h1 className="text-2xl font-black text-[#5B3DF5] tracking-tight">
                 Send money to
               </h1>
-              <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5">
                 <span>any UPI app</span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">•</span>
+                <span className="font-bold text-slate-800">•</span>
                 <span className="font-bold text-[#4285F4]">GPay</span>
                 <span className="font-bold text-[#5F259F]">PhonePe</span>
                 <span className="font-bold text-[#00BAF2]">Paytm</span>
@@ -259,14 +259,14 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
             </div>
 
             {/* Search Input Bar */}
-            <div className="flex items-center gap-2.5 px-3.5 py-3 rounded-2xl bg-white dark:bg-[#1A1A22] border border-slate-200/90 dark:border-slate-800 shadow-xs">
+            <div className="flex items-center gap-2.5 px-3.5 py-3 rounded-2xl bg-white border border-slate-200/90 shadow-xs">
               <Search className="w-4 h-4 text-slate-400 shrink-0" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search number or name or UPI ID"
-                className="flex-1 bg-transparent text-sm font-medium text-slate-900 dark:text-white placeholder:text-slate-400 outline-none"
+                className="flex-1 bg-transparent text-sm font-medium text-slate-900 placeholder:text-slate-400 outline-none"
               />
               {searchQuery && (
                 <button
@@ -310,26 +310,26 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
 
             {/* Quick Links (4 icons from video) */}
             <div>
-              <h2 className="text-xs font-black text-slate-900 dark:text-white tracking-wider mb-2">
+              <h2 className="text-xs font-black text-slate-900 tracking-wider mb-2">
                 Quick links
               </h2>
               <div className="grid grid-cols-4 gap-2">
                 {[
-                  { label: 'Self pay', icon: <Smartphone className="w-5 h-5 text-slate-700 dark:text-slate-200" /> },
-                  { label: 'Mobile', icon: <Phone className="w-5 h-5 text-slate-700 dark:text-slate-200" /> },
-                  { label: 'UPI ID/no.', icon: <AtSign className="w-5 h-5 text-slate-700 dark:text-slate-200" /> },
-                  { label: 'Bank A/c', icon: <Building2 className="w-5 h-5 text-slate-700 dark:text-slate-200" /> },
+                  { label: 'Self pay', icon: <Smartphone className="w-5 h-5 text-slate-700" /> },
+                  { label: 'Mobile', icon: <Phone className="w-5 h-5 text-slate-700" /> },
+                  { label: 'UPI ID/no.', icon: <AtSign className="w-5 h-5 text-slate-700" /> },
+                  { label: 'Bank A/c', icon: <Building2 className="w-5 h-5 text-slate-700" /> },
                 ].map((item) => (
                   <button
                     key={item.label}
                     type="button"
                     onClick={() => sounds.playKeypadClick()}
-                    className="flex flex-col items-center gap-1.5 p-2 rounded-2xl bg-white dark:bg-[#1A1A22] border border-slate-150 dark:border-slate-800 shadow-xs hover:border-[#5B3DF5]/40 transition-all cursor-pointer"
+                    className="flex flex-col items-center gap-1.5 p-2 rounded-2xl bg-white border border-slate-150 shadow-xs hover:border-[#5B3DF5]/40 transition-all cursor-pointer"
                   >
-                    <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                    <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center">
                       {item.icon}
                     </div>
-                    <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                    <span className="text-[11px] font-bold text-slate-700">
                       {item.label}
                     </span>
                   </button>
@@ -339,7 +339,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
 
             {/* Suggested Horizontal Row */}
             <div>
-              <h2 className="text-xs font-black text-slate-900 dark:text-white tracking-wider mb-2">
+              <h2 className="text-xs font-black text-slate-900 tracking-wider mb-2">
                 Suggested
               </h2>
               <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1">
@@ -358,7 +358,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
                       >
                         {initial}
                       </div>
-                      <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 w-16 truncate text-center">
+                      <span className="text-[11px] font-bold text-slate-700 w-16 truncate text-center">
                         {c.name.split(' ')[0]}
                       </span>
                     </button>
@@ -369,16 +369,16 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
 
             {/* Recent Section matching video Frame 00:05 */}
             <div className="space-y-2">
-              <h2 className="text-xs font-black text-slate-900 dark:text-white tracking-wider">
+              <h2 className="text-xs font-black text-slate-900 tracking-wider">
                 Recent
               </h2>
-              <div className="bg-white dark:bg-[#1A1A22] rounded-3xl divide-y divide-slate-100 dark:divide-slate-800/80 border border-slate-150 dark:border-slate-800 overflow-hidden shadow-xs">
+              <div className="bg-white rounded-3xl divide-y divide-slate-100 border border-slate-150 overflow-hidden shadow-xs">
                 {recentContacts.map((contact) => (
                   <button
                     key={contact.id}
                     type="button"
                     onClick={() => handleSelectContact(contact)}
-                    className="w-full p-3.5 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors cursor-pointer"
+                    className="w-full p-3.5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div
@@ -389,7 +389,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
                         {(contact.name.trim()[0] || 'M').toUpperCase()}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="font-bold text-sm text-slate-900 dark:text-white truncate">
+                        <p className="font-bold text-sm text-slate-900 truncate">
                           {contact.name}
                         </p>
                         <p className="text-xs text-slate-400 font-mono truncate">
@@ -409,16 +409,16 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
 
             {/* All Contacts */}
             <div className="space-y-2">
-              <h2 className="text-xs font-black text-slate-900 dark:text-white tracking-wider">
+              <h2 className="text-xs font-black text-slate-900 tracking-wider">
                 All
               </h2>
-              <div className="bg-white dark:bg-[#1A1A22] rounded-3xl divide-y divide-slate-100 dark:divide-slate-800/80 border border-slate-150 dark:border-slate-800 overflow-hidden shadow-xs">
+              <div className="bg-white rounded-3xl divide-y divide-slate-100 border border-slate-150 overflow-hidden shadow-xs">
                 {filteredContacts.map((contact) => (
                   <button
                     key={contact.id}
                     type="button"
                     onClick={() => handleSelectContact(contact)}
-                    className="w-full p-3.5 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors cursor-pointer"
+                    className="w-full p-3.5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div
@@ -429,7 +429,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
                         {(contact.name.trim()[0] || 'M').toUpperCase()}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="font-bold text-sm text-slate-900 dark:text-white truncate">
+                        <p className="font-bold text-sm text-slate-900 truncate">
                           {contact.name}
                         </p>
                         <p className="text-xs text-slate-400 font-mono truncate">
@@ -449,21 +449,21 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
         /* ========================================================================= */
         <div className="flex-1 flex flex-col justify-between overflow-hidden">
           {/* Top Header */}
-          <div className="p-4 flex items-start gap-3 border-b border-slate-100 dark:border-slate-800/60 shrink-0">
+          <div className="p-4 flex items-start gap-3 border-b border-slate-100 shrink-0">
             <button
               type="button"
               onClick={() => {
                 sounds.playKeypadClick();
                 setSelectedContact(null);
               }}
-              className="w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 flex items-center justify-center text-slate-800 dark:text-slate-200 cursor-pointer shrink-0 mt-0.5"
+              className="w-10 h-10 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-800 cursor-pointer shrink-0 mt-0.5"
             >
               <ArrowLeft className="w-5 h-5 stroke-[2.2]" />
             </button>
 
             <div className="min-w-0 flex-1">
               {/* Receiver Name */}
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight truncate">
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight truncate">
                 {selectedContact.name}
               </h1>
 
@@ -478,7 +478,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
                   <span>↗</span>
                   <span>{selectedContact.pastStatus || "Failed ₹1 | 13 October '26"}</span>
                 </span>
-                <span className="text-[11px] font-bold text-[#5B3DF5] dark:text-[#8B7CFA] hover:underline cursor-pointer">
+                <span className="text-[11px] font-bold text-[#5B3DF5] hover:underline cursor-pointer">
                   See history
                 </span>
               </div>
@@ -492,7 +492,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
               <span className="text-4xl sm:text-5xl font-black text-slate-400">
                 ₹
               </span>
-              <span className="text-6xl sm:text-7xl font-black text-slate-900 dark:text-white tracking-tight tabular-nums">
+              <span className="text-6xl sm:text-7xl font-black text-slate-900 tracking-tight tabular-nums">
                 {amount}
               </span>
             </div>
@@ -502,7 +502,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
               <button
                 type="button"
                 onClick={() => setShowNoteInput(!showNoteInput)}
-                className="px-4 py-2 rounded-2xl bg-white dark:bg-[#1A1A22] border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5 shadow-xs hover:bg-slate-50 cursor-pointer"
+                className="px-4 py-2 rounded-2xl bg-white border border-slate-200 text-xs font-bold text-slate-700 flex items-center gap-1.5 shadow-xs hover:bg-slate-50 cursor-pointer"
               >
                 <MessageSquare className="w-3.5 h-3.5 text-slate-400" />
                 <span>{note ? note : 'Add a note'}</span>
@@ -511,7 +511,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
               <button
                 type="button"
                 onClick={() => sounds.playKeypadClick()}
-                className="w-9 h-9 rounded-2xl bg-white dark:bg-[#1A1A22] border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center font-bold text-xs shadow-xs hover:bg-slate-50 cursor-pointer"
+                className="w-9 h-9 rounded-2xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs shadow-xs hover:bg-slate-50 cursor-pointer"
                 title="Calculator"
               >
                 <span>+-×÷</span>
@@ -526,7 +526,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="What is this for? (e.g. Dinner, Fuel)"
-                  className="w-full px-3.5 py-2 rounded-xl bg-white dark:bg-[#1A1A22] border border-slate-200 dark:border-slate-700 text-xs font-medium outline-none text-slate-900 dark:text-white"
+                  className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-medium outline-none text-slate-900"
                   autoFocus
                 />
               </div>
@@ -536,12 +536,12 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
           {/* Bottom Card: Bank Selector + Bright Green "Pay ₹{amount}" Button + Built-in Keypad */}
           <div className="px-5 pb-5 space-y-3 shrink-0">
             {/* Bank Selector Card (Frame 00:10) */}
-            <div className="w-full p-3.5 rounded-2xl bg-white dark:bg-[#1A1A22] border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
+            <div className="w-full p-3.5 rounded-2xl bg-white border border-slate-200 flex items-center justify-between shadow-xs">
               <div className="flex items-center gap-2.5">
                 <span className="w-6 h-6 rounded-lg bg-blue-500/20 text-blue-600 inline-flex items-center justify-center text-xs font-bold">
                   🏦
                 </span>
-                <span className="font-bold text-sm text-slate-900 dark:text-white">
+                <span className="font-bold text-sm text-slate-900">
                   {selectedBank.bankName.split(' ')[0]} {selectedBank.accountNumberMasked.slice(-4)}
                 </span>
               </div>
@@ -556,7 +556,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
               className={`w-full py-4 rounded-full text-base font-black transition-all flex items-center justify-center shadow-md cursor-pointer ${
                 parseFloat(amount) > 0
                   ? 'bg-[#B4F726] text-slate-900 shadow-[#B4F726]/30 hover:bg-[#a5ec14] active:scale-98'
-                  : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed shadow-none'
+                  : 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'
               }`}
             >
               Pay ₹{parseFloat(amount) > 0 ? parseFloat(amount).toLocaleString('en-IN') : '0'}
@@ -569,7 +569,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
                   key={key}
                   type="button"
                   onClick={() => handleKeypadPress(key)}
-                  className="py-3.5 rounded-2xl bg-white dark:bg-[#1A1A22] text-slate-900 dark:text-white font-bold text-lg hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-xs"
+                  className="py-3.5 rounded-2xl bg-white text-slate-900 font-bold text-lg hover:bg-slate-100 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-xs"
                 >
                   {key === 'backspace' ? '⌫' : key}
                 </button>
@@ -582,7 +582,7 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
       {/* UPI PIN Modal */}
       {showPinModal && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col justify-end sm:justify-center items-center p-0 sm:p-4 animate-in fade-in">
-          <div className="w-full max-w-sm bg-white dark:bg-[#1A1A22] rounded-t-3xl sm:rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-2xl text-center space-y-4">
+          <div className="w-full max-w-sm bg-white rounded-t-3xl sm:rounded-3xl p-6 border border-slate-200 shadow-2xl text-center space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                 ENTER 4-DIGIT UPI PIN
@@ -597,8 +597,8 @@ export const SendMoneyScreen: React.FC<SendMoneyScreenProps> = ({
             </div>
 
             <p className="text-xs text-slate-500">
-              Paying <span className="font-bold text-slate-900 dark:text-white">₹{amount}</span> to{' '}
-              <span className="font-bold text-slate-900 dark:text-white">{selectedContact?.name}</span>
+              Paying <span className="font-bold text-slate-900">₹{amount}</span> to{' '}
+              <span className="font-bold text-slate-900">{selectedContact?.name}</span>
             </p>
 
             {pinErrorMessage ? (

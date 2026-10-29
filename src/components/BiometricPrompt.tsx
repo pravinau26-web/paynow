@@ -155,16 +155,16 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
       aria-modal="true"
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200 p-0 sm:p-4 select-none"
     >
-      <div className="w-full max-w-md bg-white dark:bg-[#14151C] rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white flex flex-col items-center relative overflow-hidden transition-all max-h-[92vh] overflow-y-auto no-scrollbar">
+      <div className="w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-200 text-slate-900 flex flex-col items-center relative overflow-hidden transition-all max-h-[92vh] overflow-y-auto no-scrollbar">
         {/* Subtle Ambient Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-24 bg-gradient-to-b from-[#5B3DF5]/15 to-transparent blur-2xl pointer-events-none" />
 
         {/* Drag handle pill on mobile */}
-        <div className="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mb-3 shrink-0" />
+        <div className="w-12 h-1.5 bg-slate-300 rounded-full mb-3 shrink-0" />
 
         {/* Top Header Row with Shield and Close */}
         <div className="w-full flex items-center justify-between pb-2">
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 text-[11px] font-bold">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>NPCI 256-Bit Biometric Shield</span>
           </div>
@@ -172,7 +172,7 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
           <button
             type="button"
             onClick={onCancel}
-            className="w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
             aria-label="Close"
           >
             <X className="w-4 h-4" />
@@ -181,22 +181,22 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
 
         {/* Title & Subtitle */}
         <div className="text-center mt-1 w-full">
-          <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h3 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
             {resolvedTitle}
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs mx-auto">
+          <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
             {resolvedSubtitle}
           </p>
         </div>
 
         {/* Transaction Summary Card (Shown if authorizing a payment) */}
         {contextType === 'transaction' && transactionDetails && (
-          <div className="w-full mt-3.5 p-3.5 rounded-2xl bg-[#F7F8FA] dark:bg-[#1C1D26] border border-slate-200/80 dark:border-slate-800 flex items-center justify-between shadow-xs">
+          <div className="w-full mt-3.5 p-3.5 rounded-2xl bg-[#F7F8FA] border border-slate-200/80 flex items-center justify-between shadow-xs">
             <div className="text-left min-w-0 pr-2">
               <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
                 Paying To
               </span>
-              <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
+              <p className="text-sm font-bold text-slate-900 truncate">
                 {transactionDetails.recipientName}
               </p>
               {transactionDetails.upiId && (
@@ -205,7 +205,7 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
                 </p>
               )}
               {transactionDetails.bankName && (
-                <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
+                <p className="text-[10px] text-slate-500 mt-0.5 flex items-center gap-1">
                   <span>🏦</span>
                   <span>{transactionDetails.bankName}</span>
                 </p>
@@ -216,7 +216,7 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
               <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
                 Amount
               </span>
-              <p className="text-xl sm:text-2xl font-black font-mono text-[#5B3DF5] dark:text-[#8B7CFA] tabular-nums">
+              <p className="text-xl sm:text-2xl font-black font-mono text-[#5B3DF5] tabular-nums">
                 ₹{transactionDetails.amount.toLocaleString('en-IN')}
               </p>
             </div>
@@ -224,7 +224,7 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
         )}
 
         {/* Mode Switcher Tabs: Fingerprint vs Face ID */}
-        <div className="w-full max-w-[280px] p-1 bg-slate-100 dark:bg-[#1E1F2A] rounded-2xl flex items-center justify-between gap-1 my-4 border border-slate-200/60 dark:border-slate-800">
+        <div className="w-full max-w-[280px] p-1 bg-slate-100 rounded-2xl flex items-center justify-between gap-1 my-4 border border-slate-200/60">
           <button
             type="button"
             onClick={() => {
@@ -237,8 +237,8 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
             }}
             className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
               mode === 'fingerprint'
-                ? 'bg-white dark:bg-[#2B2C3A] text-[#5B3DF5] dark:text-white shadow-sm'
-                : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                ? 'bg-white text-[#5B3DF5] shadow-sm'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
           >
             <Fingerprint className="w-3.5 h-3.5" />
@@ -257,8 +257,8 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
             }}
             className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
               mode === 'faceid'
-                ? 'bg-white dark:bg-[#2B2C3A] text-[#5B3DF5] dark:text-white shadow-sm'
-                : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                ? 'bg-white text-[#5B3DF5] shadow-sm'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
           >
             <Scan className="w-3.5 h-3.5" />
@@ -329,16 +329,16 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
               {/* Status and instruction */}
               <div className="text-center mt-1">
                 {isSuccess ? (
-                  <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center justify-center gap-1.5 animate-in fade-in">
+                  <p className="text-xs font-bold text-emerald-600 flex items-center justify-center gap-1.5 animate-in fade-in">
                     <Check className="w-4 h-4 stroke-[2.5]" />
                     <span>Fingerprint Matched · Identity Confirmed</span>
                   </p>
                 ) : isScanning ? (
                   <div className="space-y-1">
-                    <p className="text-xs font-bold text-[#5B3DF5] dark:text-[#8B7CFA] animate-pulse">
+                    <p className="text-xs font-bold text-[#5B3DF5] animate-pulse">
                       Reading fingerprint pattern...
                     </p>
-                    <div className="w-32 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto overflow-hidden">
+                    <div className="w-32 h-1.5 bg-slate-200 rounded-full mx-auto overflow-hidden">
                       <div
                         className="h-full bg-[#5B3DF5] transition-all duration-150"
                         style={{ width: `${scanProgress}%` }}
@@ -349,7 +349,7 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
                   <button
                     type="button"
                     onClick={handleScanFingerprint}
-                    className="text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-[#5B3DF5] flex items-center justify-center gap-1 cursor-pointer transition-colors"
+                    className="text-xs font-semibold text-slate-600 hover:text-[#5B3DF5] flex items-center justify-center gap-1 cursor-pointer transition-colors"
                   >
                     <span>Tap or hold sensor to simulate Fingerprint</span>
                   </button>
@@ -367,11 +367,11 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
                       ? 'border-2 border-emerald-500 bg-emerald-500/10 shadow-lg shadow-emerald-500/20'
                       : isScanning
                       ? 'border border-[#5B3DF5]/60 bg-[#5B3DF5]/10 shadow-lg shadow-[#5B3DF5]/20'
-                      : 'border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-[#181922]'
+                      : 'border border-slate-300 bg-slate-50'
                   }`}
                 >
                   {/* Top TrueDepth Camera Notch / Indicator */}
-                  <div className="absolute top-2 w-10 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full flex items-center justify-center">
+                  <div className="absolute top-2 w-10 h-1.5 bg-slate-300 rounded-full flex items-center justify-center">
                     <span
                       className={`w-1 h-1 rounded-full ${
                         isScanning ? 'bg-red-500 animate-ping' : 'bg-slate-400'
@@ -386,7 +386,7 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
                         ? 'border-emerald-500'
                         : isScanning
                         ? 'border-[#5B3DF5]'
-                        : 'border-slate-400 dark:border-slate-600'
+                        : 'border-slate-400'
                     }`}
                   />
                   <div
@@ -395,7 +395,7 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
                         ? 'border-emerald-500'
                         : isScanning
                         ? 'border-[#5B3DF5]'
-                        : 'border-slate-400 dark:border-slate-600'
+                        : 'border-slate-400'
                     }`}
                   />
                   <div
@@ -404,7 +404,7 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
                         ? 'border-emerald-500'
                         : isScanning
                         ? 'border-[#5B3DF5]'
-                        : 'border-slate-400 dark:border-slate-600'
+                        : 'border-slate-400'
                     }`}
                   />
                   <div
@@ -413,7 +413,7 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
                         ? 'border-emerald-500'
                         : isScanning
                         ? 'border-[#5B3DF5]'
-                        : 'border-slate-400 dark:border-slate-600'
+                        : 'border-slate-400'
                     }`}
                   />
 
@@ -423,7 +423,7 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
                       <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mb-1">
                         <Unlock className="w-9 h-9 stroke-[2.5]" />
                       </div>
-                      <span className="text-[11px] font-black tracking-wider uppercase text-emerald-600 dark:text-emerald-400">
+                      <span className="text-[11px] font-black tracking-wider uppercase text-emerald-600">
                         Face Verified
                       </span>
                     </div>
@@ -435,7 +435,7 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
                       className="relative w-full h-full flex flex-col items-center justify-center cursor-pointer group"
                     >
                       {/* Stylized Face Contour Mesh */}
-                      <div className="relative w-20 h-24 rounded-[40px] border-2 border-dashed border-slate-300 dark:border-slate-600 flex flex-col items-center justify-center transition-all group-hover:border-[#5B3DF5]">
+                      <div className="relative w-20 h-24 rounded-[40px] border-2 border-dashed border-slate-300 flex flex-col items-center justify-center transition-all group-hover:border-[#5B3DF5]">
                         <Smile
                           className={`w-10 h-10 transition-colors ${
                             isScanning
@@ -460,16 +460,16 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
               {/* Status and instruction */}
               <div className="text-center mt-1">
                 {isSuccess ? (
-                  <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center justify-center gap-1.5 animate-in fade-in">
+                  <p className="text-xs font-bold text-emerald-600 flex items-center justify-center gap-1.5 animate-in fade-in">
                     <Check className="w-4 h-4 stroke-[2.5]" />
                     <span>Face ID Recognized · Access Granted</span>
                   </p>
                 ) : isScanning ? (
                   <div className="space-y-1">
-                    <p className="text-xs font-bold text-[#5B3DF5] dark:text-[#8B7CFA] animate-pulse">
+                    <p className="text-xs font-bold text-[#5B3DF5] animate-pulse">
                       Analyzing 3D facial contours...
                     </p>
-                    <div className="w-32 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto overflow-hidden">
+                    <div className="w-32 h-1.5 bg-slate-200 rounded-full mx-auto overflow-hidden">
                       <div
                         className="h-full bg-[#5B3DF5] transition-all duration-150"
                         style={{ width: `${scanProgress}%` }}
@@ -480,7 +480,7 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
                   <button
                     type="button"
                     onClick={handleScanFaceId}
-                    className="text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-[#5B3DF5] flex items-center justify-center gap-1 cursor-pointer transition-colors"
+                    className="text-xs font-semibold text-slate-600 hover:text-[#5B3DF5] flex items-center justify-center gap-1 cursor-pointer transition-colors"
                   >
                     <span>Glance at screen or tap to simulate Face ID</span>
                   </button>
@@ -540,7 +540,7 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
               onCancel();
             }
           }}
-          className="mt-2.5 w-full py-2.5 rounded-2xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+          className="mt-2.5 w-full py-2.5 rounded-2xl text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
         >
           <KeyRound className="w-3.5 h-3.5 text-slate-400" />
           <span>

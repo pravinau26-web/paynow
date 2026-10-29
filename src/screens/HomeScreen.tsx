@@ -90,7 +90,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-[#FAFAFC] dark:bg-[#0E0E12] text-slate-900 dark:text-white pb-32 sm:pb-36 overflow-y-auto no-scrollbar">
+    <div className="flex-1 flex flex-col bg-[#FAFAFC] text-slate-900 pb-32 sm:pb-36 overflow-y-auto no-scrollbar">
       <StatusBar dark={false} />
 
       {/* Top Bar: Profile avatar + Greeting + Action Icons */}
@@ -107,16 +107,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <img
               src="./logo.svg"
               alt="Super Pay"
-              className="absolute -bottom-1 -right-1 w-4.5 h-4.5 rounded-full ring-2 ring-white dark:ring-[#0E0E12] shadow-xs"
+              className="absolute -bottom-1 -right-1 w-4.5 h-4.5 rounded-full ring-2 ring-white shadow-xs"
             />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#5B3DF5] dark:text-[#8B7CFA] bg-[#5B3DF5]/10 px-1.5 py-0.5 rounded-md">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#5B3DF5] bg-[#5B3DF5]/10 px-1.5 py-0.5 rounded-md">
                 Super Pay
               </span>
             </div>
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white leading-tight mt-0.5">
+            <h2 className="text-sm font-bold text-slate-900 leading-tight mt-0.5">
               {user.name} 👋
             </h2>
           </div>
@@ -132,7 +132,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             }}
             aria-label="Test Sounds"
             title="UPI Sound Effects (Preview)"
-            className="w-9 h-9 rounded-full bg-white dark:bg-[#1A1A20] border border-slate-200 dark:border-slate-800 text-[#5B3DF5] flex items-center justify-center shadow-xs hover:bg-slate-50 transition-colors"
+            className="w-9 h-9 rounded-full bg-white border border-slate-200 text-[#5B3DF5] flex items-center justify-center shadow-xs hover:bg-slate-50 transition-colors"
           >
             <Volume2 className="w-4 h-4" />
           </button>
@@ -142,7 +142,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             type="button"
             onClick={onOpenMyQr}
             aria-label="View My QR Code"
-            className="w-9 h-9 rounded-full bg-white dark:bg-[#1A1A20] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center shadow-xs hover:bg-slate-50 transition-colors"
+            className="w-9 h-9 rounded-full bg-white border border-slate-200 text-slate-700 flex items-center justify-center shadow-xs hover:bg-slate-50 transition-colors"
           >
             <QrCode className="w-4 h-4" />
           </button>
@@ -152,11 +152,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             type="button"
             onClick={onOpenNotifications}
             aria-label="Notifications"
-            className="w-9 h-9 rounded-full bg-white dark:bg-[#1A1A20] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center shadow-xs relative hover:bg-slate-50 transition-colors"
+            className="w-9 h-9 rounded-full bg-white border border-slate-200 text-slate-700 flex items-center justify-center shadow-xs relative hover:bg-slate-50 transition-colors"
           >
             <Bell className="w-4 h-4" />
             {unreadNotifsCount > 0 && (
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-[#FF4D4F] ring-2 ring-white dark:ring-[#1A1A20]" />
+              <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-[#FF4D4F] ring-2 ring-white" />
             )}
           </button>
         </div>
@@ -253,17 +253,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         {/* ========================================================================= */}
         <div
           onClick={onOpenOffers}
-          className="p-3.5 rounded-2xl bg-emerald-500/10 dark:bg-emerald-950/30 border border-emerald-500/25 flex items-center justify-between cursor-pointer hover:bg-emerald-500/15 transition-colors"
+          className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-between cursor-pointer hover:bg-emerald-500/15 transition-colors"
         >
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-[#1DB954] text-white flex items-center justify-center shrink-0 shadow-sm shadow-emerald-500/30">
               <Sparkles className="w-5 h-5 fill-current" />
             </div>
             <div>
-              <p className="text-xs font-bold text-emerald-800 dark:text-emerald-300">
+              <p className="text-xs font-bold text-emerald-800">
                 Flat 5% Instant Real Cashback Deals
               </p>
-              <p className="text-[11px] text-emerald-600 dark:text-emerald-400">
+              <p className="text-[11px] text-emerald-600">
                 Direct to your bank on merchant QR scans. No scratch cards.
               </p>
             </div>
@@ -274,7 +274,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         {/* ========================================================================= */}
         {/* QUICK ACTIONS GRID                                                        */}
         {/* ========================================================================= */}
-        <div className="bg-white dark:bg-[#1A1A20] rounded-3xl p-4 border border-slate-200/80 dark:border-slate-800/80 shadow-xs">
+        <div className="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs">
           <div className="flex items-center justify-between mb-3 px-1">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
               UPI Payments & Services
@@ -286,12 +286,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <button
               type="button"
               onClick={() => onNavigate('scan')}
-              className="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors"
+              className="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-slate-50 transition-colors"
             >
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#5B3DF5] to-[#8B7CFA] text-white flex items-center justify-center shadow-md shadow-[#5B3DF5]/30">
                 <QrCode className="w-6 h-6" />
               </div>
-              <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200">
+              <span className="text-[11px] font-bold text-slate-800">
                 Scan QR
               </span>
             </button>
@@ -300,12 +300,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <button
               type="button"
               onClick={() => onNavigate('send')}
-              className="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors"
+              className="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-slate-50 transition-colors"
             >
-              <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-[#5B3DF5] flex items-center justify-center">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-[#5B3DF5] flex items-center justify-center">
                 <Send className="w-5 h-5" />
               </div>
-              <span className="text-[11px] font-semibold text-slate-800 dark:text-slate-200">
+              <span className="text-[11px] font-semibold text-slate-800">
                 To Contact
               </span>
             </button>
@@ -314,12 +314,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <button
               type="button"
               onClick={() => onNavigate('recharge')}
-              className="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors"
+              className="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-slate-50 transition-colors"
             >
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
                 <Smartphone className="w-5 h-5" />
               </div>
-              <span className="text-[11px] font-semibold text-slate-800 dark:text-slate-200">
+              <span className="text-[11px] font-semibold text-slate-800">
                 Recharge
               </span>
             </button>
@@ -328,12 +328,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <button
               type="button"
               onClick={() => onNavigate('billpay')}
-              className="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors"
+              className="flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-slate-50 transition-colors"
             >
-              <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
                 <Zap className="w-5 h-5" />
               </div>
-              <span className="text-[11px] font-semibold text-slate-800 dark:text-slate-200">
+              <span className="text-[11px] font-semibold text-slate-800">
                 Bill Pay
               </span>
             </button>
@@ -424,7 +424,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 >
                   {contact.initials}
                 </div>
-                <span className="text-[11px] font-medium text-slate-700 dark:text-slate-300 w-16 truncate text-center">
+                <span className="text-[11px] font-medium text-slate-700 w-16 truncate text-center">
                   {contact.name.split(' ')[0]}
                 </span>
               </button>
@@ -435,7 +435,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         {/* ========================================================================= */}
         {/* RECENT TRANSACTIONS LIST                                                  */}
         {/* ========================================================================= */}
-        <div className="bg-white dark:bg-[#1A1A20] rounded-3xl p-4 border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-3">
+        <div className="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs space-y-3">
           <div className="flex items-center justify-between px-1">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
               Recent Transactions
@@ -449,7 +449,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             </button>
           </div>
 
-          <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
+          <div className="divide-y divide-slate-100">
             {transactions.slice(0, 5).map((tx) => {
               const isDebit = tx.type === 'debit';
               const isFailed = tx.status === 'FAILED';
@@ -457,7 +457,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <div
                   key={tx.id}
                   onClick={() => onSelectTransaction(tx)}
-                  className="py-2.5 flex items-center justify-between cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/40 rounded-xl px-2 transition-colors gap-2"
+                  className="py-2.5 flex items-center justify-between cursor-pointer hover:bg-slate-50 rounded-xl px-2 transition-colors gap-2"
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div
@@ -467,8 +467,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                           : tx.category === 'cashback'
                           ? 'bg-emerald-500/10 text-[#1DB954]'
                           : isDebit
-                          ? 'bg-red-50 dark:bg-red-950/40 text-red-500'
-                          : 'bg-emerald-50 dark:bg-emerald-950/40 text-[#1DB954]'
+                          ? 'bg-red-50 text-red-500'
+                          : 'bg-emerald-50 text-[#1DB954]'
                       }`}
                     >
                       {isFailed ? (
@@ -483,7 +483,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <p className="font-black text-sm text-slate-900 dark:text-white truncate">
+                      <p className="font-black text-sm text-slate-900 truncate">
                         {tx.title}
                       </p>
                       <div className="flex items-center gap-1.5 text-xs text-slate-400 truncate">
@@ -498,7 +498,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                         isFailed
                           ? 'text-red-500 line-through'
                           : isDebit
-                          ? 'text-slate-900 dark:text-white'
+                          ? 'text-slate-900'
                           : 'text-[#1DB954]'
                       }`}
                     >
@@ -564,8 +564,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* Add Money Modal */}
       {showAddMoneyModal && (
         <div className="fixed sm:absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 animate-in fade-in">
-          <div className="w-full max-w-[20rem] bg-white dark:bg-[#1A1A20] rounded-3xl p-5 shadow-2xl border border-slate-200 dark:border-slate-800 text-center">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+          <div className="w-full max-w-[20rem] bg-white rounded-3xl p-5 shadow-2xl border border-slate-200 text-center">
+            <h3 className="text-base font-bold text-slate-900">
               Add Money to Bank
             </h3>
             <p className="text-xs text-slate-400 mt-1">
@@ -582,7 +582,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   step="any"
                   value={customAddAmount}
                   onChange={(e) => setCustomAddAmount(e.target.value)}
-                  className="w-32 text-center bg-transparent border-b-2 border-[#5B3DF5] outline-none text-slate-900 dark:text-white font-mono"
+                  className="w-32 text-center bg-transparent border-b-2 border-[#5B3DF5] outline-none text-slate-900 font-mono"
                   autoFocus
                   placeholder="100"
                 />
@@ -597,7 +597,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       sounds.playKeypadClick();
                       setCustomAddAmount(amt.toString());
                     }}
-                    className="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                    className="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer"
                   >
                     +₹{amt}
                   </button>
@@ -608,7 +608,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowAddMoneyModal(false)}
-                  className="flex-1 py-2.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 cursor-pointer hover:bg-slate-200"
+                  className="flex-1 py-2.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 cursor-pointer hover:bg-slate-200"
                 >
                   Cancel
                 </button>
@@ -629,14 +629,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* Sound Effects Preview Modal */}
       {showSoundTesterModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="w-full max-w-sm bg-white dark:bg-[#1A1A20] rounded-3xl p-5 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+          <div className="w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl border border-slate-200 space-y-4 animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-[#5B3DF5]/10 text-[#5B3DF5] flex items-center justify-center">
                   <Volume2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  <h3 className="text-sm font-bold text-slate-900">
                     UPI Sound Effects Preview
                   </h3>
                   <p className="text-[11px] text-slate-400">Tap to test alert tones</p>
@@ -645,7 +645,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               <button
                 type="button"
                 onClick={() => setShowSoundTesterModal(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-slate-700"
+                className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:text-slate-700"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -659,7 +659,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   sounds.enabled = true;
                   sounds.playPaymentSuccess();
                 }}
-                className="w-full py-3 px-3.5 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center justify-between transition-all active:scale-98 cursor-pointer"
+                className="w-full py-3 px-3.5 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-600 text-xs font-bold flex items-center justify-between transition-all active:scale-98 cursor-pointer"
               >
                 <div className="flex items-center gap-2.5 text-left">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -680,7 +680,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   sounds.enabled = true;
                   sounds.playPaymentFailure();
                 }}
-                className="w-full py-3 px-3.5 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-bold flex items-center justify-between transition-all active:scale-98 cursor-pointer"
+                className="w-full py-3 px-3.5 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-600 text-xs font-bold flex items-center justify-between transition-all active:scale-98 cursor-pointer"
               >
                 <div className="flex items-center gap-2.5 text-left">
                   <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
@@ -701,7 +701,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   sounds.enabled = true;
                   sounds.playPaymentInitiate();
                 }}
-                className="w-full py-3 px-3.5 rounded-2xl bg-[#5B3DF5]/10 hover:bg-[#5B3DF5]/20 border border-[#5B3DF5]/30 text-[#5B3DF5] dark:text-[#A16CFF] text-xs font-bold flex items-center justify-between transition-all active:scale-98 cursor-pointer"
+                className="w-full py-3 px-3.5 rounded-2xl bg-[#5B3DF5]/10 hover:bg-[#5B3DF5]/20 border border-[#5B3DF5]/30 text-[#5B3DF5] text-xs font-bold flex items-center justify-between transition-all active:scale-98 cursor-pointer"
               >
                 <div className="flex items-center gap-2.5 text-left">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#5B3DF5]" />

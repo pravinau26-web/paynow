@@ -19,8 +19,8 @@ export const OffersModal: React.FC<OffersModalProps> = ({
 
   return (
     <div className="fixed sm:absolute inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-3 animate-in fade-in duration-200">
-      <div className="w-full max-w-[22rem] bg-white dark:bg-[#1A1A20] rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white max-h-[85vh] sm:max-h-[38rem] overflow-y-auto">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+      <div className="w-full max-w-[22rem] bg-white rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl border-t sm:border border-slate-200 text-slate-900 max-h-[85vh] sm:max-h-[38rem] overflow-y-auto">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div>
             <h3 className="text-sm font-bold flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 text-emerald-500 fill-current" />
@@ -31,7 +31,7 @@ export const OffersModal: React.FC<OffersModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100"
           >
             <X className="w-4 h-4" />
           </button>

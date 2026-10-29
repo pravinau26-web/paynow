@@ -111,18 +111,18 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
   const getAvatarColors = (title: string, category?: string) => {
     const firstChar = (title.trim()[0] || 'P').toUpperCase();
     if (firstChar === 'P' || category === 'travel') {
-      return 'bg-[#E8F8EE] text-[#00875A] dark:bg-[#003822]/40 dark:text-[#36B37E]';
+      return 'bg-[#E8F8EE] text-[#00875A]';
     }
     if (firstChar === 'K' || category === 'transfer') {
-      return 'bg-[#FFEBE5] text-[#DE350B] dark:bg-[#4D1B10]/40 dark:text-[#FF8F73]';
+      return 'bg-[#FFEBE5] text-[#DE350B]';
     }
     if (firstChar === 'S' || firstChar === 'A') {
-      return 'bg-[#FFF0B3] text-[#974F00] dark:bg-[#423200]/40 dark:text-[#FFC400]';
+      return 'bg-[#FFF0B3] text-[#974F00]';
     }
     if (firstChar === 'M') {
-      return 'bg-[#FFF0B3] text-[#974F00] dark:bg-[#423200]/40 dark:text-[#FFC400]';
+      return 'bg-[#FFF0B3] text-[#974F00]';
     }
-    return 'bg-[#EAE6FF] text-[#5B3DF5] dark:bg-[#28224E]/40 dark:text-[#A16CFF]';
+    return 'bg-[#EAE6FF] text-[#5B3DF5]';
   };
 
   // Category Icon & Label
@@ -150,16 +150,16 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
   };
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col bg-[#F7F8FA] dark:bg-[#0E0E12] text-slate-900 dark:text-white overflow-hidden select-none">
+    <div className="flex-1 min-h-0 flex flex-col bg-[#F7F8FA] text-slate-900 overflow-hidden select-none">
       <StatusBar dark={false} />
 
       {/* Top Header Bar matching super.money video */}
       <div className="px-5 pt-3 pb-2 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 flex items-center justify-center font-bold text-sm shadow-xs">
+          <div className="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm shadow-xs">
             <User className="w-5 h-5" />
           </div>
-          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
             Payment history
           </h1>
         </div>
@@ -168,7 +168,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
         <button
           type="button"
           onClick={handleDownloadStatement}
-          className="w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
+          className="w-10 h-10 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-700 transition-colors cursor-pointer"
           title="Download Statement"
         >
           <Download className="w-5 h-5 stroke-[2.2]" />
@@ -177,21 +177,21 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
 
       {/* Toast feedback */}
       {statementToast && (
-        <div className="mx-5 mb-2 px-3.5 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold text-center animate-in fade-in">
+        <div className="mx-5 mb-2 px-3.5 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 text-xs font-bold text-center animate-in fade-in">
           {statementToast}
         </div>
       )}
 
       {/* Search Input matching super.money */}
       <div className="px-5 my-1.5 shrink-0">
-        <div className="flex items-center gap-2.5 px-3.5 py-3 rounded-2xl bg-white dark:bg-[#1A1A22] border border-slate-200/90 dark:border-slate-800 shadow-xs">
+        <div className="flex items-center gap-2.5 px-3.5 py-3 rounded-2xl bg-white border border-slate-200/90 shadow-xs">
           <Search className="w-4 h-4 text-slate-400 shrink-0" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search your payments"
-            className="flex-1 bg-transparent text-sm font-medium text-slate-900 dark:text-white placeholder:text-slate-400 outline-none"
+            className="flex-1 bg-transparent text-sm font-medium text-slate-900 placeholder:text-slate-400 outline-none"
           />
           {search ? (
             <button
@@ -208,7 +208,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
               className={`p-1 transition-colors cursor-pointer ${
                 showFilters || filterType !== 'all'
                   ? 'text-[#5B3DF5]'
-                  : 'text-slate-700 dark:text-slate-300'
+                  : 'text-slate-700'
               }`}
               title="Filter Payments"
             >
@@ -239,8 +239,8 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
               }}
               className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                 filterType === tab.id
-                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs'
-                  : 'bg-white dark:bg-[#1A1A22] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'bg-white text-slate-600 border border-slate-200'
               }`}
             >
               {tab.label}
@@ -261,12 +261,12 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
               {/* Month Group Header matching super.money video */}
               <div className="flex items-center justify-between pt-1">
                 <div>
-                  <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight">
+                  <h2 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
                     {monthLabel}
                   </h2>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-500 mt-0.5">
                     You have spent{' '}
-                    <span className="font-bold text-slate-900 dark:text-white">
+                    <span className="font-bold text-slate-900">
                       ₹{group.totalSpent.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                     </span>{' '}
                     in this month
@@ -277,7 +277,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
                 <button
                   type="button"
                   onClick={() => sounds.playKeypadClick()}
-                  className="w-7 h-7 rounded-lg bg-slate-900 dark:bg-slate-700 text-white flex items-center justify-center hover:bg-slate-800 active:scale-95 transition-all cursor-pointer shadow-xs"
+                  className="w-7 h-7 rounded-lg bg-slate-900 text-white flex items-center justify-center hover:bg-slate-800 active:scale-95 transition-all cursor-pointer shadow-xs"
                   title="View Monthly Breakdown"
                 >
                   <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
@@ -303,7 +303,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
                         sounds.playKeypadClick();
                         onSelectTransaction(tx);
                       }}
-                      className="w-full bg-white dark:bg-[#1A1A22] rounded-2xl p-3.5 border border-slate-150 dark:border-slate-800/90 shadow-xs hover:border-[#5B3DF5]/40 transition-all cursor-pointer flex items-center justify-between gap-3 group active:scale-[0.99]"
+                      className="w-full bg-white rounded-2xl p-3.5 border border-slate-150 shadow-xs hover:border-[#5B3DF5]/40 transition-all cursor-pointer flex items-center justify-between gap-3 group active:scale-[0.99]"
                     >
                       {/* Left Side: Pastel Letter Avatar & Details */}
                       <div className="flex items-center gap-3.5 min-w-0 flex-1">
@@ -380,7 +380,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
                               sounds.playKeypadClick();
                               setRepeatTx(tx);
                             }}
-                            className="flex flex-col items-center justify-center p-2 rounded-xl text-xs font-bold text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ml-1 cursor-pointer"
+                            className="flex flex-col items-center justify-center p-2 rounded-xl text-xs font-bold text-slate-900 hover:bg-slate-100 transition-colors ml-1 cursor-pointer"
                             title="Pay again"
                           >
                             <RotateCcw className="w-4 h-4 text-emerald-600 mb-0.5" />

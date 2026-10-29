@@ -62,16 +62,16 @@ export const SuperFdScreen: React.FC<SuperFdScreenProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-[#FAFAFC] dark:bg-[#0E0E12] text-slate-900 dark:text-white pb-32 sm:pb-36 overflow-y-auto no-scrollbar select-none">
+    <div className="flex-1 flex flex-col bg-[#FAFAFC] text-slate-900 pb-32 sm:pb-36 overflow-y-auto no-scrollbar select-none">
       <StatusBar dark={false} />
 
       {/* Header */}
-      <div className="px-5 py-3 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
+      <div className="px-5 py-3 flex items-center justify-between border-b border-slate-100">
         <button
           type="button"
           onClick={onBack}
           aria-label="Back"
-          className="w-10 h-10 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+          className="w-10 h-10 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-100"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -107,12 +107,12 @@ export const SuperFdScreen: React.FC<SuperFdScreenProps> = ({
         </div>
 
         {/* Interactive FD Calculator */}
-        <div className="p-5 rounded-3xl bg-white dark:bg-[#1A1A20] border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-4">
+        <div className="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
               Investment Amount
             </span>
-            <span className="text-xl font-black font-mono text-slate-900 dark:text-white">
+            <span className="text-xl font-black font-mono text-slate-900">
               ₹{depositAmount.toLocaleString('en-IN')}
             </span>
           </div>
@@ -125,7 +125,7 @@ export const SuperFdScreen: React.FC<SuperFdScreenProps> = ({
             step={1000}
             value={depositAmount}
             onChange={(e) => setDepositAmount(Number(e.target.value))}
-            className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#5B3DF5]"
+            className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#5B3DF5]"
           />
 
           {/* Quick preset amounts */}
@@ -141,7 +141,7 @@ export const SuperFdScreen: React.FC<SuperFdScreenProps> = ({
                 className={`flex-1 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                   depositAmount === amt
                     ? 'bg-[#5B3DF5] text-white'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                    : 'bg-slate-100 text-slate-600'
                 }`}
               >
                 ₹{amt / 1000}k
@@ -171,7 +171,7 @@ export const SuperFdScreen: React.FC<SuperFdScreenProps> = ({
                   className={`p-2.5 rounded-2xl border text-center transition-all flex flex-col items-center ${
                     tenure === item.months
                       ? 'border-[#5B3DF5] bg-[#5B3DF5]/10 text-[#5B3DF5] font-bold shadow-xs'
-                      : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50'
+                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'
                   }`}
                 >
                   <span className="text-xs font-bold">{item.label}</span>
@@ -182,13 +182,13 @@ export const SuperFdScreen: React.FC<SuperFdScreenProps> = ({
           </div>
 
           {/* Maturity Breakdown Summary Box */}
-          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-[#121217] border border-slate-100 dark:border-slate-800 space-y-2 text-xs">
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-2 text-xs">
             <div className="flex justify-between items-center">
               <span className="text-slate-400">Total Interest Earned</span>
               <span className="font-bold text-emerald-600 font-mono">+₹{estimatedReturn.toLocaleString('en-IN')}</span>
             </div>
-            <div className="flex justify-between items-center pt-2 border-t border-slate-200/60 dark:border-slate-800">
-              <span className="font-bold text-slate-800 dark:text-slate-200">Maturity Value ({rate}% p.a.)</span>
+            <div className="flex justify-between items-center pt-2 border-t border-slate-200/60">
+              <span className="font-bold text-slate-800">Maturity Value ({rate}% p.a.)</span>
               <span className="text-base font-black font-mono text-[#5B3DF5]">
                 ₹{maturityAmount.toLocaleString('en-IN')}
               </span>
@@ -215,11 +215,11 @@ export const SuperFdScreen: React.FC<SuperFdScreenProps> = ({
             {activeFds.map((fd) => (
               <div
                 key={fd.id}
-                className="p-4 rounded-3xl bg-white dark:bg-[#1A1A20] border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-2"
+                className="p-4 rounded-3xl bg-white border border-slate-200/80 shadow-xs space-y-2"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="text-xs font-bold text-slate-900 dark:text-white">{fd.bankName}</h4>
+                    <h4 className="text-xs font-bold text-slate-900">{fd.bankName}</h4>
                     <p className="text-[10px] text-slate-400 font-mono">{fd.fdNumber}</p>
                   </div>
                   <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] font-bold">
@@ -227,7 +227,7 @@ export const SuperFdScreen: React.FC<SuperFdScreenProps> = ({
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center text-xs pt-2 border-t border-slate-100 dark:border-slate-800">
+                <div className="flex justify-between items-center text-xs pt-2 border-t border-slate-100">
                   <div>
                     <span className="text-slate-400 text-[10px]">Principal</span>
                     <p className="font-bold font-mono">₹{fd.principal.toLocaleString('en-IN')}</p>

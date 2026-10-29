@@ -6,6 +6,7 @@
 }
 
 :root {
+  color-scheme: light !important;
   --primary: #5B3DF5;
   --primary-gradient: linear-gradient(135deg, #6C4CFA 0%, #A16CFF 100%);
   --success: #1DB954;
@@ -17,6 +18,14 @@
   --border: #EFEFF3;
 }
 
+/* Ensure mobile browser dark mode never forces dark styling */
+@media (prefers-color-scheme: dark) {
+  :root, html, body {
+    color-scheme: light !important;
+    background-color: #FAFAFC !important;
+  }
+}
+
 /* ========================================================================= */
 /* RESPONSIVE ROOT CONTAINER SCALING STRATEGY                                 */
 /* Reduces overall UI scale for desktop & laptop displays so components use  */
@@ -25,6 +34,7 @@
 html {
   font-size: 16px;
   height: 100%;
+  color-scheme: light !important;
 }
 
 body {
@@ -32,7 +42,8 @@ body {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   height: 100%;
-  background-color: #FAFAFC;
+  background-color: #FAFAFC !important;
+  color-scheme: light !important;
 }
 
 #root {

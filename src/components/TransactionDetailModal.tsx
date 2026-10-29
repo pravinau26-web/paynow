@@ -140,7 +140,7 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 bg-[#F4F5F9] dark:bg-[#0E0E12] text-slate-900 dark:text-white flex flex-col w-full h-full overflow-hidden select-none animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 bg-[#F4F5F9] text-slate-900 flex flex-col w-full h-full overflow-hidden select-none animate-in fade-in duration-200"
     >
       {/* Top Bar: Solid Purple with Back Arrow, super.money logo, and Help Message Icon */}
       <div className="sticky top-0 z-20 px-4 py-3 flex items-center justify-between bg-[#5B3DF5] text-white shadow-md">
@@ -178,7 +178,7 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
 
       {/* Toast Feedback */}
       {sharedToast && (
-        <div className="mx-4 mt-2 px-3.5 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold text-center animate-in fade-in">
+        <div className="mx-4 mt-2 px-3.5 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 text-xs font-bold text-center animate-in fade-in">
           {sharedToast}
         </div>
       )}
@@ -188,10 +188,10 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
         {/* ========================================================================= */}
         {/* WHITE RECEIPT CARD (Exact Video Style Frame 00:22 - 00:24)                */}
         {/* ========================================================================= */}
-        <div className="rounded-3xl bg-white dark:bg-[#1A1A22] p-5 shadow-sm border border-slate-200/80 dark:border-slate-800 space-y-3.5">
+        <div className="rounded-3xl bg-white p-5 shadow-sm border border-slate-200/80 space-y-3.5">
           {/* Top Row: Amount + Checkmark Badge */}
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl sm:text-4xl font-black font-sans text-slate-900 dark:text-white tracking-tight tabular-nums">
+            <h1 className="text-3xl sm:text-4xl font-black font-sans text-slate-900 tracking-tight tabular-nums">
               ₹{transaction.amount.toLocaleString('en-IN')}
             </h1>
 
@@ -210,12 +210,12 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
           </div>
 
           {/* Recipient Title in Bold Uppercase */}
-          <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight">
+          <h2 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
             {transaction.title.toUpperCase()}
           </h2>
 
           {/* Date, Time, Ref ID with Copy Button */}
-          <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-1.5 text-xs text-slate-500">
             <span>
               {formattedMonthDay} at {formattedTime}
             </span>
@@ -241,7 +241,7 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
                 <span>⚠️ Payment failed · No money debited</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F8EE] dark:bg-emerald-950/40 text-[#00875A] dark:text-emerald-400 text-xs font-bold border border-emerald-500/20">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F8EE] text-[#00875A] text-xs font-bold border border-emerald-500/20">
                 <span className="text-sm">🌿</span>
                 <span>{effectiveCashbackPct}% cashback earned</span>
               </span>
@@ -350,22 +350,22 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
         <div className="space-y-3 pt-1">
           <div className="flex items-start justify-between">
             <div>
-              <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight">
+              <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
                 Tap on gifts to unlock rewards
               </h3>
-              <p className="text-[11px] font-black text-[#5B3DF5] dark:text-[#8B7CFA] tracking-wider uppercase mt-0.5">
+              <p className="text-[11px] font-black text-[#5B3DF5] tracking-wider uppercase mt-0.5">
                 TAP & REVEAL
               </p>
             </div>
 
-            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#EAE6FF] dark:bg-[#2A2350] text-[#5B3DF5] dark:text-[#A16CFF] text-xs font-black shadow-xs">
+            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#EAE6FF] text-[#5B3DF5] text-xs font-black shadow-xs">
               <Gift className="w-3.5 h-3.5" />
               <span>0</span>
             </div>
           </div>
 
           {/* Interactive Conveyor Belt with Gift Boxes */}
-          <div className="relative rounded-3xl bg-gradient-to-b from-slate-100 to-slate-200 dark:from-[#181924] dark:to-[#12131A] p-4 border border-slate-200/60 dark:border-slate-800 overflow-hidden shadow-inner">
+          <div className="relative rounded-3xl bg-gradient-to-b from-slate-100 to-slate-200 p-4 border border-slate-200/60 overflow-hidden shadow-inner">
             <div className="grid grid-cols-3 gap-3 relative z-10 py-1">
               {[
                 { id: 0, color: 'from-[#FF6584] to-[#FF8DA1]', label: 'Surprise' },
@@ -392,12 +392,12 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
 
             {/* Revealed Gift Reward Popup */}
             {giftRewardAmount !== null && (
-              <div className="mt-3 p-3 rounded-2xl bg-white dark:bg-[#1E1F2A] border border-emerald-500/30 text-center space-y-1 animate-in zoom-in-95 duration-200 shadow-md">
-                <p className="text-xs font-black text-emerald-600 dark:text-emerald-400 flex items-center justify-center gap-1">
+              <div className="mt-3 p-3 rounded-2xl bg-white border border-emerald-500/30 text-center space-y-1 animate-in zoom-in-95 duration-200 shadow-md">
+                <p className="text-xs font-black text-emerald-600 flex items-center justify-center gap-1">
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>₹{giftRewardAmount} Extra Reward Won!</span>
                 </p>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                <p className="text-[10px] text-slate-500">
                   Real cash deposited direct to your Canara Bank account
                 </p>
               </div>
@@ -406,24 +406,24 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
 
           {/* Two Promotional Cards */}
           <div className="grid grid-cols-2 gap-3 pt-1">
-            <div className="p-3.5 rounded-2xl bg-white dark:bg-[#1A1A22] border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between space-y-2">
-              <span className="self-start text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
+            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-2">
+              <span className="self-start text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600">
                 3% CASHBACK
               </span>
               <div>
-                <p className="text-xs font-bold text-slate-900 dark:text-white leading-snug">
+                <p className="text-xs font-bold text-slate-900 leading-snug">
                   Save in gold & get 3% cashback
                 </p>
                 <p className="text-[10px] text-slate-400 mt-0.5">Starts with just ₹10</p>
               </div>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-white dark:bg-[#1A1A22] border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between space-y-2">
-              <span className="self-start text-[10px] font-black px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">
+            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-2">
+              <span className="self-start text-[10px] font-black px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600">
                 0.99% FEE
               </span>
               <div>
-                <p className="text-xs font-bold text-slate-900 dark:text-white leading-snug">
+                <p className="text-xs font-bold text-slate-900 leading-snug">
                   Pay tuition fee via credit card
                 </p>
                 <p className="text-[10px] text-slate-400 mt-0.5">Instant transfer</p>
@@ -434,16 +434,16 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
 
         {/* Faded Typography Watermark */}
         <div className="text-center pt-2 select-none opacity-80">
-          <p className="text-2xl sm:text-3xl font-black text-slate-300 dark:text-slate-800 tracking-tight lowercase">
+          <p className="text-2xl sm:text-3xl font-black text-slate-300 tracking-tight lowercase">
             make life super
           </p>
           <div className="flex items-center justify-center gap-2 text-xs font-bold text-slate-400 mt-1">
             <span>Powered by</span>
-            <span className="font-mono text-slate-600 dark:text-slate-300">UPI</span>
+            <span className="font-mono text-slate-600">UPI</span>
             <span>|</span>
             <span className="text-[#005A9C] font-extrabold">YES BANK</span>
             <span>|</span>
-            <span className="font-bold text-slate-600 dark:text-slate-300">super.money</span>
+            <span className="font-bold text-slate-600">super.money</span>
           </div>
         </div>
       </div>
@@ -457,31 +457,31 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
           aria-modal="true"
           className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-xs animate-in fade-in duration-200 p-0 sm:p-4 select-none"
         >
-          <div className="w-full max-w-md bg-white dark:bg-[#1A1A22] rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl border-t border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white flex flex-col max-h-[85vh] overflow-y-auto no-scrollbar animate-in slide-in-from-bottom-6 duration-300">
-            <div className="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 shrink-0" />
+          <div className="w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl border-t border-slate-200 text-slate-900 flex flex-col max-h-[85vh] overflow-y-auto no-scrollbar animate-in slide-in-from-bottom-6 duration-300">
+            <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto mb-3 shrink-0" />
 
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-              <h3 className="text-xl font-black text-slate-900 dark:text-white">Details</h3>
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <h3 className="text-xl font-black text-slate-900">Details</h3>
               <button
                 type="button"
                 onClick={() => setShowDetailsSheet(false)}
-                className="w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="divide-y divide-slate-100 dark:divide-slate-800/80 text-xs py-1">
+            <div className="divide-y divide-slate-100 text-xs py-1">
               <div className="py-3">
                 <span className="text-slate-400 text-[11px] block">Date and time</span>
-                <span className="font-bold text-slate-900 dark:text-white text-xs mt-0.5 block">
+                <span className="font-bold text-slate-900 text-xs mt-0.5 block">
                   {formattedFullDateTime}
                 </span>
               </div>
 
               <div className="py-3">
                 <span className="text-slate-400 text-[11px] block">Payment Method</span>
-                <span className="font-bold text-slate-900 dark:text-white text-xs mt-0.5 block">
+                <span className="font-bold text-slate-900 text-xs mt-0.5 block">
                   {bankName} {bankLast4}
                 </span>
               </div>
@@ -492,11 +492,11 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
                   <span className="w-4 h-4 rounded-full bg-blue-500/20 text-blue-600 inline-flex items-center justify-center text-[10px] font-bold">
                     G
                   </span>
-                  <span className="font-mono text-slate-900 dark:text-white text-xs">
+                  <span className="font-mono text-slate-900 text-xs">
                     {transaction.upiId || 'ganesankadhi@okaxis'}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-[11px]">
+                <div className="flex items-center gap-2 text-slate-500 text-[11px]">
                   <span className="text-orange-500 font-bold">🏦</span>
                   <span>Bank of Baroda</span>
                 </div>
@@ -505,14 +505,14 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
               <div className="py-3 flex items-center justify-between">
                 <div>
                   <span className="text-slate-400 text-[11px] block">UPI Transaction ID</span>
-                  <span className="font-mono font-bold text-slate-900 dark:text-white text-xs mt-0.5 block">
+                  <span className="font-mono font-bold text-slate-900 text-xs mt-0.5 block">
                     {transaction.upiRefNumber}
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={handleCopyUtr}
-                  className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 cursor-pointer"
+                  className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 cursor-pointer"
                   title="Copy UPI Ref"
                 >
                   {copied ? (
@@ -528,14 +528,14 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
                   <span className="text-slate-400 text-[11px] block">
                     Super.Money transaction ID
                   </span>
-                  <span className="font-mono text-[11px] text-slate-700 dark:text-slate-300 break-all block mt-0.5">
+                  <span className="font-mono text-[11px] text-slate-700 break-all block mt-0.5">
                     {superTxId}
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={handleCopySuperTxId}
-                  className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 shrink-0 cursor-pointer"
+                  className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 shrink-0 cursor-pointer"
                   title="Copy Super ID"
                 >
                   {copiedTxId ? (
@@ -553,7 +553,7 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
                   onClick={() => setDetailsAccordionOpen(!detailsAccordionOpen)}
                   className="w-full flex items-center justify-between text-left cursor-pointer"
                 >
-                  <span className="font-black text-slate-900 dark:text-white text-xs">
+                  <span className="font-black text-slate-900 text-xs">
                     Payment Details
                   </span>
                   {detailsAccordionOpen ? (
@@ -633,9 +633,9 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
       {/* Help / Dispute Dialog Modal */}
       {showHelpModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#1A1A22] rounded-3xl p-5 max-w-sm w-full space-y-3.5 shadow-2xl border border-slate-200 dark:border-slate-800">
+          <div className="bg-white rounded-3xl p-5 max-w-sm w-full space-y-3.5 shadow-2xl border border-slate-200">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <MessageSquare className="w-4 h-4 text-[#5B3DF5]" />
                 <span>NPCI Dispute Support</span>
               </h3>

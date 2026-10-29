@@ -68,7 +68,7 @@ export const PinLoginScreen: React.FC<PinLoginScreenProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-[#FAFAFC] dark:bg-[#0E0E12] text-slate-900 dark:text-white relative justify-between p-6 select-none overflow-hidden">
+    <div className="flex-1 flex flex-col bg-[#FAFAFC] text-slate-900 relative justify-between p-6 select-none overflow-hidden">
       <StatusBar dark={false} />
 
       {/* Top Section: Avatar & Greeting */}
@@ -82,7 +82,7 @@ export const PinLoginScreen: React.FC<PinLoginScreenProps> = ({
           <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#5B3DF5] to-[#A16CFF] text-white flex items-center justify-center text-2xl font-bold shadow-xl shadow-[#5B3DF5]/30">
             {user.name.trim().split(/\s+/).map((n) => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}
           </div>
-          <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-2 border-white dark:border-[#0E0E12] flex items-center justify-center text-white text-[10px]">
+          <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-white text-[10px]">
             ⚡
           </div>
         </div>
@@ -90,7 +90,7 @@ export const PinLoginScreen: React.FC<PinLoginScreenProps> = ({
         <h2 className="text-xl font-bold mt-4">
           Welcome back, {user.name.trim().split(/\s+/)[0] || user.name} 👋
         </h2>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+        <p className="text-xs text-slate-500 mt-1">
           Enter your 4-digit App PIN to unlock
         </p>
 

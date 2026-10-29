@@ -10,12 +10,13 @@
     <meta property="og:type" content="website" />
     <meta property="og:image" content="./icon-512.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="theme-color" content="#5B3DF5" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#FAFAFC" />
     <meta name="application-name" content="Super Pay" />
     <meta name="apple-mobile-web-app-title" content="Super Pay" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
     <!-- Super Pay Favicon & App Icons for Chrome & Mobile Home Screen -->
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
@@ -33,6 +34,7 @@
         try {
           localStorage.removeItem('superpay_theme_mode_v1');
           document.documentElement.classList.remove('dark');
+          document.documentElement.style.colorScheme = 'light';
         } catch (e) {}
       })();
     </script>

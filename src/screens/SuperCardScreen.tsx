@@ -47,16 +47,16 @@ export const SuperCardScreen: React.FC<SuperCardScreenProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-[#FAFAFC] dark:bg-[#0E0E12] text-slate-900 dark:text-white pb-32 sm:pb-36 overflow-y-auto no-scrollbar select-none">
+    <div className="flex-1 flex flex-col bg-[#FAFAFC] text-slate-900 pb-32 sm:pb-36 overflow-y-auto no-scrollbar select-none">
       <StatusBar dark={false} />
 
       {/* Header */}
-      <div className="px-5 py-3 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
+      <div className="px-5 py-3 flex items-center justify-between border-b border-slate-100">
         <button
           type="button"
           onClick={onBack}
           aria-label="Back"
-          className="w-10 h-10 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+          className="w-10 h-10 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-100"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -153,7 +153,7 @@ export const SuperCardScreen: React.FC<SuperCardScreenProps> = ({
           <button
             type="button"
             onClick={handleCopyCard}
-            className="p-3 rounded-2xl bg-white dark:bg-[#1A1A20] border border-slate-200/80 dark:border-slate-800/80 text-xs font-bold text-slate-700 dark:text-slate-300 flex flex-col items-center gap-1 hover:bg-slate-50 transition-colors"
+            className="p-3 rounded-2xl bg-white border border-slate-200/80 text-xs font-bold text-slate-700 flex flex-col items-center gap-1 hover:bg-slate-50 transition-colors"
           >
             <Copy className="w-4 h-4 text-[#5B3DF5]" />
             <span>{copied ? 'Copied!' : 'Copy Number'}</span>
@@ -165,7 +165,7 @@ export const SuperCardScreen: React.FC<SuperCardScreenProps> = ({
               sounds.playKeypadClick();
               setShowCvv(!showCvv);
             }}
-            className="p-3 rounded-2xl bg-white dark:bg-[#1A1A20] border border-slate-200/80 dark:border-slate-800/80 text-xs font-bold text-slate-700 dark:text-slate-300 flex flex-col items-center gap-1 hover:bg-slate-50 transition-colors"
+            className="p-3 rounded-2xl bg-white border border-slate-200/80 text-xs font-bold text-slate-700 flex flex-col items-center gap-1 hover:bg-slate-50 transition-colors"
           >
             {showCvv ? <EyeOff className="w-4 h-4 text-[#5B3DF5]" /> : <Eye className="w-4 h-4 text-[#5B3DF5]" />}
             <span>{showCvv ? 'Hide CVV' : 'View CVV'}</span>
@@ -179,8 +179,8 @@ export const SuperCardScreen: React.FC<SuperCardScreenProps> = ({
             }}
             className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1 transition-colors ${
               cardInfo.isFrozen
-                ? 'bg-cyan-50 dark:bg-cyan-950/40 border-cyan-400 text-cyan-600'
-                : 'bg-white dark:bg-[#1A1A20] border-slate-200/80 dark:border-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-slate-50'
+                ? 'bg-cyan-50 border-cyan-400 text-cyan-600'
+                : 'bg-white border-slate-200/80 text-slate-700 hover:bg-slate-50'
             }`}
           >
             <Snowflake className="w-4 h-4 text-cyan-500" />
@@ -189,13 +189,13 @@ export const SuperCardScreen: React.FC<SuperCardScreenProps> = ({
         </div>
 
         {/* Credit Limit & Outstanding Balance Card */}
-        <div className="p-4 rounded-3xl bg-white dark:bg-[#1A1A20] border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-4">
+        <div className="p-4 rounded-3xl bg-white border border-slate-200/80 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                 Available Credit Limit
               </span>
-              <p className="text-2xl font-black font-mono text-slate-900 dark:text-white mt-0.5">
+              <p className="text-2xl font-black font-mono text-slate-900 mt-0.5">
                 ₹{cardInfo.availableLimit.toLocaleString('en-IN')}
               </p>
               <p className="text-[11px] text-slate-400">
@@ -215,7 +215,7 @@ export const SuperCardScreen: React.FC<SuperCardScreenProps> = ({
 
           {/* Progress bar */}
           <div className="space-y-1">
-            <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+            <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
               <div
                 className="h-full bg-[#5B3DF5] rounded-full"
                 style={{ width: `${(cardInfo.usedLimit / cardInfo.totalLimit) * 100}%` }}
@@ -228,10 +228,10 @@ export const SuperCardScreen: React.FC<SuperCardScreenProps> = ({
           </div>
 
           {/* Bill payment CTA */}
-          <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
             <div>
               <span className="text-[11px] text-slate-400">Total Bill Due</span>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">
+              <p className="text-sm font-bold text-slate-900">
                 ₹{cardInfo.usedLimit.toLocaleString('en-IN')}
               </p>
             </div>
@@ -246,7 +246,7 @@ export const SuperCardScreen: React.FC<SuperCardScreenProps> = ({
         </div>
 
         {/* Benefits breakdown */}
-        <div className="p-4 rounded-3xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-500/20 text-xs text-emerald-800 dark:text-emerald-300 space-y-2">
+        <div className="p-4 rounded-3xl bg-emerald-50 border border-emerald-500/20 text-xs text-emerald-800 space-y-2">
           <div className="flex items-center gap-2 font-bold">
             <Sparkles className="w-4 h-4 text-emerald-600" />
             <span>Why superCard on UPI?</span>
