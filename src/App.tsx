@@ -31,6 +31,7 @@ import { sounds } from './services/audio';
 import { INITIAL_CONTACTS } from './services/mockData';
 import { storage } from './services/storage';
 import { ThemeMode, getThemeMode, setThemeMode, applyTheme } from './services/theme';
+import { generateUpiRefNumber } from './services/upi';
 import {
   AppScreen,
   BankAccount,
@@ -114,33 +115,19 @@ export default function App() {
     sounds.enabled = user.soundEnabled;
   }, [user.soundEnabled]);
 
-  // Apply theme mode and listen to system preference changes when in 'system' mode
+  // Always enforce clean light theme matching super.money as requested
   useEffect(() => {
-    applyTheme(themeMode);
-
-    if (themeMode === 'system' && window.matchMedia) {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const handleSystemThemeChange = () => {
-        applyTheme('system');
-      };
-
-      mediaQuery.addEventListener('change', handleSystemThemeChange);
-      return () => {
-        mediaQuery.removeEventListener('change', handleSystemThemeChange);
-      };
-    }
+    applyTheme('light');
   }, [themeMode]);
 
-  const handleSetThemeMode = (mode: ThemeMode) => {
-    setThemeModeState(mode);
-    setThemeMode(mode);
+  const handleSetThemeMode = (_mode: ThemeMode) => {
+    setThemeModeState('light');
+    setThemeMode('light');
   };
 
   const handleCycleThemeMode = () => {
     sounds.playKeypadClick();
-    const nextMode: ThemeMode =
-      themeMode === 'system' ? 'dark' : themeMode === 'dark' ? 'light' : 'system';
-    handleSetThemeMode(nextMode);
+    handleSetThemeMode('light');
   };
 
   // Persist state updates
@@ -327,7 +314,7 @@ export default function App() {
     // NO money is debited from the bank account!
     const failedTx: Transaction = {
       id: `tx-${Date.now()}`,
-      upiRefNumber: `UPI/${Math.floor(100000000000 + Math.random() * 900000000000)}`,
+      upiRefNumber: generateUpiRefNumber(),
       type: 'debit',
       title: payload.recipientName,
       subtitle: `Failed · Bank server decline (${sourceBank.bankName})`,
@@ -443,7 +430,7 @@ export default function App() {
       // Create new Transaction item
       const newTx: Transaction = {
         id: `tx-${Date.now()}`,
-        upiRefNumber: `UPI/${Math.floor(100000000000 + Math.random() * 900000000000)}`,
+        upiRefNumber: generateUpiRefNumber(),
         type: 'debit',
         title: payload.recipientName,
         subtitle: `Paid via ${sourceBank.bankName} · ${sourceBank.accountNumberMasked}`,
@@ -657,7 +644,7 @@ export default function App() {
 
     const creditTx: Transaction = {
       id: `tx-${Date.now()}`,
-      upiRefNumber: `UPI/${Math.floor(100000000000 + Math.random() * 900000000000)}`,
+      upiRefNumber: generateUpiRefNumber(),
       type: 'credit',
       title: 'Money Added via Net Banking',
       subtitle: `Credited to ${primaryBank.bankName} · ${primaryBank.accountNumberMasked}`,

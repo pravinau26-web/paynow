@@ -306,26 +306,26 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
                       className="w-full bg-white dark:bg-[#1A1A22] rounded-2xl p-3.5 border border-slate-150 dark:border-slate-800/90 shadow-xs hover:border-[#5B3DF5]/40 transition-all cursor-pointer flex items-center justify-between gap-3 group active:scale-[0.99]"
                     >
                       {/* Left Side: Pastel Letter Avatar & Details */}
-                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <div className="flex items-center gap-3.5 min-w-0 flex-1">
                         {/* Rounded Square Pastel Letter Avatar */}
                         <div
-                          className={`w-11 h-11 rounded-2xl flex items-center justify-center font-black text-base shrink-0 shadow-xs ${avatarColor}`}
+                          className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-lg shrink-0 shadow-xs ${avatarColor}`}
                         >
                           {initialLetter}
                         </div>
 
                         {/* Title, Date & Category Tag */}
                         <div className="min-w-0 flex-1">
-                          <p className="font-bold text-sm sm:text-base text-slate-900 dark:text-white truncate">
+                          <p className="font-black text-lg sm:text-xl text-slate-900 truncate tracking-tight">
                             {tx.title}
                           </p>
-                          <p className="text-xs text-slate-400 truncate mt-0.5">
+                          <p className="text-xs sm:text-sm text-slate-500 font-semibold truncate mt-0.5">
                             {formatTransactionTime(tx.timestamp)}
                           </p>
 
                           {/* Category Tag pill if available */}
                           {categoryTag && (
-                            <div className="flex items-center gap-1 mt-1 text-[11px] text-slate-400">
+                            <div className="flex items-center gap-1.5 mt-1 text-xs font-semibold text-slate-500">
                               {categoryTag.icon}
                               <span>{categoryTag.label}</span>
                             </div>
@@ -338,10 +338,10 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
                         <div>
                           {/* Amount */}
                           <p
-                            className={`font-black text-sm sm:text-base tabular-nums ${
+                            className={`font-black text-lg sm:text-2xl tabular-nums tracking-tight ${
                               isFailed
                                 ? 'text-slate-400 line-through'
-                                : 'text-slate-900 dark:text-white'
+                                : 'text-slate-900'
                             }`}
                           >
                             ₹{tx.amount.toLocaleString('en-IN')}
@@ -349,13 +349,13 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
 
                           {/* Bank Source / Failed Tag */}
                           {isFailed ? (
-                            <p className="text-xs font-bold text-red-500 mt-0.5">
+                            <p className="text-xs sm:text-sm font-black text-red-500 mt-0.5">
                               Failed
                             </p>
                           ) : (
-                            <div className="flex items-center justify-end gap-1 text-[11px] text-slate-400 mt-0.5">
+                            <div className="flex items-center justify-end gap-1 text-xs sm:text-sm text-slate-500 font-semibold mt-0.5">
                               <span>From</span>
-                              <span className="w-2.5 h-2.5 rounded-full bg-blue-500/20 text-blue-600 inline-flex items-center justify-center text-[7px] font-bold">
+                              <span className="w-3.5 h-3.5 rounded-full bg-blue-500/20 text-blue-600 inline-flex items-center justify-center text-[9px] font-bold">
                                 🏦
                               </span>
                               <span>• {last4Digits}</span>
@@ -364,8 +364,8 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
 
                           {/* Cashback Green Badge if earned */}
                           {tx.cashback > 0 && !isFailed && (
-                            <div className="flex items-center justify-end gap-1 mt-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                              <Sparkles className="w-3 h-3 fill-current" />
+                            <div className="flex items-center justify-end gap-1 mt-0.5 text-xs sm:text-sm font-black text-emerald-600">
+                              <Sparkles className="w-3.5 h-3.5 fill-current" />
                               <span>₹{tx.cashback.toFixed(1)}</span>
                             </div>
                           )}

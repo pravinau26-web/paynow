@@ -222,7 +222,7 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'tx-kt-2',
-    upiRefNumber: 'UPI/428900891278',
+    upiRefNumber: '628100891278',
     type: 'debit',
     title: 'Kaliyapparaja T',
     subtitle: 'Transfer to kaliyapparaja@upi',
@@ -237,7 +237,7 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'tx-kg-3',
-    upiRefNumber: 'UPI/428876129841',
+    upiRefNumber: '627076129841',
     type: 'debit',
     title: 'Karpagamg',
     subtitle: 'Transfer to karpagamg@upi',
@@ -252,7 +252,7 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'tx-sm-4',
-    upiRefNumber: 'UPI/428812984102',
+    upiRefNumber: '626812984102',
     type: 'debit',
     title: 'S M Vegetable And Fruits',
     subtitle: 'Paid via Canara · **9461',
@@ -267,7 +267,7 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'tx-lk-5',
-    upiRefNumber: 'UPI/428711094821',
+    upiRefNumber: '626511094821',
     type: 'debit',
     title: 'Mr Lingakumar A',
     subtitle: 'Paid via Canara · **9461',
@@ -282,7 +282,7 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'tx-1',
-    upiRefNumber: 'UPI/428901239014',
+    upiRefNumber: '626201239014',
     type: 'debit',
     title: 'Chai Point Koramangala',
     subtitle: 'Paid via Canara · **9461',
@@ -297,7 +297,7 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'tx-2',
-    upiRefNumber: 'UPI/428900891278',
+    upiRefNumber: '630182608743',
     type: 'debit',
     title: 'Swiggy Instamart',
     subtitle: 'Paid via HDFC · **4829',
@@ -312,7 +312,7 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'tx-3',
-    upiRefNumber: 'UPI/428876129841',
+    upiRefNumber: '630087612984',
     type: 'credit',
     title: 'Super Cashback Direct Credit',
     subtitle: 'Credited to HDFC Bank A/c **4829',
@@ -327,7 +327,7 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'tx-4',
-    upiRefNumber: 'UPI/428812984102',
+    upiRefNumber: '629912984102',
     type: 'debit',
     title: 'Priya Patel',
     subtitle: 'Transfer to priya.patel@okhdfcbank',
@@ -342,7 +342,7 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'tx-5',
-    upiRefNumber: 'UPI/428711094821',
+    upiRefNumber: '629811094821',
     type: 'debit',
     title: 'Blue Tokai Coffee Roasters',
     subtitle: 'Paid via HDFC · **4829',
@@ -357,7 +357,7 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'tx-6',
-    upiRefNumber: 'UPI/428612984920',
+    upiRefNumber: '629612984920',
     type: 'debit',
     title: 'BESCOM Electricity Bill',
     subtitle: 'Paid via HDFC · **4829',
@@ -372,7 +372,7 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'tx-7',
-    upiRefNumber: 'UPI/428510293841',
+    upiRefNumber: '629510293841',
     type: 'credit',
     title: 'Ananya Iyer',
     subtitle: 'Received via UPI · ananya.iyer@okaxis',
@@ -387,7 +387,7 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
   },
   {
     id: 'tx-8',
-    upiRefNumber: 'UPI/428409182736',
+    upiRefNumber: '629409182736',
     type: 'debit',
     title: 'Amazon Shopping',
     subtitle: 'Failed · Bank server decline',
