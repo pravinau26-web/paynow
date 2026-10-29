@@ -9,6 +9,7 @@ import {
   Info,
   MessageSquare,
   Pencil,
+  QrCode,
   Share2,
   Sparkles,
   X,
@@ -40,6 +41,8 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [ticketRaised, setTicketRaised] = useState<string | null>(null);
   const [showDetailsSheet, setShowDetailsSheet] = useState(false);
+  const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
   const [detailsAccordionOpen, setDetailsAccordionOpen] = useState(true);
   const [showRepeatModal, setShowRepeatModal] = useState(false);
   const [openedGiftIndex, setOpenedGiftIndex] = useState<number | null>(null);
@@ -48,12 +51,35 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
   useEffect(() => {
     if (transaction) {
       setShowDetailsSheet(false);
+      setIsDetailsExpanded(false);
       setShowRepeatModal(false);
       setShowHelpModal(false);
       setOpenedGiftIndex(null);
       setGiftRewardAmount(null);
     }
   }, [transaction]);
+
+  // Drag handle gesture to expand details sheet upward
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartY(e.touches[0].clientY);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartY === null) return;
+    const currentY = e.touches[0].clientY;
+    const deltaY = currentY - touchStartY;
+    if (deltaY < -25 && !isDetailsExpanded) {
+      setIsDetailsExpanded(true);
+      setTouchStartY(null);
+    } else if (deltaY > 35 && isDetailsExpanded) {
+      setIsDetailsExpanded(false);
+      setTouchStartY(null);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setTouchStartY(null);
+  };
 
   if (!transaction) return null;
 
@@ -451,158 +477,177 @@ export const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
       {/* ========================================================================= */}
       {/* DETAILS BOTTOM SHEET MODAL (Frame 00:27 - 00:41)                          */}
       {/* ========================================================================= */}
+      {/* ========================================================================= */}
+      {/* DETAILS BOTTOM SHEET MODAL (Exact match of WhatsApp screenshot)           */}
+      {/* ========================================================================= */}
       {showDetailsSheet && (
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-xs animate-in fade-in duration-200 p-0 sm:p-4 select-none"
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-xs animate-in fade-in duration-200 p-0 sm:p-4 select-none"
+          onClick={() => setShowDetailsSheet(false)}
         >
-          <div className="w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl border-t border-slate-200 text-slate-900 flex flex-col max-h-[85vh] overflow-y-auto no-scrollbar animate-in slide-in-from-bottom-6 duration-300">
-            <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto mb-3 shrink-0" />
+          <div
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            className={`w-full max-w-md bg-white rounded-t-[32px] sm:rounded-3xl px-6 pt-3 pb-8 shadow-2xl border-t border-slate-100 text-slate-900 flex flex-col transition-all duration-300 ease-out overflow-y-auto no-scrollbar ${
+              isDetailsExpanded ? 'h-[95vh] sm:h-[92vh]' : 'h-[65vh] sm:h-[62vh]'
+            }`}
+          >
+            {/* Top Drag Handle ("kodu") - swipe up or tap to expand upward to top */}
+            <div
+              className="w-full flex flex-col items-center pt-1 pb-3 cursor-grab active:cursor-grabbing"
+              onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
+              title="Drag or tap to expand to full height"
+            >
+              <div className="w-14 h-1.25 bg-slate-300 hover:bg-slate-400 rounded-full transition-colors" />
+            </div>
 
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="text-xl font-black text-slate-900">Details</h3>
+            {/* Header: "Details" in vibrant Indigo/Purple matching screenshot */}
+            <div className="flex items-center justify-between pb-2 pt-1">
+              <h2 className="text-[22px] font-extrabold text-[#4840EC] tracking-tight">
+                Details
+              </h2>
               <button
                 type="button"
                 onClick={() => setShowDetailsSheet(false)}
                 className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                title="Close"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="divide-y divide-slate-100 text-xs py-1">
-              <div className="py-3">
-                <span className="text-slate-400 text-[11px] block">Date and time</span>
-                <span className="font-bold text-slate-900 text-xs mt-0.5 block">
+            {/* Details Key-Value Rows matching exact typography */}
+            <div className="space-y-4 pt-2">
+              {/* Date and time */}
+              <div>
+                <p className="text-[13px] text-slate-500 font-normal">Date and time</p>
+                <p className="text-[15px] font-semibold text-slate-900 mt-1">
                   {formattedFullDateTime}
-                </span>
+                </p>
               </div>
 
-              <div className="py-3">
-                <span className="text-slate-400 text-[11px] block">Payment Method</span>
-                <span className="font-bold text-slate-900 text-xs mt-0.5 block">
+              {/* Payment Method */}
+              <div>
+                <p className="text-[13px] text-slate-500 font-normal">Payment Method</p>
+                <p className="text-[15px] font-semibold text-slate-900 mt-1">
                   {bankName} {bankLast4}
-                </span>
+                </p>
               </div>
 
-              <div className="py-3 space-y-1">
-                <span className="text-slate-400 text-[11px] block">Paid to</span>
-                <div className="flex items-center gap-2">
-                  <span className="w-4 h-4 rounded-full bg-blue-500/20 text-blue-600 inline-flex items-center justify-center text-[10px] font-bold">
-                    G
-                  </span>
-                  <span className="font-mono text-slate-900 text-xs">
+              {/* Paid to */}
+              <div>
+                <p className="text-[13px] text-slate-500 font-normal">Paid to</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <QrCode className="w-4 h-4 text-slate-700 stroke-[2] shrink-0" />
+                  <span className="text-[15px] font-semibold text-slate-900 break-all">
                     {transaction.upiId || 'ganesankadhi@okaxis'}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-slate-500 text-[11px]">
-                  <span className="text-orange-500 font-bold">🏦</span>
-                  <span>Bank of Baroda</span>
-                </div>
               </div>
 
-              <div className="py-3 flex items-center justify-between">
-                <div>
-                  <span className="text-slate-400 text-[11px] block">UPI Transaction ID</span>
-                  <span className="font-mono font-bold text-slate-900 text-xs mt-0.5 block">
+              {/* UPI Transaction ID */}
+              <div>
+                <p className="text-[13px] text-slate-500 font-normal">UPI Transaction Id</p>
+                <div className="flex items-center justify-between mt-1">
+                  <span className="text-[15px] font-semibold text-slate-900 font-mono tracking-tight">
                     {transaction.upiRefNumber}
                   </span>
+                  <button
+                    type="button"
+                    onClick={handleCopyUtr}
+                    className="p-1 rounded-md hover:bg-slate-100 text-slate-500 active:scale-95 transition-all cursor-pointer"
+                    title="Copy UPI Transaction ID"
+                  >
+                    {copied ? (
+                      <Check className="w-4 h-4 text-emerald-500" />
+                    ) : (
+                      <Copy className="w-4 h-4 text-slate-600" />
+                    )}
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleCopyUtr}
-                  className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 cursor-pointer"
-                  title="Copy UPI Ref"
-                >
-                  {copied ? (
-                    <Check className="w-4 h-4 text-emerald-500" />
-                  ) : (
-                    <Copy className="w-4 h-4" />
-                  )}
-                </button>
               </div>
 
-              <div className="py-3 flex items-center justify-between">
-                <div className="min-w-0 pr-2">
-                  <span className="text-slate-400 text-[11px] block">
-                    Super.Money transaction ID
-                  </span>
-                  <span className="font-mono text-[11px] text-slate-700 break-all block mt-0.5">
+              {/* Super.Money transaction ID */}
+              <div>
+                <p className="text-[13px] text-slate-500 font-normal">Super.Money transaction ID</p>
+                <div className="flex items-center justify-between mt-1">
+                  <span className="text-[13.5px] font-mono font-medium text-slate-900 break-all pr-2 leading-relaxed">
                     {superTxId}
                   </span>
+                  <button
+                    type="button"
+                    onClick={handleCopySuperTxId}
+                    className="p-1 rounded-md hover:bg-slate-100 text-slate-500 shrink-0 active:scale-95 transition-all cursor-pointer"
+                    title="Copy Super.Money ID"
+                  >
+                    {copiedTxId ? (
+                      <Check className="w-4 h-4 text-emerald-500" />
+                    ) : (
+                      <Copy className="w-4 h-4 text-slate-600" />
+                    )}
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleCopySuperTxId}
-                  className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 shrink-0 cursor-pointer"
-                  title="Copy Super ID"
-                >
-                  {copiedTxId ? (
-                    <Check className="w-4 h-4 text-emerald-500" />
-                  ) : (
-                    <Copy className="w-4 h-4" />
-                  )}
-                </button>
               </div>
 
-              {/* Collapsible Payment Details Timeline */}
-              <div className="py-3">
+              {/* Collapsible Payment Details Accordion */}
+              <div className="pt-2">
                 <button
                   type="button"
                   onClick={() => setDetailsAccordionOpen(!detailsAccordionOpen)}
-                  className="w-full flex items-center justify-between text-left cursor-pointer"
+                  className="w-full flex items-center justify-between text-left py-2 cursor-pointer"
                 >
-                  <span className="font-black text-slate-900 text-xs">
+                  <span className="text-[15px] font-bold text-slate-900">
                     Payment Details
                   </span>
-                  {detailsAccordionOpen ? (
-                    <ChevronUp className="w-4 h-4 text-slate-400" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4 text-slate-400" />
-                  )}
+                  <ChevronUp
+                    className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${
+                      detailsAccordionOpen ? '' : 'rotate-180'
+                    }`}
+                  />
                 </button>
 
                 {detailsAccordionOpen && (
-                  <div className="mt-3 pl-2.5 relative border-l-2 border-[#00D09C] space-y-4 ml-2.5 text-xs">
-                    <div className="relative pl-3.5">
-                      <span className="absolute -left-[14px] top-0.5 w-5 h-5 rounded-full bg-[#00D09C] text-white flex items-center justify-center shadow-xs">
+                  <div className="relative pl-7 space-y-5 mt-3 select-none">
+                    {/* Dotted vertical line connecting ticks */}
+                    <div className="absolute left-[9px] top-2.5 bottom-2.5 w-px border-l-2 border-dotted border-slate-300 pointer-events-none" />
+
+                    {/* Step 1: Payment initiated */}
+                    <div className="relative">
+                      <span className="absolute -left-7 top-0 w-5 h-5 rounded-full bg-[#00D09C] text-white flex items-center justify-center shadow-xs">
                         <Check className="w-3.5 h-3.5 stroke-[3]" />
                       </span>
-                      <p className="font-black text-slate-900 text-xs sm:text-sm">Payment initiated</p>
-                      <p className="text-[11px] text-slate-400 font-mono mt-0.5">{formattedTime}</p>
+                      <p className="text-[14px] font-medium text-slate-900 leading-tight">
+                        Payment initiated
+                      </p>
                     </div>
 
-                    <div className="relative pl-3.5">
-                      <span
-                        className={`absolute -left-[14px] top-0.5 w-5 h-5 rounded-full flex items-center justify-center shadow-xs ${
-                          isFailed ? 'bg-red-500 text-white' : 'bg-[#00D09C] text-white'
-                        }`}
-                      >
-                        {isFailed ? <X className="w-3.5 h-3.5 stroke-[3]" /> : <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                    {/* Step 2: Money debited from your bank */}
+                    <div className="relative">
+                      <span className="absolute -left-7 top-0 w-5 h-5 rounded-full bg-[#00D09C] text-white flex items-center justify-center shadow-xs">
+                        <Check className="w-3.5 h-3.5 stroke-[3]" />
                       </span>
-                      <p className="font-black text-slate-900 text-xs sm:text-sm">
+                      <p className="text-[14px] font-medium text-slate-900 leading-tight">
                         {isFailed ? 'Declined by issuing bank' : 'Money debited from your bank'}
                       </p>
-                      <p className="text-[11px] text-slate-400 mt-0.5">
-                        {bankName} (A/c ••{bankLast4})
-                      </p>
                     </div>
 
-                    <div className="relative pl-3.5">
-                      <span
-                        className={`absolute -left-[14px] top-0.5 w-5 h-5 rounded-full flex items-center justify-center shadow-xs ${
-                          isFailed ? 'bg-slate-300 text-slate-500' : 'bg-[#00D09C] text-white'
-                        }`}
-                      >
-                        {isFailed ? <X className="w-3.5 h-3.5 stroke-[3]" /> : <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                    {/* Step 3: Money received by recipient */}
+                    <div className="relative">
+                      <span className="absolute -left-7 top-0 w-5 h-5 rounded-full bg-[#00D09C] text-white flex items-center justify-center shadow-xs">
+                        <Check className="w-3.5 h-3.5 stroke-[3]" />
                       </span>
-                      <p className="font-black text-slate-900 text-xs sm:text-sm">
-                        {isFailed ? 'No money debited from your account' : `Money received by ${transaction.title.toUpperCase()}`}
+                      <p className="text-[14px] font-medium text-slate-900 leading-tight">
+                        {isFailed ? 'No money debited from your account' : `Money received by ${transaction.title}`}
                       </p>
-                      <p className="text-[11px] text-slate-400 font-mono mt-0.5">
-                        {transaction.upiId || 'ganesankadhi@okaxis'}
-                      </p>
+                      {transaction.upiId && (
+                        <p className="text-[12.5px] text-slate-500 mt-0.5 font-normal">
+                          {transaction.upiId}
+                        </p>
+                      )}
                     </div>
                   </div>
                 )}
